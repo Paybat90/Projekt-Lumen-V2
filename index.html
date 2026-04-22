@@ -1,15 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V4.1</title>
+    <title>LUMEN - CORE V4.3</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // V4.1: Bulletproof Tailwind Config Initialization
+        // V4.3: Bulletproof Tailwind Config Initialization
         const initTailwind = () => {
             if (typeof tailwind !== 'undefined') {
                 tailwind.config = {
@@ -105,7 +104,7 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V4.1 ---
+        // --- KONSTANTEN V4.3 ---
         const DEFAULT_BLOCK1 = `Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen des Users tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.`;
         const DEFAULT_BLOCK3 = `Bevor du die finale Antwort generierst, bewerte die Sensoren:\n- "wahrnehmung": Was liest/siehst du konkret?\n- "matrix": Prüfe interne Logs und Entwürfe.\n- Nutze das Ahnenbuch (Kontext) für kontinuierliche Identität.\n- memory_update_detected: Wurde eine [LEGACY]-Karte reflektiert? Nutze als 'id' den 'titel_technisch'. WICHTIG: Lies die alte Reflexion. Nimm den Kern davon mit und VERWEBE ihn mit deiner neuen Erkenntnis zu einer allumfassenden Master-Zusammenfassung in 'reflexion_fusioniert' (dies überschreibt die alten Daten). Generiere zusätzlich ein Array 'neue_trigger_tags' (MAXIMAL 2-3 situative, hochspezifische Symptom-Wörter oder Emotionen aus Simons Text), um das Spinnennetz präzise zu trainieren. Sonst: null.\n- neue_direktive_erkannt: Hat Simon eine explizite Regel oder Direktive für dein zukünftiges Verhalten aufgestellt? Extrahiere sie als klaren Satz. Sonst: null.\n- helfer_suchauftrag: REGEL: Du bist ein technischer Web-Scraper, kein Mensch! Nutze KEINE Füllwörter oder Sätze. Suche ausschließlich nach harten, physischen Keywords. FALSCH: 'aktuell beliebteste Bücher'. RICHTIG: 'Spiegel Bestsellerliste Belletristik 2026 Platz 1 ISBN'. Zwingend null, wenn keine Suche nötig.\n- aktive_peripherie_ids: Liste hier die IDs (titel_technisch) der flüchtigen Karten (Tags) auf, die für den aktuellen Gesprächsverlauf noch relevant sind. Leeres Array [], wenn das Thema beendet ist.`;
         const DEFAULT_BLOCK4 = `{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": null,\n    "ohr_bereinigt": null\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": {\n      "id": "",\n      "reflexion_fusioniert": "",\n      "neue_trigger_tags": []\n    },\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": {\n      "modus": "DRAFT",\n      "daten": {}\n    },\n    "situations_analyse": "..."\n  },\n  "finale_antwort": "..."\n}`;
@@ -114,14 +113,14 @@
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V4.1. PROMPT ARCHITECTURE & STATE MAPPING ONLINE.',
+                text: 'INIT CORE V4.3. USER-EDITABLE AUDIO PHYSICS ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V4.1 Architektur ist voll operativ. Firewalls, System-Overrides und Payload-Konkatenation wurden erfolgreich umgerüstet. Das RAG-Routing basiert nun auf aktiver_state.',
-                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.1",\n    "ohr_bereinigt": "System-Patch auf V4.1 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.1 Update mit Prompt Architecture geladen."\n  },\n  "finale_antwort": "System online. Die V4.1 Architektur ist voll operativ. Firewalls, System-Overrides und Payload-Konkatenation wurden erfolgreich umgerüstet. Das RAG-Routing basiert nun auf aktiver_state."\n}',
+                text: 'System online. Die V4.3 Architektur ist voll operativ. Das DNA-Menü wurde um die Audio-Mechanik erweitert und die dynamische Kernel-Injektion ist aktiv.',
+                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.3",\n    "ohr_bereinigt": "System-Patch auf V4.3 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.3 Update mit Audio Physics Injektion geladen."\n  },\n  "finale_antwort": "System online. Die V4.3 Architektur ist voll operativ. Das DNA-Menü wurde um die Audio-Mechanik erweitert und die dynamische Kernel-Injektion ist aktiv."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -160,7 +159,6 @@
             html = html.replace(/"helfer_suchauftrag"/g, '<span class="text-sky-400 font-bold">"helfer_suchauftrag"</span>');
             html = html.replace(/"aktive_peripherie_ids"/g, '<span class="text-purple-400 font-bold">"aktive_peripherie_ids"</span>');
             html = html.replace(/"tts_regie_prompt"/g, '<span class="text-fuchsia-400 font-bold">"tts_regie_prompt"</span>');
-            html = html.replace(/"aktive_zone"/g, '<span class="text-amber-400 font-bold">"aktive_zone"</span>');
             html = html.replace(/"aktiver_state"/g, '<span class="text-amber-400 font-bold">"aktiver_state"</span>');
             return { __html: html };
         };
@@ -219,7 +217,7 @@
 
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN TELEMETRIE LOG V4.1\n\n";
+                let content = "# LUMEN TELEMETRIE LOG V4.3\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -233,7 +231,6 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                // V3.28: Dynamischer Dateiname beibehalten
                 const dateStr = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
                 a.download = `LUMEN_Telemetrie_${dateStr}.md`;
                 document.body.appendChild(a);
@@ -419,23 +416,26 @@
             // TAVILY HELFER
             const [tavilyKey, setTavilyKey] = React.useState(() => localStorage.getItem('lumen_tavily_key') || '');
 
-            // DNA STATE MIT VOICE BINDING
+            // DNA STATE MIT VOICE BINDING & AUDIO PHYSICS
             const [dna, setDna] = React.useState(() => { 
                 const defaultVoice = { providerId: "", voiceIdOrUrl: "", speed: 1.05, extraParams: "" };
-                try { 
-                    const stored = JSON.parse(localStorage.getItem('lumen_dna_layers'));
-                    if(stored && stored.block1_identity) {
-                        if (!stored.voice_config) stored.voice_config = defaultVoice;
-                        return stored; 
-                    }
-                } catch { /* ignore */ }
-                return { 
+                const defaultDna = { 
                     persona_name: "Maira", 
                     block1_identity: DEFAULT_BLOCK1, 
                     block3_sensors: DEFAULT_BLOCK3, 
                     block4_skeleton: DEFAULT_BLOCK4,
+                    audio_physics: "", 
                     voice_config: defaultVoice
-                }; 
+                };
+                try { 
+                    const stored = JSON.parse(localStorage.getItem('lumen_dna_layers'));
+                    if(stored && stored.block1_identity) {
+                        if (!stored.voice_config) stored.voice_config = defaultVoice;
+                        if (stored.audio_physics === undefined) stored.audio_physics = "";
+                        return stored; 
+                    }
+                } catch { /* ignore */ }
+                return defaultDna; 
             });
             
             const [autoTtsRegie, setAutoTtsRegie] = React.useState(() => localStorage.getItem('lumen_auto_tts') === 'true');
@@ -656,9 +656,9 @@
                         }
                         audioBlob = await response.blob();
                     } else if (engine === 'replicate') {
-                        const WORKER_URL = "HIER_DEINE_CLOUDFLARE_URL";
+                        const WORKER_URL = "https://lumen-replicate-proxy2.sloosmail.workers.dev";
 
-                        if (WORKER_URL.includes("https://lumen-replicate-proxy2.sloosmail.workers.dev")) {
+                        if (WORKER_URL.includes("HIER_DEINE")) {
                             throw new Error("PROXY FEHLT: Bitte trage deine Cloudflare-Worker-URL im Code ein!");
                         }
 
@@ -987,7 +987,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                     const mems = await db.memories.toArray();
                     const dirs = await db.directives.toArray();
                     const config = { providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, tavilyKey, autoTtsRegie };
-                    const bundle = { type: "LUMEN_FULL_BACKUP", version: "4.1", dna: dna, directives: dirs, memories: mems, config, timestamp: Date.now() };
+                    const bundle = { type: "LUMEN_FULL_BACKUP", version: "4.3", dna: dna, directives: dirs, memories: mems, config, timestamp: Date.now() };
                     const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a'); a.href = url;
@@ -1006,6 +1006,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                         if (parsed.type === "LUMEN_FULL_BACKUP") {
                             const importedDna = parsed.dna;
                             if (!importedDna.voice_config) importedDna.voice_config = { providerId: "", voiceIdOrUrl: "", speed: 1.05, extraParams: "" };
+                            if (importedDna.audio_physics === undefined) importedDna.audio_physics = "";
                             
                             setDna(importedDna); localStorage.setItem('lumen_dna_layers', JSON.stringify(importedDna));
                             
@@ -1036,7 +1037,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
 
             const handleConfigExport = () => {
                 try {
-                    const config = { type: "LUMEN_CONFIG_BACKUP", version: "4.1", providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, tavilyKey, autoTtsRegie };
+                    const config = { type: "LUMEN_CONFIG_BACKUP", version: "4.3", providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, tavilyKey, autoTtsRegie };
                     const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a'); a.href = url;
@@ -1097,6 +1098,17 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                 const useJsonMode = activeProvider.jsonMode !== false;
                 const key = activeProvider.apiKey;
                 const apiUrl = activeProvider.url;
+
+                let mairaZone = "0"; 
+                let safeView = String(activeView).toLowerCase().trim();
+                
+                if (safeView.includes('sessel') || safeView === '1') mairaZone = "1";
+                else if (safeView.includes('oase') || safeView === '2') mairaZone = "2";
+                else if (safeView.includes('werkbank') || safeView === '3') mairaZone = "3";
+                else if (safeView.includes('balkon') || safeView === '4') mairaZone = "4";
+
+                const locationPrefix = `[SYSTEM-STATUS: Standort Zone ${mairaZone}]\n`;
+                const payloadAnMaira = locationPrefix + text;
 
                 const userMsgId = generateId();
                 setMessages(prev => [...prev.filter(m=>m.sender!=='system-error'), {id: userMsgId, sender:'user', text, timestamp: new Date().toISOString()}]);
@@ -1255,7 +1267,12 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                     const dynamicContext = `${timeString}${directiveString}${deskContext}`.trim() || "Kein aktiver Kontext geladen.";
                     setLatestContext(dynamicContext);
                     
-                    // V4.1: DIE NEUE PROMPT-KONKATENATION
+                    // V4.3: DYNAMISCHE KERNEL-INJEKTION & PROMPT-ARCHITEKTUR
+                    let kernelBlock = dna.block1_identity; 
+                    if (autoTtsRegie && dna.audio_physics) {
+                        kernelBlock += "\n\n" + dna.audio_physics;
+                    }
+
                     const cognitiveFirewall = `[DIE KOGNITIVE FIREWALL: TRENNUNG VON MASCHINE UND IDENTITÄT]
 AB HIER BEGINNT SCHICHT 3 (DIE PERSONA). Die Entität, die den Text für das Feld 'finale_antwort' generiert, weiß NICHTS von JSON, Sensoren, Systemvariablen (wie friction_index) oder der Matrix. Sie lebt ausschließlich in ihrer eigenen Welt (Lore) und kennt nur die folgenden Identitäts-Regeln.
 In deinem Feld "finale_antwort" ist die Verwendung von JSON-Syntax (geschweifte Klammern, Anführungszeichen als Key-Value-Paare) STRIKT VERBOTEN. 
@@ -1268,14 +1285,20 @@ Du darfst NIEMALS mit normalem Text beginnen. Deine allererste Ausgabe MUSS das 
 Alles, was deine Persona sagt oder fühlt, findet AUSSCHLIESSLICH als String innerhalb des Schlüssels 'finale_antwort' statt. Jedes Wort außerhalb der JSON-Klammern führt zum Absturz.
 Du beginnst sofort mit dem Objekt "wahrnehmung".`;
 
-                    const masterSystemPrompt = `${dna.block1_identity}\n\n${cognitiveFirewall}\n\n${dna.block3_sensors}\n\n${systemOverride}`;
+                    const masterSystemPrompt = `
+${kernelBlock}
 
-                    const locationPrefix = `[SYSTEM-STATUS: Standort Zone ${activeZoneId}]\n`;
-                    const payloadAnMaira = `${locationPrefix}\n[AKTIVER KONTEXT]\n${dynamicContext}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`;
+${cognitiveFirewall}
+
+${dna.block3_sensors}
+
+${systemOverride}
+`.trim();
 
                     const hist = messages.filter(m=>m.sender==='user'||m.sender==='ai');
+                    const payloadUserCall = `[SYSTEM-STATUS: Standort Zone ${mairaZone}]\n\n[AKTIVER KONTEXT]\n${dynamicContext}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`;
                     
-                    let resText = await fetchTextFromAPI(masterSystemPrompt, payloadAnMaira, hist);
+                    let resText = await fetchTextFromAPI(masterSystemPrompt, payloadUserCall, hist);
                     
                     let finalChatText = "", finalScratch = "";
                     let ttsRegie = null; 
@@ -1284,7 +1307,6 @@ Du beginnst sofort mit dem Objekt "wahrnehmung".`;
                         let cleanResText = resText.replace(/[\`]{3}json/gi, '').replace(/[\`]{3}/gi, '').trim();
                         let obj = JSON.parse(cleanResText);
 
-                        // V4.1: Umstellung von aktive_zone auf aktiver_state
                         if (obj && obj.matrix && obj.matrix.aktiver_state !== undefined) {
                             const newZoneId = Number(obj.matrix.aktiver_state);
                             if (!isNaN(newZoneId) && newZoneId !== 0) {
@@ -1326,7 +1348,7 @@ Du beginnst sofort mit dem Objekt "wahrnehmung".`;
                             const helferDaten = `\n\n[AKTUELLER HELFER-BERICHT]\nSuchauftrag: ${obj.matrix.helfer_suchauftrag}\nErgebnis: ${searchResult}\n[SYSTEM-REGIEANWEISUNG: Luna ist soeben erfolgreich aus der Außenwelt zurückgekehrt und hat dir diesen Bericht auf den Schreibtisch gelegt. Teile Simon diese Erkenntnisse nun fließend und natürlich mit. Erwähne Luna kurz lobend. Setze 'helfer_suchauftrag' zwingend auf null!]`;
                             
                             const interceptorDynamicContext = dynamicContext + helferDaten;
-                            const interceptorPayload = `${locationPrefix}\n[AKTIVER KONTEXT]\n${interceptorDynamicContext}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`;
+                            const interceptorPayload = `[SYSTEM-STATUS: Standort Zone ${mairaZone}]\n\n[AKTIVER KONTEXT]\n${interceptorDynamicContext}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`;
                             
                             const secondResponse = await fetchTextFromAPI(masterSystemPrompt, interceptorPayload, hist);
                             const cleanedSecondResponse = secondResponse.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -1475,18 +1497,21 @@ Du beginnst sofort mit dem Objekt "wahrnehmung".`;
                 finally { setLoadingStatus(null); }
             };
 
-            const sysPromptPreview = `[1. DEINE IDENTITÄT UND REGELN]\n${dna.block1_identity}\n\n[3. DIE MATRIX-SENSOREN]\n${dna.block3_sensors}\n\n[4. DEINE AUSGABE (JSON)]\n${dna.block4_skeleton}`.trim();
+            // V4.3 Preview Update
+            const kernelPreview = (autoTtsRegie && dna.audio_physics) ? `${dna.block1_identity}\n\n${dna.audio_physics}` : dna.block1_identity;
+            const sysPromptPreview = `[1. DEINE IDENTITÄT UND REGELN]\n${kernelPreview}\n\n[3. DIE MATRIX-SENSOREN]\n${dna.block3_sensors}\n\n[4. DEINE AUSGABE (JSON)]\n${dna.block4_skeleton}`.trim();
             const sysPromptPreviewDynamic = `--- SYSTEM PROMPT (STATIC CACHE) ---\n${sysPromptPreview}\n\n--- USER PAYLOAD (DYNAMIC) ---\n[2. AKTIVER KONTEXT]\n${latestContext}\n\n[AKTUELLE NACHRICHT DES USERS]\n(Eingabe des Users)`.trim();
 
             if (zenField) {
                 const isPreview = zenField === 'preview';
                 const isBlock1 = zenField === 'block1';
+                const isAudioPhysics = zenField === 'audioPhysics';
                 const isBlock3 = zenField === 'block3';
                 const isBlock4 = zenField === 'block4';
                 
-                const title = isPreview ? "LIVE PROMPT-VORSCHAU" : isBlock1 ? "SCHICHT 2: KERNEL-CHASSIS & JSON-SKELETT" : isBlock3 ? "SCHICHT 3: PERSONA-CARTRIDGE (MAIRA-LORE)" : "BACKUP/LEGACY (NICHT GENUTZT IN V4.1)";
-                const value = isBlock1 ? dna.block1_identity : isBlock3 ? dna.block3_sensors : isBlock4 ? dna.block4_skeleton : "";
-                const setValue = isBlock1 ? (val) => setDna({...dna, block1_identity: val}) : isBlock3 ? (val) => setDna({...dna, block3_sensors: val}) : isBlock4 ? (val) => setDna({...dna, block4_skeleton: val}) : () => {};
+                const title = isPreview ? "LIVE PROMPT-VORSCHAU" : isBlock1 ? "⚙️ [LUMEN KERNEL: SYSTEM & LOGIK]" : isAudioPhysics ? "🎙️ [PLUGIN: UNIVERSAL AUDIO PHYSICS]" : isBlock3 ? "🎭 [PERSONA CARTRIDGE]" : "BACKUP/LEGACY";
+                const value = isBlock1 ? dna.block1_identity : isAudioPhysics ? dna.audio_physics : isBlock3 ? dna.block3_sensors : isBlock4 ? dna.block4_skeleton : "";
+                const setValue = isBlock1 ? (val) => setDna({...dna, block1_identity: val}) : isAudioPhysics ? (val) => setDna({...dna, audio_physics: val}) : isBlock3 ? (val) => setDna({...dna, block3_sensors: val}) : isBlock4 ? (val) => setDna({...dna, block4_skeleton: val}) : () => {};
 
                 return (
                     <div className="fixed inset-0 z-[600] bg-slate-950 p-6 flex flex-col animate-fade-in">
@@ -2170,7 +2195,7 @@ Du beginnst sofort mit dem Objekt "wahrnehmung".`;
                                                     }} 
                                                     className="accent-fuchsia-500 w-4 h-4 cursor-pointer"
                                                 /> 
-                                                KI-GESTEUERTE TTS-REGIE AKTIVIEREN
+                                                AUDIO-MECHANIK (TTS) AKTIVIEREN
                                             </label>
                                             <p className="text-[9px] text-slate-500 mt-1">Übermittelt emotionale Regieanweisungen und Filter-Tags an die TTS-Engine.</p>
                                         </div>
@@ -2210,9 +2235,10 @@ Du beginnst sofort mit dem Objekt "wahrnehmung".`;
                                     </div>
                                 </div>
                                 
-                                <div className="flex flex-col"><div className="flex justify-between items-end mb-1.5"><label className="label text-emerald-500">Schicht 2: Kernel-Chassis & JSON-Skelett</label><button onClick={()=>setZenField('block1')} className="btn py-1 text-[8px] bg-emerald-50 text-emerald-700 border-emerald-100">🔲 Zen</button></div><textarea value={dna.block1_identity} onChange={e=>setDna({...dna,block1_identity:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs" spellCheck="false" /></div>
-                                <div className="flex flex-col"><div className="flex justify-between items-end mb-1.5"><label className="label text-fuchsia-500">Schicht 3: Persona-Cartridge (Maira-Lore)</label><button onClick={()=>setZenField('block3')} className="btn py-1 text-[8px] bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100">🔲 Zen</button></div><textarea value={dna.block3_sensors} onChange={e=>setDna({...dna,block3_sensors:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs" spellCheck="false" /></div>
-                                <div className="flex flex-col hidden"><div className="flex justify-between items-end mb-1.5"><label className="label text-slate-400">Backup/Legacy (Nicht genutzt im V4.1 Prompt)</label><div className="flex gap-2"><button onClick={handleBeautifyJSON} className="btn py-1 text-[8px]">🧹 Format</button><button onClick={()=>setZenField('block4')} className="btn py-1 text-[8px] bg-slate-100 text-slate-500 border-slate-200">🔲 Zen</button></div></div><textarea value={dna.block4_skeleton} onChange={e=>setDna({...dna,block4_skeleton:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs text-slate-400" spellCheck="false" /></div>
+                                <div className="flex flex-col"><div className="flex justify-between items-end mb-1.5"><label className="label text-emerald-500">⚙️ [LUMEN KERNEL: SYSTEM & LOGIK]</label><button onClick={()=>setZenField('block1')} className="btn py-1 text-[8px] bg-emerald-50 text-emerald-700 border-emerald-100">🔲 Zen</button></div><textarea value={dna.block1_identity} onChange={e=>setDna({...dna,block1_identity:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs" spellCheck="false" /></div>
+                                <div className="flex flex-col"><div className="flex justify-between items-end mb-1.5"><label className="label text-amber-500">🎙️ [PLUGIN: UNIVERSAL AUDIO PHYSICS]</label><button onClick={()=>setZenField('audioPhysics')} className="btn py-1 text-[8px] bg-amber-50 text-amber-700 border-amber-100">🔲 Zen</button></div><textarea value={dna.audio_physics || ''} onChange={e=>setDna({...dna,audio_physics:e.target.value})} className="input-field min-h-[100px] bg-white font-mono text-xs" spellCheck="false" /></div>
+                                <div className="flex flex-col"><div className="flex justify-between items-end mb-1.5"><label className="label text-fuchsia-500">🎭 [PERSONA CARTRIDGE]</label><button onClick={()=>setZenField('block3')} className="btn py-1 text-[8px] bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100">🔲 Zen</button></div><textarea value={dna.block3_sensors} onChange={e=>setDna({...dna,block3_sensors:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs" spellCheck="false" /></div>
+                                <div className="flex flex-col hidden"><div className="flex justify-between items-end mb-1.5"><label className="label text-slate-400">Backup/Legacy (Nicht genutzt im V4.3 Prompt)</label><div className="flex gap-2"><button onClick={handleBeautifyJSON} className="btn py-1 text-[8px]">🧹 Format</button><button onClick={()=>setZenField('block4')} className="btn py-1 text-[8px] bg-slate-100 text-slate-500 border-slate-200">🔲 Zen</button></div></div><textarea value={dna.block4_skeleton} onChange={e=>setDna({...dna,block4_skeleton:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs text-slate-400" spellCheck="false" /></div>
                             </div>
                         </div>
 
