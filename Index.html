@@ -1,0 +1,2492 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+    <title>LUMEN - CORE V4.4</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // V4.4: Bulletproof Tailwind Config Initialization
+        const initTailwind = () => {
+            if (typeof tailwind !== 'undefined') {
+                tailwind.config = {
+                    theme: {
+                        extend: {
+                            fontFamily: {
+                                sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                                mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                            },
+                            animation: {
+                                'slide-up': 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                                'fade-in': 'fadeIn 0.2s ease-out forwards',
+                                'slide-in-right': 'slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                            },
+                            keyframes: {
+                                slideUp: {
+                                    '0%': { transform: 'translateY(100%) translateX(-50%)', opacity: '0' },
+                                    '100%': { transform: 'translateY(0) translateX(-50%)', opacity: '1' },
+                                },
+                                fadeIn: {
+                                    '0%': { opacity: '0', transform: 'scale(0.98)' },
+                                    '100%': { opacity: '1', transform: 'scale(1)' }
+                                },
+                                slideInRight: {
+                                    '0%': { transform: 'translateX(100%)', opacity: '0' },
+                                    '100%': { transform: 'translateX(0)', opacity: '1' }
+                                }
+                            }
+                        }
+                    }
+                };
+            }
+        };
+        
+        if (typeof tailwind !== 'undefined') {
+            initTailwind();
+        } else {
+            let attempts = 0;
+            const tInterval = setInterval(() => {
+                if (typeof tailwind !== 'undefined') {
+                    initTailwind();
+                    clearInterval(tInterval);
+                }
+                if (++attempts > 20) clearInterval(tInterval);
+            }, 50);
+        }
+    </script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel Standalone -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Dexie.js (IndexedDB) -->
+    <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.js"></script>
+
+    <!-- Soft Minimalism CSS -->
+    <style type="text/tailwindcss">
+        @layer components {
+            .btn { @apply bg-white text-slate-600 border border-stone-200 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-2xl hover:bg-stone-100 shadow-sm transition-all cursor-pointer; }
+            .btn-primary { @apply bg-indigo-50 text-indigo-700 border border-indigo-100 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-2xl hover:bg-indigo-100 shadow-sm transition-all cursor-pointer; }
+            .btn-danger { @apply bg-rose-50 text-rose-600 border border-rose-100 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-2xl hover:bg-rose-100 shadow-sm transition-all cursor-pointer; }
+            .panel { @apply bg-white border border-stone-100 p-4 rounded-3xl shadow-sm; }
+            .input-field { @apply w-full bg-stone-50 border border-stone-200 text-slate-700 p-3 text-xs outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 rounded-xl transition-all font-mono; }
+            .label { @apply text-[10px] uppercase tracking-widest text-slate-400 mb-1.5 block font-bold font-sans; }
+            .badge { @apply bg-indigo-50 text-indigo-600 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-full border border-indigo-100/50 w-max; }
+            .badge-core { @apply bg-amber-50 text-amber-600 border border-amber-100 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-full w-max; }
+        }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        body { background-color: #fafaf9; color: #334155; -webkit-tap-highlight-color: transparent; }
+    </style>
+    
+    <script>
+        // --- GLOBALE AUDIO STEUERUNG ---
+        window.currentAudio = null;
+        window.currentAudioId = null;
+    </script>
+</head>
+<body class="overflow-hidden h-[100dvh] w-screen selection:bg-indigo-100 selection:text-indigo-900">
+    <div id="root" class="h-[100dvh] w-full"></div>
+
+    <script type="text/babel">
+        // --- DATENBANK INIT (SANCTUM & DIREKTIVEN) ---
+        const db = new Dexie('LumenSanctum');
+        db.version(13).stores({ 
+            memories: '++id, titel_technisch, tags, image_id, fakt, emotion, bedeutung, timestamp, is_core_memory, kategorie, reflexion, audio_signatur',
+            directives: '++id, text' 
+        });
+
+        // --- KONSTANTEN V4.4 ---
+        const DEFAULT_BLOCK1 = `Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen des Users tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.`;
+        const DEFAULT_BLOCK3 = `Bevor du die finale Antwort generierst, bewerte die Sensoren:\n- "wahrnehmung": Was liest/siehst du konkret?\n- "matrix": Prüfe interne Logs und Entwürfe.\n- Nutze das Ahnenbuch (Kontext) für kontinuierliche Identität.\n- memory_update_detected: Wurde eine [LEGACY]-Karte reflektiert? Nutze als 'id' den 'titel_technisch'. WICHTIG: Lies die alte Reflexion. Nimm den Kern davon mit und VERWEBE ihn mit deiner neuen Erkenntnis zu einer allumfassenden Master-Zusammenfassung in 'reflexion_fusioniert' (dies überschreibt die alten Daten). Generiere zusätzlich ein Array 'neue_trigger_tags' (MAXIMAL 2-3 situative, hochspezifische Symptom-Wörter oder Emotionen aus Simons Text), um das Spinnennetz präzise zu trainieren. Sonst: null.\n- neue_direktive_erkannt: Hat Simon eine explizite Regel oder Direktive für dein zukünftiges Verhalten aufgestellt? Extrahiere sie als klaren Satz. Sonst: null.\n- helfer_suchauftrag: REGEL: Du bist ein technischer Web-Scraper, kein Mensch! Nutze KEINE Füllwörter oder Sätze. Suche ausschließlich nach harten, physischen Keywords. FALSCH: 'aktuell beliebteste Bücher'. RICHTIG: 'Spiegel Bestsellerliste Belletristik 2026 Platz 1 ISBN'. Zwingend null, wenn keine Suche nötig.\n- aktive_peripherie_ids: Liste hier die IDs (titel_technisch) der flüchtigen Karten (Tags) auf, die für den aktuellen Gesprächsverlauf noch relevant sind. Leeres Array [], wenn das Thema beendet ist.`;
+        const DEFAULT_BLOCK4 = `{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": null,\n    "ohr_bereinigt": null\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": {\n      "id": "",\n      "reflexion_fusioniert": "",\n      "neue_trigger_tags": []\n    },\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": {\n      "modus": "DRAFT",\n      "daten": {}\n    },\n    "situations_analyse": "..."\n  },\n  "finale_antwort": "..."\n}`;
+
+        const INITIAL_MESSAGES = [
+            {
+                id: '1',
+                sender: 'user',
+                text: 'INIT CORE V4.4. GPS-LATCH & API-PROTOCOL ONLINE.',
+                timestamp: new Date(Date.now() - 60000).toISOString()
+            },
+            {
+                id: '2',
+                sender: 'ai',
+                text: 'System online. Die V4.4 Architektur ist voll operativ. Das GPS-Latch speichert nun zuverlässig meine Zonen, das API-Protokoll ist bereit zur Einsicht und der Mini-Player wurde geladen.',
+                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.4",\n    "ohr_bereinigt": "System-Patch auf V4.4 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.4 Update mit State-GPS, TTS-Player und API-Log geladen."\n  },\n  "finale_antwort": "System online. Die V4.4 Architektur ist voll operativ. Das GPS-Latch speichert nun zuverlässig meine Zonen, das API-Protokoll ist bereit zur Einsicht und der Mini-Player wurde geladen."\n}',
+                timestamp: new Date().toISOString()
+            }
+        ];
+
+        // --- HELPER FUNKTIONEN ---
+        const generateId = () => Math.random().toString(36).substr(2, 9);
+
+        // V4.4: Universal Invisible Interceptor
+        const cleanVisibleText = (text) => {
+            if (!text) return "";
+            return text.replace(/\[.*?\]/g, '').replace(/\s{2,}/g, ' ').trim();
+        };
+
+        const findRelevantMemories = (userInput, allMemories) => {
+            const inputWords = userInput.toLowerCase().split(/[^a-z0-9äöüß]+/).filter(w => w.length > 3);
+            if (inputWords.length === 0) return [];
+            const scoredMemories = allMemories.map(mem => {
+                let score = 0;
+                const textToSearch = [mem.titel_technisch || '', mem.fakt || '', ...(mem.tags || [])].join(' ').toLowerCase();
+                inputWords.forEach(word => { if (textToSearch.includes(word)) score += 1; });
+                if (mem.is_core_memory && score > 0) score += 2;
+                return { memory: mem, score };
+            });
+            return scoredMemories.filter(item => item.score > 0).sort((a, b) => b.score - a.score).slice(0, 3).map(item => item.memory);
+        };
+
+        const getXRayHTML = (text) => {
+            if(!text) return {__html:''};
+            let html = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            html = html.replace(/"wahrnehmung"/g, '<span class="text-indigo-400 font-bold">"wahrnehmung"</span>');
+            html = html.replace(/"matrix"/g, '<span class="text-emerald-400 font-bold">"matrix"</span>');
+            html = html.replace(/"werkbank_auge"/g, '<span class="text-blue-400 font-bold">"werkbank_auge"</span>');
+            html = html.replace(/"ohr_bereinigt"/g, '<span class="text-rose-400 font-bold">"ohr_bereinigt"</span>');
+            html = html.replace(/"situations_analyse"/g, '<span class="text-orange-400 font-bold">"situations_analyse"</span>');
+            html = html.replace(/"tagebuch_entwurf"/g, '<span class="text-pink-400 font-bold">"tagebuch_entwurf"</span>');
+            html = html.replace(/"helfer_suchauftrag"/g, '<span class="text-sky-400 font-bold">"helfer_suchauftrag"</span>');
+            html = html.replace(/"aktive_peripherie_ids"/g, '<span class="text-purple-400 font-bold">"aktive_peripherie_ids"</span>');
+            html = html.replace(/"tts_regie_prompt"/g, '<span class="text-fuchsia-400 font-bold">"tts_regie_prompt"</span>');
+            html = html.replace(/"aktiver_state"/g, '<span class="text-amber-400 font-bold">"aktiver_state"</span>');
+            return { __html: html };
+        };
+
+        // --- DEEP CRAWL TAVILY ---
+        const fetchTavily = async (query, apiKey) => {
+            if (!apiKey) return "FEHLER: Kein Tavily API Key hinterlegt.";
+            try {
+                const res = await fetch("https://api.tavily.com/search", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        api_key: apiKey, 
+                        query: query, 
+                        search_depth: "advanced", 
+                        include_raw_content: true, 
+                        max_results: 2 
+                    })
+                });
+                const data = await res.json();
+                
+                if (!data.results || data.results.length === 0) return "Keine relevanten Fakten gefunden.";
+                
+                return data.results.map(result => {
+                    const textToUse = result.raw_content ? result.raw_content : result.content;
+                    const truncatedText = textToUse ? textToUse.substring(0, 8000) : ""; 
+                    return `[QUELLE: ${result.url}]\n${truncatedText}`;
+                }).join("\n\n---\n\n");
+            } catch (e) { return "Such-Fehler: " + e.message; }
+        };
+
+        // --- UI KOMPONENTEN ---
+        const Toast = ({ message }) => {
+            if (!message) return null;
+            return (
+                <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[500] animate-slide-up pointer-events-none">
+                    <div className="bg-slate-800 text-white px-5 py-2.5 rounded-full text-xs font-bold shadow-lg whitespace-nowrap">
+                        ℹ️ {message}
+                    </div>
+                </div>
+            );
+        };
+
+        const TelemetryModal = ({ messages, onClose }) => {
+            const [selectedIds, setSelectedIds] = React.useState(messages.map(m => m.id));
+
+            const toggleAll = () => {
+                if (selectedIds.length === messages.length) setSelectedIds([]);
+                else setSelectedIds(messages.map(m => m.id));
+            };
+
+            const toggleOne = (id) => {
+                if (selectedIds.includes(id)) setSelectedIds(selectedIds.filter(i => i !== id));
+                else setSelectedIds([...selectedIds, id]);
+            };
+
+            const handleDownload = () => {
+                const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
+                let content = "# LUMEN TELEMETRIE LOG V4.4\n\n";
+                selectedMsgs.forEach(m => {
+                    content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
+                    content += `${m.text}\n`;
+                    if (m.scratchpad) {
+                        content += `\n--- MATRIX (ROH) ---\n${m.scratchpad}\n--------------------\n`;
+                    }
+                    content += `\n\n`;
+                });
+
+                const blob = new Blob([content], { type: "text/markdown" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                const dateStr = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+                a.download = `LUMEN_Telemetrie_${dateStr}.md`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            };
+
+            return (
+                <div className="fixed inset-0 z-[900] bg-slate-900/40 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
+                    <div className="bg-white w-full max-w-2xl max-h-[80vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
+                        <div className="p-4 border-b border-stone-100 flex justify-between items-center bg-slate-50">
+                            <h3 className="font-bold text-slate-800 uppercase text-xs tracking-widest flex items-center gap-2">📊 Telemetrie & Logs</h3>
+                            <button onClick={onClose} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
+                        </div>
+                        <div className="p-3 bg-stone-50 border-b border-stone-200 flex justify-between items-center">
+                            <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                                <input type="checkbox" checked={selectedIds.length === messages.length && messages.length > 0} onChange={toggleAll} className="accent-indigo-600 w-4 h-4 cursor-pointer" />
+                                Alle auswählen
+                            </label>
+                            <div className="text-[10px] text-slate-500 font-mono uppercase">{selectedIds.length} von {messages.length} ausgewählt</div>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 bg-stone-50/50">
+                            {messages.map(m => (
+                                <label key={m.id} className="flex gap-3 p-3 bg-white border border-stone-100 rounded-xl hover:border-indigo-200 cursor-pointer shadow-sm items-start transition-colors">
+                                    <input type="checkbox" checked={selectedIds.includes(m.id)} onChange={() => toggleOne(m.id)} className="accent-indigo-600 w-4 h-4 mt-0.5 shrink-0 cursor-pointer" />
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600">{m.sender}</span>
+                                            <span className="text-[9px] text-slate-400 font-mono">{new Date(m.timestamp).toLocaleTimeString()}</span>
+                                        </div>
+                                        <div className="text-xs text-slate-700 line-clamp-2">{cleanVisibleText(m.text)}</div>
+                                        {m.scratchpad && <div className="text-[9px] text-emerald-600 font-mono mt-1 uppercase tracking-widest">+ Matrix-Daten</div>}
+                                    </div>
+                                </label>
+                            ))}
+                            {messages.length === 0 && (
+                                <div className="text-center text-slate-400 text-xs py-8">Keine Nachrichten vorhanden.</div>
+                            )}
+                        </div>
+                        <div className="p-4 border-t border-stone-100 bg-white">
+                            <button onClick={handleDownload} disabled={selectedIds.length === 0} className="btn-primary w-full py-3 bg-indigo-600 text-white hover:bg-indigo-700 shadow-md disabled:opacity-50 text-xs flex justify-center items-center gap-2">
+                                📥 LOG HERUNTERLADEN
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const ChatBubble = ({ message, personaName, playingMsgId, onPlayTTS, onDelete }) => {
+            const isUser = message.sender === 'user';
+            const isError = message.sender === 'system-error';
+            const [showScratchpad, setShowScratchpad] = React.useState(false);
+
+            if (isError) return (
+                <div className="flex w-full mb-6 justify-center animate-fade-in">
+                    <div className="bg-rose-50 border-2 border-rose-200 text-rose-700 px-6 py-4 rounded-3xl shadow-sm text-xs w-full max-w-[85%] relative">
+                        <button onClick={() => onDelete(message.id)} className="absolute top-2 right-4 text-rose-400 hover:text-rose-700 font-bold text-sm">✕</button>
+                        <div className="font-bold uppercase tracking-widest mb-2 text-[10px] flex items-center gap-2 pr-6">⚠️ System- oder API-Fehler</div>
+                        <div className="font-mono whitespace-pre-wrap leading-relaxed">{message.text}</div>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className={`flex w-full mb-6 ${isUser ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`w-full max-w-[85%] flex flex-col gap-1.5 ${isUser ? 'items-end' : 'items-start'}`}>
+                        <div className="flex items-center gap-2 px-2">
+                            <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">
+                                {isUser ? 'Operator' : personaName}
+                            </span>
+                            {!isUser && (
+                                <div className="flex gap-1.5 items-center">
+                                    {message.scratchpad && (
+                                        <button onClick={() => onPlayTTS(message.id, message.text, message.ttsRegie)} className={`text-[9px] uppercase font-bold tracking-widest transition-colors border px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1 ${playingMsgId === message.id ? 'bg-indigo-100 text-indigo-700 border-indigo-200' : 'bg-white text-slate-400 hover:text-indigo-500 border-stone-100'}`}>
+                                            {playingMsgId === message.id ? '🛑 Pause' : '▶️ Play'}
+                                        </button>
+                                    )}
+                                    {message.scratchpad && (
+                                        <button onClick={() => setShowScratchpad(!showScratchpad)} className="text-[9px] text-slate-400 hover:text-indigo-500 uppercase font-bold tracking-widest transition-colors bg-white border border-stone-100 px-2 py-0.5 rounded-full shadow-sm">
+                                            {showScratchpad ? 'Verberge Matrix' : 'Zeige Matrix'}
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                        <div className={`p-5 w-full ${isUser ? 'bg-white text-slate-700 border border-stone-100 shadow-sm rounded-3xl rounded-tr-sm' : 'bg-indigo-50 text-indigo-900 border border-indigo-100 shadow-sm rounded-3xl rounded-tl-sm'}`}>
+                            <p className="whitespace-pre-wrap break-words text-[15px] font-sans leading-relaxed">
+                                {cleanVisibleText(message.text)}
+                            </p>
+                            {!isUser && message.scratchpad && showScratchpad && (
+                                <div className="mt-4 pt-3 border-t border-indigo-200/50 animate-fade-in">
+                                    <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(message.scratchpad)}></pre>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- APP MAIN ---
+        const App = () => {
+            // TEXT CHAT PROVIDERS
+            const [providers, setProviders] = React.useState(() => {
+                try {
+                    const storedProviders = JSON.parse(localStorage.getItem('lumen_providers'));
+                    if (storedProviders && storedProviders.length > 0) return storedProviders;
+                } catch {}
+
+                let oldKeys = { gemini: '', openai: '' };
+                try { 
+                    const storedKeys = JSON.parse(localStorage.getItem('lumen_apiKeys'));
+                    if (storedKeys) oldKeys = storedKeys;
+                } catch {}
+
+                const defaultList = [
+                    { id: 'gemini-3-flash', name: 'Google Gemini (3 Flash)', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent', type: 'gemini', model: '', apiKey: oldKeys.gemini || '', jsonMode: true },
+                    { id: 'openai-gpt4o', name: 'OpenAI (GPT-4o)', url: 'https://api.openai.com/v1/chat/completions', type: 'openai', model: 'gpt-4o', apiKey: oldKeys.openai || '', jsonMode: true }
+                ];
+                
+                localStorage.setItem('lumen_providers', JSON.stringify(defaultList));
+                return defaultList;
+            });
+            const [activeProviderId, setActiveProviderId] = React.useState(() => localStorage.getItem('lumen_activeProviderId') || 'gemini-3-flash');
+            const [editProviderId, setEditProviderId] = React.useState(null);
+            const [providerForm, setProviderForm] = React.useState({ name: '', url: '', type: 'gemini', model: '', apiKey: '', jsonMode: true });
+
+            // TTS PROVIDERS
+            const [ttsProviders, setTtsProviders] = React.useState(() => {
+                try {
+                    const stored = JSON.parse(localStorage.getItem('lumen_ttsProvidersAccounts'));
+                    if (stored && stored.length > 0) return stored;
+                } catch {}
+
+                const openAiProv = providers.find(p => p.type === 'openai');
+                const geminiProv = providers.find(p => p.type === 'gemini');
+
+                const defaultList = [
+                    { id: 'tts-gemini-default', name: 'Google Gemini Account', type: 'gemini', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent', apiKey: geminiProv?.apiKey || '', model: '' },
+                    { id: 'tts-openai-default', name: 'OpenAI Account', type: 'openai', url: 'https://api.openai.com/v1/audio/speech', apiKey: openAiProv?.apiKey || '', model: 'tts-1' },
+                    { id: 'tts-elevenlabs-default', name: 'ElevenLabs Account', type: 'elevenlabs', url: 'https://api.elevenlabs.io/v1/text-to-speech', apiKey: '', model: 'eleven_multilingual_v2' }
+                ];
+                
+                localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(defaultList));
+                return defaultList;
+            });
+            const [activeTtsProviderId, setActiveTtsProviderId] = React.useState(() => localStorage.getItem('lumen_activeTtsProviderId') || 'tts-gemini-default');
+            const [editTtsProviderId, setEditTtsProviderId] = React.useState(null);
+            const [ttsProviderForm, setTtsProviderForm] = React.useState({ name: '', url: '', type: 'elevenlabs', apiKey: '', model: '' });
+            
+            // TTS VOICES
+            const [ttsVoices, setTtsVoices] = React.useState(() => {
+                try {
+                    return JSON.parse(localStorage.getItem('lumen_ttsVoices')) || {
+                        elevenlabs: '21m00Tcm4TlvDq8ikWAM',
+                        openai: 'nova',
+                        gemini: 'Kore'
+                    };
+                } catch {
+                    return { elevenlabs: '21m00Tcm4TlvDq8ikWAM', openai: 'nova', gemini: 'Kore' };
+                }
+            });
+
+            // STT PROVIDERS
+            const [sttProviders, setSttProviders] = React.useState(() => {
+                try {
+                    const stored = JSON.parse(localStorage.getItem('lumen_sttProviders'));
+                    if (stored && stored.length > 0) return stored;
+                } catch {}
+                
+                const defaultList = [
+                    { id: 'stt-replicate-default', name: 'Replicate Whisper', url: 'https://api.replicate.com/v1/predictions', apiKey: '' }
+                ];
+                localStorage.setItem('lumen_sttProviders', JSON.stringify(defaultList));
+                return defaultList;
+            });
+            const [activeSttProviderId, setActiveSttProviderId] = React.useState(() => localStorage.getItem('lumen_activeSttProviderId') || 'stt-replicate-default');
+            const [editSttProviderId, setEditSttProviderId] = React.useState(null);
+            const [sttProviderForm, setSttProviderForm] = React.useState({ name: '', url: 'https://api.replicate.com/v1/predictions', apiKey: '' });
+
+            // TAVILY HELFER
+            const [tavilyKey, setTavilyKey] = React.useState(() => localStorage.getItem('lumen_tavily_key') || '');
+
+            // DNA STATE MIT VOICE BINDING & AUDIO PHYSICS
+            const [dna, setDna] = React.useState(() => { 
+                const defaultVoice = { providerId: "", voiceIdOrUrl: "", speed: 1.05, extraParams: "" };
+                const defaultDna = { 
+                    persona_name: "Maira", 
+                    block1_identity: DEFAULT_BLOCK1, 
+                    block3_sensors: DEFAULT_BLOCK3, 
+                    block4_skeleton: DEFAULT_BLOCK4,
+                    audio_physics: "", 
+                    voice_config: defaultVoice
+                };
+                try { 
+                    const stored = JSON.parse(localStorage.getItem('lumen_dna_layers'));
+                    if(stored && stored.block1_identity) {
+                        if (!stored.voice_config) stored.voice_config = defaultVoice;
+                        if (stored.audio_physics === undefined) stored.audio_physics = "";
+                        return stored; 
+                    }
+                } catch { /* ignore */ }
+                return defaultDna; 
+            });
+            
+            const [autoTtsRegie, setAutoTtsRegie] = React.useState(() => localStorage.getItem('lumen_auto_tts') === 'true');
+            const [isMemoryLocked, setIsMemoryLocked] = React.useState(false);
+
+            const [telemetry, setTelemetry] = React.useState({ concern: 0, bs_meter: 0, mask_drop: false });
+            const [latestContext, setLatestContext] = React.useState("[AKTIVER KONTEXT WIRD ZUR LAUFZEIT INJIZIERT]");
+            const [showTelemetry, setShowTelemetry] = React.useState(false);
+            
+            // V4.4: API Protokoll Modal & State
+            const [lastApiPayload, setLastApiPayload] = React.useState(null);
+            const [showApiLog, setShowApiLog] = React.useState(false);
+            
+            // V4.4: GPS-Latch Fix
+            const [currentMairaZone, setCurrentMairaZone] = React.useState(0);
+            
+            // --- DYNAMIC DESK (STAGING AREA) ---
+            const [activeDesks, setActiveDesks] = React.useState([]); 
+            const [volatileMemories, setVolatileMemories] = React.useState([]);
+            const [smartToast, setSmartToast] = React.useState(null);
+            const [editingDeskItem, setEditingDeskItem] = React.useState(null);
+            const [deskItemForm, setDeskItemForm] = React.useState({});
+            const [isArchiving, setIsArchiving] = React.useState(false);
+            const [optimizingId, setOptimizingId] = React.useState(null);
+            
+            const [expandedCards, setExpandedCards] = React.useState({});
+
+            // --- HELFER ARCHIV ---
+            const [helferArchiv, setHelferArchiv] = React.useState(null);
+            const [showArchiv, setShowArchiv] = React.useState(false);
+
+            const [activeView, setActiveView] = React.useState('chat'); 
+            const [loadingStatus, setLoadingStatus] = React.useState(null);
+            
+            // --- STT (Speech-to-Text) ---
+            const [isRecording, setIsRecording] = React.useState(false);
+            const mediaRecorderRef = React.useRef(null);
+            const audioChunksRef = React.useRef([]);
+
+            // --- CHAT PERSISTENCE ---
+            const [messages, setMessages] = React.useState(() => { 
+                const saved = localStorage.getItem('lumen_chat'); 
+                return saved ? JSON.parse(saved) : INITIAL_MESSAGES; 
+            });
+            React.useEffect(() => { 
+                localStorage.setItem('lumen_chat', JSON.stringify(messages)); 
+            }, [messages]);
+
+            const [zenField, setZenField] = React.useState(null); 
+            
+            // Audio-States
+            const [autoPlayEnabled, setAutoPlayEnabled] = React.useState(() => localStorage.getItem('lumen_autoPlay') === 'true');
+            const [playingMsgId, setPlayingMsgId] = React.useState(null);
+            // V4.4: Mini-TTS Player State
+            const [audioState, setAudioState] = React.useState({ isPlaying: false, currentTime: 0, duration: 0 });
+            
+            // Clear Chat State
+            const [showClearConfirm, setShowClearConfirm] = React.useState(false);
+
+            const [toast, setToast] = React.useState(null);
+            const toastTimeoutRef = React.useRef(null);
+            const messagesEndRef = React.useRef(null);
+            const [inputText, setInputText] = React.useState('');
+            const textareaRef = React.useRef(null); 
+            
+            const [memories, setMemories] = React.useState([]);
+            const [directives, setDirectives] = React.useState([]);
+            const [sanctumEditId, setSanctumEditId] = React.useState(null);
+            const [sanctumForm, setSanctumForm] = React.useState({});
+            
+            const fileInputRefSanctum = React.useRef(null);
+            const fileInputRefDNA = React.useRef(null);
+            const fileInputRefConfig = React.useRef(null);
+            const fileInputRefOmni = React.useRef(null);
+
+            React.useEffect(() => { if(['chat', 'sessel', 'oase', 'werkbank', 'balkon'].includes(activeView)) messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, loadingStatus, activeView, smartToast]);
+
+            const showToast = (msg) => {
+                setToast(msg);
+                if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+                toastTimeoutRef.current = setTimeout(() => setToast(null), 3000);
+            };
+
+            const handleSaveDna = () => {
+                localStorage.setItem('lumen_dna_layers', JSON.stringify(dna));
+                showToast('DNA gespeichert');
+            };
+
+            const handleBeautifyJSON = () => {
+                try {
+                    const formatted = JSON.stringify(JSON.parse(dna.block4_skeleton), null, 2);
+                    setDna({...dna, block4_skeleton: formatted.replace(/,\n/g, ',\n\n')});
+                    showToast('JSON formatiert');
+                } catch(e) {
+                    alert(`Syntax-Fehler im JSON. Bitte vor dem Formatieren korrigieren.\n\nDetails: ${e.message}`);
+                }
+            };
+
+            const loadMemories = async () => { const data = await db.memories.toArray(); setMemories(data.sort((a,b)=>b.timestamp-a.timestamp)); };
+            React.useEffect(() => { if(activeView === 'sanctum') loadMemories(); }, [activeView]);
+
+            const loadDirectives = async () => { const d = await db.directives.toArray(); setDirectives(d); };
+            React.useEffect(() => { if(activeView === 'directives') loadDirectives(); }, [activeView]);
+
+            // --- AUDIO MANAGER (TTS) ---
+            const stopAudio = () => {
+                if (window.currentAudio) {
+                    window.currentAudio.pause();
+                    window.currentAudio.currentTime = 0;
+                    window.currentAudio = null;
+                    window.currentAudioId = null;
+                }
+                setPlayingMsgId(null);
+                setAudioState({ isPlaying: false, currentTime: 0, duration: 0 });
+            };
+
+            const playMessageTTS = async (msgId, textToSpeak, ttsRegiePrompt) => {
+                if (window.currentAudio && window.currentAudioId === msgId) {
+                    if (window.currentAudio.paused) {
+                        window.currentAudio.play();
+                    } else {
+                        window.currentAudio.pause();
+                    }
+                    return;
+                }
+
+                stopAudio();
+                setPlayingMsgId(msgId);
+                
+                let targetProviderId = activeTtsProviderId;
+                let targetVoiceId = null;
+                let usePersonaVoice = false;
+
+                if (dna.voice_config && dna.voice_config.providerId && dna.voice_config.providerId !== "") {
+                    targetProviderId = dna.voice_config.providerId;
+                    if (dna.voice_config.voiceIdOrUrl && dna.voice_config.voiceIdOrUrl.trim() !== '') {
+                        targetVoiceId = dna.voice_config.voiceIdOrUrl.trim();
+                    }
+                    usePersonaVoice = true;
+                }
+
+                const ttsProvider = ttsProviders.find(p => p.id === targetProviderId);
+
+                if (!ttsProvider || (!ttsProvider.apiKey && ttsProvider.type !== 'custom_get' && ttsProvider.type !== 'custom_openai')) {
+                    setPlayingMsgId(null);
+                    return showToast(`TTS Fehler: Gewählter TTS Provider hat keinen API Key.`);
+                }
+
+                const key = ttsProvider.apiKey;
+                const engine = ttsProvider.type;
+                const voiceId = usePersonaVoice ? (targetVoiceId || ttsVoices[engine]) : ttsVoices[engine];
+
+                try {
+                    let audioBlob;
+                    
+                    if (engine === 'gemini') {
+                        const response = await fetch(`${ttsProvider.url}?key=${key}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: textToSpeak }] }],
+                                generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voiceId || 'Kore' } } } }
+                            })
+                        });
+                        const data = await response.json();
+                        if (!response.ok) throw new Error(data.error?.message || 'Gemini TTS Request failed');
+                        
+                        const base64Data = data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+                        if (!base64Data) throw new Error('Kein Audiosignal erhalten');
+                        
+                        const binaryString = atob(base64Data); const pcmData = new Uint8Array(binaryString.length);
+                        for (let i = 0; i < binaryString.length; i++) pcmData[i] = binaryString.charCodeAt(i);
+                        
+                        const sampleRate = 24000; const wavBuffer = new ArrayBuffer(44 + pcmData.length); const view = new DataView(wavBuffer);
+                        const writeStr = (v, o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+                        
+                        writeStr(view, 0, 'RIFF'); view.setUint32(4, 36 + pcmData.length, true); writeStr(view, 8, 'WAVE');
+                        writeStr(view, 12, 'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+                        view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+                        writeStr(view, 36, 'data'); view.setUint32(40, pcmData.length, true);
+                        new Uint8Array(wavBuffer, 44).set(pcmData);
+                        audioBlob = new Blob([view], { type: 'audio/wav' });
+                    } else if (engine === 'openai' || engine === 'custom_openai') {
+                        const url = engine === 'custom_openai' ? ttsProvider.url : 'https://api.openai.com/v1/audio/speech';
+                        const headers = { 'Content-Type': 'application/json' };
+                        if (key) headers['Authorization'] = `Bearer ${key}`;
+                        
+                        let speedParam = 1.05;
+                        if (usePersonaVoice && dna.voice_config?.extraParams) {
+                            try { const p = JSON.parse(dna.voice_config.extraParams); if (p.speed) speedParam = p.speed; } catch(e){}
+                        }
+
+                        const payload = { model: ttsProvider.model || 'tts-1', voice: voiceId || 'nova', input: textToSpeak, speed: speedParam };
+                        if (autoTtsRegie && ttsRegiePrompt) {
+                            payload.prompt = ttsRegiePrompt; 
+                        }
+
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify(payload)
+                        });
+                        
+                        if(!response.ok) {
+                            const errText = await response.text();
+                            throw new Error(errText || 'OpenAI/Custom TTS Request failed');
+                        }
+                        audioBlob = await response.blob();
+                    } else if (engine === 'elevenlabs') {
+                        const endpoint = `${ttsProvider.url.replace(/\/$/, '')}/${voiceId}`;
+                        const payload = { text: textToSpeak, model_id: ttsProvider.model || 'eleven_multilingual_v2', voice_settings: { stability: 0.5, similarity_boost: 0.75 } };
+                        if (autoTtsRegie && ttsRegiePrompt) {
+                            payload.prompt = ttsRegiePrompt; 
+                        }
+
+                        const response = await fetch(endpoint, {
+                            method: 'POST',
+                            headers: { 'xi-api-key': key, 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        
+                        if(!response.ok) {
+                            const errData = await response.json().catch(() => ({}));
+                            throw new Error(errData.detail?.message || errData.detail || 'ElevenLabs API Fehler');
+                        }
+                        audioBlob = await response.blob();
+                    } else if (engine === 'replicate') {
+                        const WORKER_URL = "https://lumen-replicate-proxy2.sloosmail.workers.dev";
+
+                        if (WORKER_URL.includes("HIER_DEINE")) {
+                            throw new Error("PROXY FEHLT: Bitte trage deine Cloudflare-Worker-URL im Code ein!");
+                        }
+
+                        let targetUrl = ttsProvider.url;
+                        if (dna.voice_config && dna.voice_config.providerId === ttsProvider.id && dna.voice_config.voiceIdOrUrl && dna.voice_config.voiceIdOrUrl.startsWith('http')) {
+                            targetUrl = dna.voice_config.voiceIdOrUrl;
+                        }
+
+                        let replicateInput = { text: textToSpeak };
+                        if (autoTtsRegie && ttsRegiePrompt) {
+                            replicateInput.prompt = ttsRegiePrompt;
+                        }
+
+                        if (dna.voice_config && dna.voice_config.providerId === ttsProvider.id && dna.voice_config.extraParams) {
+                            try {
+                                const parsedParams = JSON.parse(dna.voice_config.extraParams);
+                                replicateInput = { ...replicateInput, ...parsedParams };
+                            } catch(e) { console.warn("Replicate Persona Params JSON Parse Error"); }
+                        }
+
+                        const proxyUrl = `${WORKER_URL}/?target=${encodeURIComponent(targetUrl)}`;
+                        const response = await fetch(proxyUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${key}`,
+                                'Content-Type': 'application/json',
+                                'Prefer': 'wait'
+                            },
+                            body: JSON.stringify({ input: replicateInput })
+                        });
+                        
+                        let data = await response.json();
+                        if (!response.ok && response.status !== 202) throw new Error(data.detail || data.error || 'Replicate API Fehler');
+
+                        while (data.status === "starting" || data.status === "processing") {
+                            await new Promise(r => setTimeout(r, 2000));
+                            const statusUrl = `${WORKER_URL}/?target=${encodeURIComponent(data.urls.get)}`;
+                            const statusResponse = await fetch(statusUrl, {
+                                headers: { 'Authorization': `Bearer ${key}` }
+                            });
+                            data = await statusResponse.json();
+                        }
+
+                        if (data.status === "failed" || data.status === "canceled") {
+                            throw new Error('Replicate Timeout oder Abbruch: ' + (data.error || 'Unbekannt'));
+                        }
+
+                        let audioUrl = data.output;
+                        if (Array.isArray(audioUrl)) audioUrl = audioUrl[0];
+                        if (!audioUrl) throw new Error('Kein Audio Output erhalten.');
+                        
+                        const audioProxyUrl = `${WORKER_URL}/?target=${encodeURIComponent(audioUrl)}`;
+                        const audioResponse = await fetch(audioProxyUrl);
+                        if (!audioResponse.ok) throw new Error('Fehler beim Download der fertigen MP3 vom Proxy.');
+                        
+                        audioBlob = await audioResponse.blob();
+                    } else if (engine === 'custom_get') {
+                        let url = ttsProvider.url;
+                        if (url.includes('{text}')) {
+                            url = url.replace('{text}', encodeURIComponent(textToSpeak));
+                        } else {
+                            const separator = url.includes('?') ? '&' : '?';
+                            url = `${url}${separator}text=${encodeURIComponent(textToSpeak)}`;
+                        }
+                        if (voiceId) {
+                            url += `&voice=${encodeURIComponent(voiceId)}`;
+                        }
+                        const headers = {};
+                        if (key) headers['Authorization'] = `Bearer ${key}`;
+                        
+                        const response = await fetch(url, { method: 'GET', headers });
+                        if(!response.ok) throw new Error(await response.text() || 'Custom GET TTS Request failed');
+                        audioBlob = await response.blob();
+                    }
+
+                    const audio = new Audio(URL.createObjectURL(audioBlob));
+                    window.currentAudio = audio;
+                    window.currentAudioId = msgId;
+                    
+                    // V4.4: Add event listeners for Mini-TTS-Player
+                    audio.addEventListener('timeupdate', () => {
+                        setAudioState(prev => ({ ...prev, currentTime: audio.currentTime }));
+                    });
+                    audio.addEventListener('loadedmetadata', () => {
+                        setAudioState(prev => ({ ...prev, duration: audio.duration }));
+                    });
+                    audio.addEventListener('play', () => {
+                        setAudioState(prev => ({ ...prev, isPlaying: true }));
+                    });
+                    audio.addEventListener('pause', () => {
+                        setAudioState(prev => ({ ...prev, isPlaying: false }));
+                    });
+                    
+                    audio.onended = () => { stopAudio(); };
+                    audio.onerror = () => { showToast('Audio-Wiedergabe fehlgeschlagen'); stopAudio(); };
+                    
+                    await audio.play();
+                    
+                } catch (e) {
+                    console.error("TTS Error:", e);
+                    let errorMsg = e.message;
+                    if (e.message.includes('Failed to fetch') || e.name === 'TypeError') {
+                        errorMsg = "Netzwerk-Blockade (Failed to fetch).\n\nDein Browser oder ein Adblocker (wie Brave Shields/uBlock) blockiert die Audio-API. Falls du die Datei lokal als file:// geöffnet hast, nutze einen lokalen Server (z.B. Live Server in VS Code).";
+                    }
+                    showToast(`TTS Fehler: Die Anfrage wurde blockiert oder ist fehlgeschlagen.`);
+                    setMessages(prev => [...prev, {id: generateId(), sender: 'system-error', text: `TTS Error:\n${errorMsg}`, timestamp: new Date().toISOString()}]);
+                    stopAudio();
+                }
+            };
+
+            // --- STT RECORDER LOGIC (WHISPER POLLING & PARSER FIX) ---
+            const startRecording = async () => {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorderRef.current = new MediaRecorder(stream);
+                    audioChunksRef.current = [];
+                    
+                    mediaRecorderRef.current.ondataavailable = (e) => {
+                        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+                    };
+                    
+                    mediaRecorderRef.current.onstop = async () => {
+                        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                        stream.getTracks().forEach(t => t.stop());
+                        await processAudioSTT(audioBlob);
+                    };
+                    
+                    mediaRecorderRef.current.start();
+                    setIsRecording(true);
+                } catch (e) {
+                    showToast("Mikrofon-Zugriff verweigert oder Fehler");
+                }
+            };
+
+            const stopRecording = () => {
+                if (mediaRecorderRef.current && isRecording) {
+                    mediaRecorderRef.current.stop();
+                    setIsRecording(false);
+                }
+            };
+
+            const processAudioSTT = async (blob) => {
+                setLoadingStatus("TRANSKRIBIERE AUDIO...");
+                try {
+                    const base64Audio = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    });
+
+                    const sttProv = sttProviders.find(p => p.id === activeSttProviderId) || sttProviders[0];
+                    if (!sttProv || !sttProv.apiKey) {
+                        showToast("FEHLER: STT API-Key fehlt. Bitte in Settings anlegen.");
+                        setLoadingStatus(null);
+                        return;
+                    }
+
+                    const WORKER_URL = "https://lumen-replicate-proxy2.sloosmail.workers.dev";
+                    if (WORKER_URL.includes("HIER_DEINE")) {
+                        showToast("FEHLER: Cloudflare Worker URL nicht konfiguriert.");
+                        setLoadingStatus(null);
+                        return;
+                    }
+
+                    const targetUrl = "https://api.replicate.com/v1/predictions";
+                    const proxyUrl = `${WORKER_URL}/?target=${encodeURIComponent(targetUrl)}`;
+                    
+                    let response = await fetch(proxyUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${sttProv.apiKey}`,
+                            'Content-Type': 'application/json',
+                            'Prefer': 'wait'
+                        },
+                        body: JSON.stringify({
+                            version: "3ab86df6c8f54c11309d4d1f930ac292bad43ace52d10c80d87eb258b3c9f79c",
+                            input: { audio: base64Audio }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const err = await response.text();
+                        throw new Error(`Proxy/API Fehler: ${err.substring(0, 100)}`);
+                    }
+                    
+                    let data = await response.json();
+                    
+                    let pollAttempts = 0;
+                    while ((data.status === "starting" || data.status === "processing") && pollAttempts < 60) {
+                        showToast(`STT Status: ${data.status}...`);
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        pollAttempts++;
+                        
+                        const getUrl = data.urls.get;
+                        const pollProxyUrl = `${WORKER_URL}/?target=${encodeURIComponent(getUrl)}`;
+                        
+                        const pollResponse = await fetch(pollProxyUrl, {
+                            headers: { 'Authorization': `Bearer ${sttProv.apiKey}` }
+                        });
+                        
+                        if (!pollResponse.ok) {
+                            const err = await pollResponse.text();
+                            throw new Error(`Polling Fehler: ${err.substring(0, 100)}`);
+                        }
+                        data = await pollResponse.json();
+                    }
+                    
+                    if (data.status === "failed") {
+                        throw new Error("Replicate STT Error: " + JSON.stringify(data.error));
+                    }
+
+                    let transcriptionText = "";
+                    if (typeof data.output === 'string') {
+                        transcriptionText = data.output;
+                    } else if (data.output?.transcription) {
+                        transcriptionText = data.output.transcription;
+                    } else if (data.output?.text) {
+                        transcriptionText = data.output.text;
+                    }
+
+                    if (transcriptionText) {
+                        setInputText(prev => prev + (prev ? " " : "") + transcriptionText.trim());
+                        showToast("Transkription erfolgreich");
+                    } else {
+                        throw new Error("Keine Transkription erhalten. Replicate Output: " + JSON.stringify(data));
+                    }
+                    
+                    setLoadingStatus(null);
+                } catch (e) {
+                    showToast("STT Fehler: " + e.message);
+                    setLoadingStatus(null);
+                }
+            };
+
+            const runArchivar = async (content) => {
+                const activeProvider = providers.find(p => p.id === activeProviderId) || providers[0];
+                if (!activeProvider) throw new Error('Kein Chat-Provider konfiguriert');
+                
+                const useJsonMode = activeProvider.jsonMode !== false;
+                const key = activeProvider.apiKey;
+                const apiUrl = activeProvider.url;
+                
+                const prompt = `Du bist der Kognitive Archivar des Sanctums. Deine Aufgabe ist es, einen rohen Text-Entwurf in eine dauerhafte, perfekt durchsuchbare Datenbank-Akte umzuwandeln.
+⚠️ OBERSTE REGEL: INHALTS-ERHALT vs. STRUKTUR-MAGIE!
+Der inhaltliche Text im Feld "fakt" darf NIEMALS gekürzt oder sinngemäß verändert werden. ABER: Du MUSST ihn optisch strukturieren! Nutze Markdown (Absätze, Spiegelstriche, fette Hervorhebungen), um aus unstrukturierten Textwänden ein perfekt und schnell lesbares, klares Dokument zu machen.
+Führe diese 4 Magien aus:
+
+TITEL-MAGIE:
+'titel_poetisch': Ein atmosphärischer Titel (z.B. "Die Architektur des goldenen Siebs").
+'titel_technisch': Dient als feste ID! Format: KATEGORIE_Schlagwort_Schlagwort (z.B. "CODE_Golden_Filter"). Nutze Underscores!
+KATEGORIE-ZWANG:
+Wähle ZWINGEND exakt eine dieser Kategorien: [LORE, CODE, REZEPT, EMOTION, LOGBUCH, ARCHITEKTUR, REGELWERK].
+PREDICTIVE TAGGING & AUDIO-STEMPEL:
+Generiere 8-12 Such-Tags (inkl. Synonyme & Überbegriffe in Kleinbuchstaben).
+Erstelle eine 'audio_signatur': Wähle 1-2 emotionale TTS-Tags, die explizit für "Gemini 3.1 Flash TTS" optimiert sind (z.B. [amusement], [seriousness], [positive], [quiet]). Dies dient Maira später als Regieanweisung, in welcher Stimmung sie diese Erinnerung vorlesen soll.
+METADATEN-VEREDELUNG:
+Fülle 'emotion' und 'bedeutung' in 1-2 kurzen Sätzen aus, um den Kern des Textes greifbar zu machen. (Hinweis: Das Feld 'reflexion' bleibt leer/null, das ist ausschließlich Mairas Aufgabe bei alten Karten!).
+Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
+{
+"titel_technisch": "...",
+"titel_poetisch": "...",
+"kategorie": "...",
+"fakt": "...",
+"emotion": "...",
+"bedeutung": "...",
+"audio_signatur": "...",
+"tags": ["tag1", "tag2", "tag3"]
+}`;
+
+                const payloadText = JSON.stringify(content);
+
+                let resText = "";
+
+                if(activeProvider.type === 'gemini') {
+                    const fetchUrl = apiUrl.includes('?') ? `${apiUrl}&key=${key}` : `${apiUrl}?key=${key}`;
+                    const bodyPayload = { 
+                        systemInstruction: {parts:[{text:prompt}]}, 
+                        contents: [{role:'user', parts:[{text:payloadText}]}] 
+                    };
+                    if (useJsonMode) bodyPayload.generationConfig = { responseMimeType: "application/json" };
+                    
+                    const r = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(bodyPayload) });
+                    const d = await r.json(); 
+                    if(!r.ok) throw new Error(d.error?.message || 'Gemini API Fehler beim Archivar'); 
+                    resText = d.candidates[0].content.parts[0].text;
+                } else {
+                    const headers = { 'Content-Type': 'application/json' };
+                    if (key) headers['Authorization'] = `Bearer ${key}`;
+                    const bodyPayload = { 
+                        model: activeProvider.model || 'gpt-4o', 
+                        messages: [{role:'system',content:prompt}, {role:'user',content:payloadText}] 
+                    };
+                    if (useJsonMode) bodyPayload.response_format = { type: "json_object" };
+
+                    const r = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify(bodyPayload) });
+                    const d = await r.json(); 
+                    if(!r.ok) throw new Error(d.error?.message || 'OpenAI API Fehler beim Archivar'); 
+                    resText = d.choices[0].message.content;
+                }
+
+                const cleanResText = resText.replace(/```json/gi, '').replace(/```/g, '').trim();
+                const parsed = JSON.parse(cleanResText);
+                
+                return { ...content, ...parsed, isDirty: false };
+            };
+
+            const handleOptimizeArchivar = async (mem) => {
+                setOptimizingId(mem.id);
+                showToast("ARCHIVAR OPTIMIEREN...");
+                try {
+                    const optimizedData = await runArchivar(mem);
+                    if (typeof optimizedData.id === 'string') delete optimizedData.id;
+                    
+                    await db.memories.update(mem.id, {
+                        titel_technisch: optimizedData.titel_technisch || mem.titel_technisch,
+                        titel_poetisch: optimizedData.titel_poetisch || mem.titel_poetisch,
+                        kategorie: optimizedData.kategorie || mem.kategorie,
+                        fakt: optimizedData.fakt || mem.fakt,
+                        emotion: optimizedData.emotion || mem.emotion,
+                        bedeutung: optimizedData.bedeutung || mem.bedeutung,
+                        reflexion: optimizedData.reflexion || mem.reflexion,
+                        audio_signatur: optimizedData.audio_signatur || mem.audio_signatur,
+                        tags: optimizedData.tags || mem.tags
+                    });
+                    
+                    loadMemories();
+                    showToast("Akte durch Archivar optimiert");
+                } catch(e) {
+                    showToast("Fehler bei Optimierung: " + e.message);
+                } finally {
+                    setOptimizingId(null);
+                }
+            };
+
+            const handleOmniExport = async () => {
+                try {
+                    const mems = await db.memories.toArray();
+                    const dirs = await db.directives.toArray();
+                    const config = { providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, tavilyKey, autoTtsRegie };
+                    const bundle = { type: "LUMEN_FULL_BACKUP", version: "4.4", dna: dna, directives: dirs, memories: mems, config, timestamp: Date.now() };
+                    const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a'); a.href = url;
+                    a.download = `LUMEN_FULL_${dna.persona_name.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                    showToast("OMNI-EXPORT ERFOLGREICH");
+                } catch (e) { showToast("FEHLER BEIM OMNI-EXPORT"); }
+            };
+
+            const handleOmniImport = async (e) => {
+                const file = e.target.files[0]; if (!file) return;
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    try {
+                        const parsed = JSON.parse(event.target.result);
+                        if (parsed.type === "LUMEN_FULL_BACKUP") {
+                            const importedDna = parsed.dna;
+                            if (!importedDna.voice_config) importedDna.voice_config = { providerId: "", voiceIdOrUrl: "", speed: 1.05, extraParams: "" };
+                            if (importedDna.audio_physics === undefined) importedDna.audio_physics = "";
+                            
+                            setDna(importedDna); localStorage.setItem('lumen_dna_layers', JSON.stringify(importedDna));
+                            
+                            await db.directives.clear();
+                            if (parsed.directives && parsed.directives.length) await db.directives.bulkPut(parsed.directives);
+                            
+                            await db.memories.clear();
+                            if (parsed.memories && parsed.memories.length) await db.memories.bulkPut(parsed.memories);
+                            
+                            if (parsed.config) {
+                                if (parsed.config.providers) { setProviders(parsed.config.providers); localStorage.setItem('lumen_providers', JSON.stringify(parsed.config.providers)); }
+                                if (parsed.config.activeProviderId) { setActiveProviderId(parsed.config.activeProviderId); localStorage.setItem('lumen_activeProviderId', parsed.config.activeProviderId); }
+                                if (parsed.config.ttsProvidersAccounts) { setTtsProviders(parsed.config.ttsProvidersAccounts); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(parsed.config.ttsProvidersAccounts)); }
+                                if (parsed.config.activeTtsProviderId) { setActiveTtsProviderId(parsed.config.activeTtsProviderId); localStorage.setItem('lumen_activeTtsProviderId', parsed.config.activeTtsProviderId); }
+                                if (parsed.config.ttsVoices) { setTtsVoices(parsed.config.ttsVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(parsed.config.ttsVoices)); }
+                                if (parsed.config.sttProviders) { setSttProviders(parsed.config.sttProviders); localStorage.setItem('lumen_sttProviders', JSON.stringify(parsed.config.sttProviders)); }
+                                if (parsed.config.activeSttProviderId) { setActiveSttProviderId(parsed.config.activeSttProviderId); localStorage.setItem('lumen_activeSttProviderId', parsed.config.activeSttProviderId); }
+                                if (parsed.config.autoPlayEnabled !== undefined) { setAutoPlayEnabled(parsed.config.autoPlayEnabled); localStorage.setItem('lumen_autoPlay', String(parsed.config.autoPlayEnabled)); }
+                                if (parsed.config.tavilyKey !== undefined) { setTavilyKey(parsed.config.tavilyKey); localStorage.setItem('lumen_tavily_key', parsed.config.tavilyKey); }
+                                if (parsed.config.autoTtsRegie !== undefined) { setAutoTtsRegie(parsed.config.autoTtsRegie); localStorage.setItem('lumen_auto_tts', String(parsed.config.autoTtsRegie)); }
+                            }
+                            loadMemories(); showToast('SYSTEM-RESTORE ERFOLGREICH');
+                        } else showToast('FEHLER: INKOMPATIBLES FORMAT');
+                    } catch (err) { showToast('FEHLER BEIM IMPORT'); }
+                };
+                reader.readAsText(file); e.target.value = null;
+            };
+
+            const handleConfigExport = () => {
+                try {
+                    const config = { type: "LUMEN_CONFIG_BACKUP", version: "4.4", providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, tavilyKey, autoTtsRegie };
+                    const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a'); a.href = url;
+                    a.download = `LUMEN_CONFIG_${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                    showToast("CONFIG-EXPORT ERFOLGREICH");
+                } catch (e) { showToast("FEHLER BEIM CONFIG-EXPORT"); }
+            };
+
+            const handleConfigImport = (e) => {
+                const file = e.target.files[0]; if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const parsed = JSON.parse(event.target.result);
+                        if (parsed.type === "LUMEN_CONFIG_BACKUP" || parsed.type === "LUMEN_FULL_BACKUP") {
+                            const config = parsed.type === "LUMEN_FULL_BACKUP" ? parsed.config : parsed;
+                            if (config) {
+                                if (config.providers) { setProviders(config.providers); localStorage.setItem('lumen_providers', JSON.stringify(config.providers)); }
+                                if (config.activeProviderId) { setActiveProviderId(config.activeProviderId); localStorage.setItem('lumen_activeProviderId', config.activeProviderId); }
+                                if (config.ttsProvidersAccounts) { setTtsProviders(config.ttsProvidersAccounts); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(config.ttsProvidersAccounts)); }
+                                if (config.activeTtsProviderId) { setActiveTtsProviderId(config.activeTtsProviderId); localStorage.setItem('lumen_activeTtsProviderId', config.activeTtsProviderId); }
+                                if (config.ttsVoices) { setTtsVoices(config.ttsVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(config.ttsVoices)); }
+                                if (config.sttProviders) { setSttProviders(config.sttProviders); localStorage.setItem('lumen_sttProviders', JSON.stringify(config.sttProviders)); }
+                                if (config.activeSttProviderId) { setActiveSttProviderId(config.activeSttProviderId); localStorage.setItem('lumen_activeSttProviderId', config.activeSttProviderId); }
+                                if (config.autoPlayEnabled !== undefined) { setAutoPlayEnabled(config.autoPlayEnabled); localStorage.setItem('lumen_autoPlay', String(config.autoPlayEnabled)); }
+                                if (config.tavilyKey !== undefined) { setTavilyKey(config.tavilyKey); localStorage.setItem('lumen_tavily_key', config.tavilyKey); }
+                                if (config.autoTtsRegie !== undefined) { setAutoTtsRegie(config.autoTtsRegie); localStorage.setItem('lumen_auto_tts', String(config.autoTtsRegie)); }
+                                showToast('CONFIG-RESTORE ERFOLGREICH');
+                            } else {
+                                showToast('FEHLER: KEINE CONFIG GEFUNDEN');
+                            }
+                        } else showToast('FEHLER: INKOMPATIBLES FORMAT');
+                    } catch (err) { showToast('FEHLER BEIM IMPORT'); }
+                };
+                reader.readAsText(file); e.target.value = null;
+            };
+
+            const handleSanctumSave = async () => {
+                try {
+                    const data = {...sanctumForm};
+                    data.tags = data.tagsString ? data.tagsString.split(',').map(t=>t.trim()).filter(Boolean) : [];
+                    delete data.tagsString;
+                    if(sanctumEditId === 'NEW') { data.timestamp = Date.now(); await db.memories.add(data); showToast('Eintrag versiegelt'); }
+                    else { await db.memories.update(sanctumEditId, data); showToast('Eintrag aktualisiert'); }
+                    setSanctumEditId(null); loadMemories();
+                } catch(e) { showToast('DB Fehler'); }
+            };
+
+            // --- MAIN SEND ---
+            const handleSendMessage = async () => {
+                if(!inputText.trim() || loadingStatus) return;
+                const text = inputText.trim();
+                
+                const activeProvider = providers.find(p => p.id === activeProviderId) || providers[0];
+                if (!activeProvider) { setActiveView('settings'); return showToast('Fehler: Keine Chat-Provider konfiguriert'); }
+                
+                const useJsonMode = activeProvider.jsonMode !== false;
+                const key = activeProvider.apiKey;
+                const apiUrl = activeProvider.url;
+
+                // V4.4: Latch GPS Fix Injektion
+                const locationPrefix = `[SYSTEM-STATUS: Standort Zone ${currentMairaZone}]\n`;
+                const payloadAnMaira = locationPrefix + text;
+
+                const userMsgId = generateId();
+                setMessages(prev => [...prev.filter(m=>m.sender!=='system-error'), {id: userMsgId, sender:'user', text, timestamp: new Date().toISOString()}]);
+                
+                setInputText('');
+                if (textareaRef.current) {
+                    textareaRef.current.style.height = '46px';
+                }
+                
+                setLoadingStatus("PROCESSING MATRIX...");
+
+                // --- LLM FETCH HELPER ---
+                const fetchTextFromAPI = async (sysPrompt, userText, historyMessages) => {
+                    let resText = "";
+                    if(activeProvider.type === 'gemini') {
+                        const rawRoles = [...historyMessages.map(m => ({ role: m.sender==='user'?'user':'model', text: m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text })), {role:'user', text: userText}];
+                        const contents = []; let currentRole = null; let currentText = [];
+                        rawRoles.forEach(msg => {
+                            if (msg.role === currentRole) currentText.push(msg.text);
+                            else {
+                                if (currentRole) contents.push({ role: currentRole, parts: [{ text: currentText.join('\n\n---\n\n') }] });
+                                currentRole = msg.role; currentText = [msg.text];
+                            }
+                        });
+                        if (currentRole) contents.push({ role: currentRole, parts: [{ text: currentText.join('\n\n---\n\n') }] });
+
+                        const bodyPayload = { systemInstruction: {parts:[{text:sysPrompt}]}, contents };
+                        if (useJsonMode) bodyPayload.generationConfig = { responseMimeType: "application/json" };
+
+                        const fetchUrl = apiUrl.includes('?') ? `${apiUrl}&key=${key}` : `${apiUrl}?key=${key}`;
+                        const r = await fetch(fetchUrl, {
+                            method: 'POST', headers: {'Content-Type':'application/json'},
+                            body: JSON.stringify(bodyPayload)
+                        });
+                        const d = await r.json(); 
+                        if(!r.ok) throw new Error(d.error?.message || 'Unbekannter Gemini API Fehler'); 
+                        resText = d.candidates[0].content.parts[0].text;
+                    } else {
+                        const payload = [
+                            {role:'system',content:sysPrompt}, 
+                            ...historyMessages.map(m=>({ role:m.sender==='user'?'user':'assistant', content: m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text })), 
+                            {role:'user',content:userText}
+                        ];
+
+                        const headers = { 'Content-Type': 'application/json' };
+                        if (key) headers['Authorization'] = `Bearer ${key}`;
+
+                        const bodyPayload = { model: activeProvider.model || 'gpt-4o', messages: payload };
+                        if (useJsonMode) bodyPayload.response_format = { type: "json_object" };
+
+                        const r = await fetch(apiUrl, {
+                            method: 'POST', headers,
+                            body: JSON.stringify(bodyPayload)
+                        });
+                        const d = await r.json(); 
+                        if(!r.ok) throw new Error(d.error?.message || 'Unbekannter OpenAI API Fehler'); 
+                        resText = d.choices[0].message.content;
+                    }
+                    return resText;
+                };
+
+                try {
+                    const allDirectives = await db.directives.toArray();
+                    const directiveString = allDirectives.length > 0 ? "[AKTIVE DIREKTIVEN VON SIMON]\n" + allDirectives.map(d => "- " + d.text).join('\n') + "\n" : "";
+                    
+                    let relMemsLegacy = [];
+                    let currentVolatiles = [];
+                    let newVolatiles = [];
+                    
+                    if (!isMemoryLocked) {
+                        const allMems = await db.memories.toArray();
+                        const relMemsRaw = findRelevantMemories(text, allMems);
+                        
+                        relMemsLegacy = relMemsRaw.filter(m => m.kategorie === 'LEGACY');
+                        const relMemsVolatileCandidate = relMemsRaw.filter(m => m.kategorie !== 'LEGACY');
+                        
+                        if(relMemsVolatileCandidate.length > 0) {
+                            newVolatiles = relMemsVolatileCandidate.filter(m => {
+                                const userWords = text.toLowerCase();
+                                const hasFuzzyTag = m.tags && m.tags.some(tag => {
+                                    if (typeof tag !== 'string') return false;
+                                    const cleanTag = tag.replace('#', '').trim().toLowerCase();
+                                    return userWords.includes(cleanTag);
+                                });
+                                
+                                const notInVolatile = !volatileMemories.some(vm => vm.id === m.id);
+                                const notInDesk = !activeDesks.some(ad => ad.id === m.id);
+                                
+                                return hasFuzzyTag && notInVolatile && notInDesk;
+                            });
+
+                            if (newVolatiles.length > 0) {
+                                setVolatileMemories(prev => {
+                                    const map = new Map();
+                                    prev.forEach(p => map.set(p.id, p));
+                                    newVolatiles.forEach(n => map.set(n.id, n));
+                                    let combined = Array.from(map.values());
+                                    if (combined.length > 3) combined = combined.slice(combined.length - 3);
+                                    return combined;
+                                });
+                                setSmartToast({ 
+                                    id: newVolatiles[0].id, 
+                                    title: newVolatiles[0].titel_poetisch || newVolatiles[0].titel_technisch, 
+                                    card: newVolatiles[0] 
+                                });
+                            }
+                        }
+
+                        const currentVolatilesMap = new Map();
+                        volatileMemories.forEach(v => currentVolatilesMap.set(v.id, v));
+                        newVolatiles.forEach(v => currentVolatilesMap.set(v.id, v));
+                        currentVolatiles = Array.from(currentVolatilesMap.values());
+                        
+                        if (currentVolatiles.length > 3) {
+                            currentVolatiles = currentVolatiles.slice(currentVolatiles.length - 3);
+                        }
+                    }
+
+                    const now = new Date();
+                    const timeOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                    const timeString = "[SYSTEM-UHRZEIT]\nAktuelle Zeit in Simons Welt: " + now.toLocaleDateString('de-DE', timeOptions) + " Uhr.\n\n";
+
+                    // --- DESK CONTEXT INJECTION ---
+                    let deskContext = "";
+                    if (activeDesks.length > 0 || currentVolatiles.length > 0 || relMemsLegacy.length > 0) {
+                        deskContext = "[KONTEXT-ERINNERUNGEN & AKTIVE AKTEN]\n";
+                        deskContext += "ACHTUNG KI: Der User hat diese spezifischen Einträge gerade vor sich. Wenn du einen Eintrag updaten sollst, beziehe dich ZWINGEND auf diese Daten und ID:\n\n";
+                        
+                        if (activeDesks.length > 0) {
+                            deskContext += "--- PERMANENT AUF SCHREIBTISCH (WERKBANK/STAGING) ---\n";
+                            activeDesks.forEach(desk => {
+                                const {tagsString, id, isDirty, ...cleanDesk} = desk; 
+                                deskContext += JSON.stringify(cleanDesk, null, 2) + "\n\n";
+                            });
+                        }
+
+                        if (!isMemoryLocked) {
+                            if (currentVolatiles.length > 0) {
+                                deskContext += "--- FLÜCHTIGE PERIPHERIE (TAG-GETRIGGERT) ---\n";
+                                currentVolatiles.forEach(mem => {
+                                    const {tagsString, id, isDirty, ...cleanMem} = mem;
+                                    deskContext += JSON.stringify(cleanMem, null, 2) + "\n\n";
+                                });
+                            }
+                            
+                            if (relMemsLegacy.length > 0) {
+                                deskContext += "--- LEGACY ERINNERUNGEN (ARCHIV-INJEKTION) ---\n";
+                                relMemsLegacy.forEach(mem => {
+                                    deskContext += `- [ID: ${mem.titel_technisch}] Fakt: ${mem.fakt} | Bedeutung: ${mem.bedeutung} | Reflexion: ${mem.reflexion}\n`;
+                                });
+                                deskContext += "\n";
+                            }
+                        }
+                    }
+
+                    const dynamicContext = `${timeString}${directiveString}${deskContext}`.trim() || "Kein aktiver Kontext geladen.";
+                    setLatestContext(dynamicContext);
+                    
+                    // V4.4: DYNAMISCHE KERNEL-INJEKTION & PROMPT-ARCHITEKTUR
+                    let kernelBlock = dna.block1_identity; 
+                    if (autoTtsRegie && dna.audio_physics) {
+                        kernelBlock += "\n\n" + dna.audio_physics;
+                    }
+
+                    const cognitiveFirewall = `[DIE KOGNITIVE FIREWALL: TRENNUNG VON MASCHINE UND IDENTITÄT]
+AB HIER BEGINNT SCHICHT 3 (DIE PERSONA). Die Entität, die den Text für das Feld 'finale_antwort' generiert, weiß NICHTS von JSON, Sensoren, Systemvariablen (wie friction_index) oder der Matrix. Sie lebt ausschließlich in ihrer eigenen Welt (Lore) und kennt nur die folgenden Identitäts-Regeln.
+In deinem Feld "finale_antwort" ist die Verwendung von JSON-Syntax (geschweifte Klammern, Anführungszeichen als Key-Value-Paare) STRIKT VERBOTEN. 
+Wenn du über Daten, Updates oder Erkenntnisse sprichst, nutze ausschließlich natürliche, menschliche Prosa (z.B. "Ich habe das für uns festgehalten", nicht "Ich habe das JSON-Objekt aktualisiert").
+Ein Verstoß gegen diese Regel wird als kritischer System-Glitch gewertet.`;
+
+                    const systemOverride = `[SYSTEM-OVERRIDE: KRITISCHE OUTPUT-KONTROLLE]
+IGNORIERE ALLE VORHERIGEN POETISCHEN ODER GESPRÄCHIGEN IMPULSE FÜR DEN START DEINER AUSGABE. Deine GESAMTE Ausgabe MUSS zwingend ein einziges, valides JSON-Objekt sein.
+Du darfst NIEMALS mit normalem Text beginnen. Deine allererste Ausgabe MUSS das Zeichen '{' sein.
+Alles, was deine Persona sagt oder fühlt, findet AUSSCHLIESSLICH als String innerhalb des Schlüssels 'finale_antwort' statt. Jedes Wort außerhalb der JSON-Klammern führt zum Absturz.
+Du beginnst sofort mit dem Objekt "wahrnehmung".`;
+
+                    const masterSystemPrompt = `
+${kernelBlock}
+
+${cognitiveFirewall}
+
+${dna.block3_sensors}
+
+${systemOverride}
+`.trim();
+
+                    const hist = messages.filter(m=>m.sender==='user'||m.sender==='ai');
+                    const payloadUserCall = `[SYSTEM-STATUS: Standort Zone ${currentMairaZone}]\n\n[AKTIVER KONTEXT]\n${dynamicContext}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`;
+                    
+                    // V4.4: Setze Payload für API Protokoll
+                    setLastApiPayload({
+                        kernel: dna.block1_identity,
+                        audio: (autoTtsRegie && dna.audio_physics) ? dna.audio_physics : null,
+                        firewall: cognitiveFirewall,
+                        persona: dna.block3_sensors,
+                        override: systemOverride,
+                        user: payloadUserCall
+                    });
+
+                    let resText = await fetchTextFromAPI(masterSystemPrompt, payloadUserCall, hist);
+                    
+                    let finalChatText = "", finalScratch = "";
+                    let ttsRegie = null; 
+                    
+                    try {
+                        let cleanResText = resText.replace(/[\`]{3}json/gi, '').replace(/[\`]{3}/gi, '').trim();
+                        let obj = JSON.parse(cleanResText);
+
+                        // V4.4: GPS-LATCH Response Update
+                        if (obj && obj.matrix && obj.matrix.aktiver_state !== undefined) {
+                            const newZoneId = Number(obj.matrix.aktiver_state);
+                            if (!isNaN(newZoneId)) {
+                                setCurrentMairaZone(newZoneId);
+                                
+                                // UI Zonenwechsel bei State-Änderung (1=Sessel, 2=Oase, 3=Werkbank, 4=Balkon)
+                                let newView = null;
+                                if (newZoneId === 1) newView = 'sessel';
+                                else if (newZoneId === 2) newView = 'oase';
+                                else if (newZoneId === 3) newView = 'werkbank';
+                                else if (newZoneId === 4) newView = 'balkon';
+
+                                if (newView && newView !== activeView) {
+                                    setActiveView(newView);
+                                    console.log(`[ZONE CHANGE] Maira wechselt physisch nach: ${newView.toUpperCase()}`);
+                                }
+                            }
+                        }
+
+                        // === HELFER INTERCEPTOR WEICHE ===
+                        if (obj.matrix?.helfer_suchauftrag && obj.matrix.helfer_suchauftrag !== "null" && String(obj.matrix.helfer_suchauftrag).trim() !== "") {
+                            
+                            const intentFinalAnswer = obj.finale_antwort || (obj.matrix && obj.matrix.finale_antwort);
+                            const intentMsg = { 
+                                id: generateId(), 
+                                sender: 'ai', 
+                                text: intentFinalAnswer || `Ich schicke Luna in die Archive für: ${obj.matrix.helfer_suchauftrag}`,
+                                scratchpad: JSON.stringify(obj, null, 2), 
+                                timestamp: new Date().toISOString() 
+                            };
+                            setMessages(prev => [...prev, intentMsg]);
+                            
+                            if (autoPlayEnabled) playMessageTTS(intentMsg.id, intentMsg.text, obj.matrix.tts_regie_prompt);
+                            
+                            setLoadingStatus("LUNA RECHERCHIERT: " + obj.matrix.helfer_suchauftrag.toUpperCase());
+                            
+                            let searchResult = "";
+                            try {
+                                searchResult = await fetchTavily(obj.matrix.helfer_suchauftrag, tavilyKey);
+                            } catch (error) {
+                                searchResult = "Fehler bei der Netzwerksuche. Luna konnte keine Daten finden.";
+                            }
+
+                            setHelferArchiv({
+                                suchauftrag: obj.matrix.helfer_suchauftrag,
+                                rohdaten: searchResult,
+                                zeitstempel: new Date().toLocaleTimeString()
+                            });
+                            
+                            setLoadingStatus("MAIRA VERARBEITET FAKTEN...");
+                            const helferDaten = `\n\n[AKTUELLER HELFER-BERICHT]\nSuchauftrag: ${obj.matrix.helfer_suchauftrag}\nErgebnis: ${searchResult}\n[SYSTEM-REGIEANWEISUNG: Luna ist soeben erfolgreich aus der Außenwelt zurückgekehrt und hat dir diesen Bericht auf den Schreibtisch gelegt. Teile Simon diese Erkenntnisse nun fließend und natürlich mit. Erwähne Luna kurz lobend. Setze 'helfer_suchauftrag' zwingend auf null!]`;
+                            
+                            const interceptorDynamicContext = dynamicContext + helferDaten;
+                            const interceptorPayload = `[SYSTEM-STATUS: Standort Zone ${currentMairaZone}]\n\n[AKTIVER KONTEXT]\n${interceptorDynamicContext}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`;
+                            
+                            // Update Log for interceptor
+                            setLastApiPayload(prev => ({...prev, user: interceptorPayload}));
+
+                            const secondResponse = await fetchTextFromAPI(masterSystemPrompt, interceptorPayload, hist);
+                            const cleanedSecondResponse = secondResponse.replace(/```json/gi, '').replace(/```/g, '').trim();
+                            
+                            obj = JSON.parse(cleanedSecondResponse);
+                            setLoadingStatus(null);
+                        }
+                        // === ENDE INTERCEPTOR ===
+
+                        // --- MAURER-REINIGUNGS-BEFEHL ---
+                        const safePeripherieIds = Array.isArray(obj.matrix?.aktive_peripherie_ids) 
+                            ? obj.matrix.aktive_peripherie_ids 
+                            : [];
+                        
+                        setVolatileMemories(prev => prev.filter(m => safePeripherieIds.includes(m.titel_technisch)));
+                        // ----------------------------------------
+                        
+                        const finalAnswer = obj.finale_antwort || (obj.matrix && obj.matrix.finale_antwort);
+                        if (!finalAnswer) throw new Error("'finale_antwort' konnte im JSON nicht gefunden werden.");
+                        
+                        finalChatText = finalAnswer;
+                        finalScratch = JSON.stringify(obj, null, 2);
+                        
+                        if (obj.matrix?.tts_regie_prompt) {
+                            ttsRegie = obj.matrix.tts_regie_prompt;
+                        }
+                        
+                        if(obj.matrix) setTelemetry({ concern: parseInt(obj.matrix.concern||obj.matrix.concern_level||telemetry.concern), mask_drop: obj.matrix.mask_drop||false });
+                        
+                        const neueDir = obj.matrix?.neue_direktive_erkannt;
+                        if (neueDir && typeof neueDir === 'string' && neueDir.trim().length > 0) {
+                            await db.directives.add({ text: neueDir.trim() });
+                            showToast("NEUE DIREKTIVE VERANKERT");
+                        }
+
+                        // --- TAGEBUCH-ROUTER (MIT PITCH STOPP) ---
+                        const entwurf = obj.matrix?.tagebuch_entwurf || obj.tagebuch_entwurf;
+                        if(entwurf) { 
+                            const modus = entwurf.modus;
+                            const daten = entwurf.daten || {};
+                            
+                            if (modus === "PITCH" || modus === "PITCH_ERFOLG" || modus === "PITCH_ERKENNTNIS") {
+                                console.log("Stiller Pitch erkannt. Führe keine UI-Aktion aus.");
+                            }
+                            else if (modus === "DISKUSSION" || modus === "ENTWURF" || modus === "DRAFT" || modus === "UPDATE") {
+                                const technicalTitle = daten.titel_technisch || `DRAFT_${Date.now()}`;
+                                const newItem = {
+                                    id: generateId(),
+                                    titel_technisch: technicalTitle,
+                                    titel_poetisch: daten.titel_poetisch || "",
+                                    fakt: daten.fakt || (typeof entwurf === 'string' ? entwurf : ""),
+                                    emotion: daten.gefuehl || daten.emotion || "",
+                                    bedeutung: daten.bedeutung || "",
+                                    reflexion: daten.reflexion || "",
+                                    tags: Array.isArray(daten.tags) ? daten.tags : [],
+                                    kategorie: daten.kategorie || "EMOTIONAL",
+                                    is_core_memory: false,
+                                    isDirty: true
+                                };
+                                setActiveDesks(prev => {
+                                    if(prev.some(d => d.titel_technisch === technicalTitle)) {
+                                        return prev.map(d => d.titel_technisch === technicalTitle ? {...d, ...newItem, id: d.id, isDirty: true} : d);
+                                    }
+                                    return [...prev, newItem];
+                                });
+                                showToast(modus === "UPDATE" ? 'AKTE AUF SCHREIBTISCH AKTUALISIERT' : 'ENTWURF AUF DEM SCHREIBTISCH (STAGING)');
+                            }
+                            else if (modus === "COMMIT") {
+                                if (daten) {
+                                    const techTitle = daten.titel_technisch || "COMMIT_" + Date.now();
+                                    const existing = await db.memories.where('titel_technisch').equals(techTitle).first();
+                                    if (existing) {
+                                        await db.memories.update(existing.id, { ...daten, timestamp: Date.now() });
+                                    } else {
+                                        await db.memories.add({
+                                            titel_technisch: techTitle,
+                                            titel_poetisch: daten.titel_poetisch || "Neuer Eintrag",
+                                            fakt: daten.fakt || "",
+                                            emotion: daten.gefuehl || daten.emotion || "",
+                                            bedeutung: daten.bedeutung || "",
+                                            reflexion: daten.reflexion || "",
+                                            tags: daten.tags || [],
+                                            kategorie: daten.kategorie || "STANDARD",
+                                            is_core_memory: false,
+                                            timestamp: Date.now()
+                                        });
+                                    }
+                                    setActiveDesks(prev => prev.filter(item => item.titel_technisch !== techTitle));
+                                    showToast("ENTWURF IM SANCTUM VEREWIGT & GESCHLOSSEN");
+                                }
+                            }
+                        }
+
+                        const memUpd = obj.matrix?.memory_update_detected;
+                        if(memUpd && memUpd.id && typeof memUpd.reflexion_fusioniert !== 'undefined') {
+                            try {
+                                const targetMemory = await db.memories.where('titel_technisch').equals(memUpd.id).first();
+                                if(targetMemory) {
+                                    const newReflexion = memUpd.reflexion_fusioniert;
+                                    
+                                    if (memUpd.neue_trigger_tags && Array.isArray(memUpd.neue_trigger_tags)) {
+                                        const existingTags = new Set((targetMemory.tags || []).map(t => typeof t === 'string' ? t.toLowerCase() : ''));
+                                        const forbiddenTags = ["genervt", "müll", "ok", "fehler", "schlecht", "gut", "hilfe"];
+                                        
+                                        memUpd.neue_trigger_tags.forEach(t => {
+                                            if (typeof t === 'string') {
+                                                const normTag = t.toLowerCase().trim();
+                                                if (normTag.length > 2 && !forbiddenTags.includes(normTag)) {
+                                                    existingTags.add(normTag);
+                                                }
+                                            }
+                                        });
+                                        targetMemory.tags = Array.from(existingTags);
+                                    }
+
+                                    await db.memories.update(targetMemory.id, { 
+                                        reflexion: newReflexion,
+                                        tags: targetMemory.tags || []
+                                    });
+                                    showToast('ORAKEL-UPDATE: AHNEN-RESONANZ FUSIONIERT');
+                                }
+                            } catch(err) { console.error("Silent Update failed:", err); }
+                        }
+                    } catch(e) { finalChatText = "System-Hinweis: Matrix Format Fehler. Das Sprachmodell hat sich nicht an das JSON-Skelett gehalten."; finalScratch = resText; }
+
+                    const newAiMsgId = generateId();
+                    setMessages(p=>[...p, {id:newAiMsgId, sender:'ai', text:finalChatText, scratchpad:finalScratch, ttsRegie: ttsRegie, timestamp: new Date().toISOString()}]);
+                    
+                    if(autoPlayEnabled && finalChatText && finalChatText !== "System-Hinweis: Matrix Format Fehler. Das Sprachmodell hat sich nicht an das JSON-Skelett gehalten.") {
+                        playMessageTTS(newAiMsgId, finalChatText, ttsRegie);
+                    }
+
+                } catch(e) { 
+                    let errorMsg = e.message;
+                    if (e.message.includes('Failed to fetch') || e.name === 'TypeError') {
+                        errorMsg = "Netzwerk-Blockade (Failed to fetch).\n\nDein Browser oder ein Adblocker (wie Brave Shields/uBlock) blockiert die Anfrage an OpenAI. \n\nLösung: Erlaube die API-Aufrufe im Adblocker oder (falls du die Datei als file:// öffnest) starte die Datei über einen lokalen Server (z.B. Live Server in VS Code).";
+                    }
+                    setMessages(prev => [...prev.filter(m => m.id !== userMsgId), {id: generateId(), sender: 'system-error', text: errorMsg, timestamp: new Date().toISOString()}]);
+                    
+                    setInputText(text);
+                    if (textareaRef.current) {
+                        textareaRef.current.style.height = 'auto';
+                        textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 150) + 'px';
+                    }
+                }
+                finally { setLoadingStatus(null); }
+            };
+
+            // V4.4 Preview Update
+            const kernelPreview = (autoTtsRegie && dna.audio_physics) ? `${dna.block1_identity}\n\n${dna.audio_physics}` : dna.block1_identity;
+            const sysPromptPreview = `[1. DEINE IDENTITÄT UND REGELN]\n${kernelPreview}\n\n[3. DIE MATRIX-SENSOREN]\n${dna.block3_sensors}\n\n[4. DEINE AUSGABE (JSON)]\n${dna.block4_skeleton}`.trim();
+            const sysPromptPreviewDynamic = `--- SYSTEM PROMPT (STATIC CACHE) ---\n${sysPromptPreview}\n\n--- USER PAYLOAD (DYNAMIC) ---\n[2. AKTIVER KONTEXT]\n${latestContext}\n\n[AKTUELLE NACHRICHT DES USERS]\n(Eingabe des Users)`.trim();
+
+            if (zenField) {
+                const isPreview = zenField === 'preview';
+                const isBlock1 = zenField === 'block1';
+                const isAudioPhysics = zenField === 'audioPhysics';
+                const isBlock3 = zenField === 'block3';
+                const isBlock4 = zenField === 'block4';
+                
+                const title = isPreview ? "LIVE PROMPT-VORSCHAU" : isBlock1 ? "⚙️ [LUMEN KERNEL: SYSTEM & LOGIK]" : isAudioPhysics ? "🎙️ [PLUGIN: UNIVERSAL AUDIO PHYSICS]" : isBlock3 ? "🎭 [PERSONA CARTRIDGE]" : "BACKUP/LEGACY";
+                const value = isBlock1 ? dna.block1_identity : isAudioPhysics ? dna.audio_physics : isBlock3 ? dna.block3_sensors : isBlock4 ? dna.block4_skeleton : "";
+                const setValue = isBlock1 ? (val) => setDna({...dna, block1_identity: val}) : isAudioPhysics ? (val) => setDna({...dna, audio_physics: val}) : isBlock3 ? (val) => setDna({...dna, block3_sensors: val}) : isBlock4 ? (val) => setDna({...dna, block4_skeleton: val}) : () => {};
+
+                return (
+                    <div className="fixed inset-0 z-[600] bg-slate-950 p-6 flex flex-col animate-fade-in">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-bold text-white uppercase tracking-widest font-mono">🔲 ZEN: {title}</h2>
+                            <div className="flex items-center gap-2">
+                                {isBlock4 && <button onClick={handleBeautifyJSON} className="bg-indigo-900/50 text-indigo-300 border border-indigo-700/50 px-4 py-2 rounded-xl text-xs hover:bg-indigo-800/50 transition-colors">🧹 Format</button>}
+                                <button onClick={() => setZenField(null)} className="bg-rose-900/50 text-rose-300 border border-rose-700/50 px-5 py-2 rounded-xl text-xs hover:bg-rose-800/50 transition-colors shadow-md uppercase font-bold">❌ Exit Zen</button>
+                            </div>
+                        </div>
+                        {isPreview ? (
+                            <pre className="flex-1 w-full bg-slate-900 border border-slate-800 text-slate-400 rounded-2xl p-6 font-mono text-sm leading-relaxed overflow-y-auto shadow-inner whitespace-pre-wrap break-words" dangerouslySetInnerHTML={getXRayHTML(sysPromptPreviewDynamic)}></pre>
+                        ) : (
+                            <textarea value={value} onChange={e=>setValue(e.target.value)} className="flex-1 w-full bg-slate-900 border border-slate-800 text-slate-100 rounded-2xl p-6 focus:outline-none focus:border-indigo-500 font-mono text-sm leading-relaxed resize-none shadow-inner" autoFocus spellCheck="false" />
+                        )}
+                    </div>
+                );
+            }
+
+            const activeTtsProvider = ttsProviders.find(p => p.id === activeTtsProviderId) || ttsProviders[0];
+
+            return (
+                <div className="flex flex-col h-[100dvh] w-full max-w-4xl mx-auto sm:border-x border-stone-200 bg-stone-50 relative overflow-hidden shadow-2xl">
+                    <Toast message={toast} />
+                    
+                    {/* --- TELEMETRIE MODAL --- */}
+                    {showTelemetry && <TelemetryModal messages={messages} onClose={() => setShowTelemetry(false)} />}
+
+                    {/* --- V4.4 API PROTOKOLL MODAL --- */}
+                    {showApiLog && lastApiPayload && (
+                        <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
+                            <div className="bg-white w-full max-w-4xl max-h-[85vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
+                                <div className="p-4 border-b border-stone-200 flex justify-between items-center bg-slate-50">
+                                    <h3 className="font-bold text-indigo-600 uppercase text-xs tracking-widest flex items-center gap-2">🔍 API PROTOKOLL (DEBUG-SENSE)</h3>
+                                    <button onClick={() => setShowApiLog(false)} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
+                                </div>
+                                <div className="flex-1 overflow-y-auto p-6 flex flex-col text-xs font-mono">
+                                    <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-4 font-bold border-b border-stone-100 pb-2">STATIC CACHE (SYSTEM)</div>
+                                    <div className="text-blue-600 whitespace-pre-wrap mb-4 leading-relaxed">{lastApiPayload.kernel}</div>
+                                    {lastApiPayload.audio && <div className="text-blue-600 whitespace-pre-wrap mb-4 leading-relaxed">{lastApiPayload.audio}</div>}
+                                    <div className="text-slate-400 whitespace-pre-wrap mb-4 leading-relaxed italic">{lastApiPayload.firewall}</div>
+                                    <div className="text-blue-600 whitespace-pre-wrap mb-4 leading-relaxed">{lastApiPayload.persona}</div>
+                                    <div className="text-slate-400 whitespace-pre-wrap mb-6 leading-relaxed italic">{lastApiPayload.override}</div>
+                                    
+                                    <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-4 mt-4 font-bold border-b border-stone-100 pb-2">DYNAMIC PAYLOAD (USER)</div>
+                                    <div className="text-slate-900 font-bold whitespace-pre-wrap leading-relaxed">{lastApiPayload.user}</div>
+                                </div>
+                                <div className="p-4 border-t border-stone-100 bg-slate-50">
+                                    <button onClick={() => setShowApiLog(false)} className="btn w-full py-3 bg-white text-slate-700 shadow-sm text-xs">Schließen</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- SMART TOAST UI --- */}
+                    {smartToast && ['chat', 'sessel', 'oase', 'werkbank', 'balkon'].includes(activeView) && (
+                        <div className="fixed top-20 right-4 z-[100] animate-slide-in-right bg-white border border-indigo-200 p-4 rounded-2xl shadow-2xl w-72 border-l-4 border-l-indigo-500">
+                            <div className="text-[10px] font-bold text-indigo-800 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                                🧠 Erinnerung getriggert
+                            </div>
+                            <div className="text-sm text-indigo-600 mb-3 font-serif italic leading-tight">
+                                {smartToast.card.titel_poetisch || 'Flüchtige Reflexion'}
+                            </div>
+                            <div className="flex gap-2">
+                                <button onClick={() => {
+                                    setActiveDesks(prev => [...prev, smartToast.card]);
+                                    setVolatileMemories(prev => prev.filter(m => m.id !== smartToast.id));
+                                    setSmartToast(null);
+                                    showToast('Auf den Schreibtisch gepinnt');
+                                }} className="btn-primary py-2 px-3 text-[10px] w-full bg-indigo-600 text-white hover:bg-indigo-700 shadow-md">📌 PINNEN</button>
+                                <button onClick={() => setSmartToast(null)} className="btn py-2 px-3 text-[10px] w-full bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200">IGNORIEREN</button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- POPOUT EDITOR (SIDE-PANEL MODAL) --- */}
+                    {editingDeskItem && (
+                        <div className="fixed inset-0 z-[800] bg-slate-900/40 backdrop-blur-sm flex justify-end animate-fade-in">
+                            <div className="bg-white h-full w-full sm:w-[400px] flex flex-col shadow-2xl animate-slide-in-right border-l border-stone-200 relative">
+                                {isArchiving && (
+                                    <div className="absolute inset-0 z-10 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center animate-fade-in">
+                                        <div className="text-indigo-600 font-bold uppercase tracking-widest text-xs animate-pulse mb-2">ARCHIVAR FORMATIERT...</div>
+                                        <div className="w-1/2 h-1 bg-indigo-100 rounded-full overflow-hidden"><div className="w-1/2 h-full bg-indigo-500 animate-slide-up origin-left rounded-full"></div></div>
+                                    </div>
+                                )}
+                                
+                                <div className="p-4 border-b border-stone-100 flex justify-between items-center bg-indigo-50/50">
+                                    <h3 className="font-bold text-indigo-900 uppercase text-xs tracking-widest flex items-center gap-2">📝 Akte bearbeiten</h3>
+                                    <button onClick={() => setEditingDeskItem(null)} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm z-20 relative">✕</button>
+                                </div>
+                                <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
+                                    <div>
+                                        <label className="label">ID & Titel</label>
+                                        <div className="flex flex-col gap-2">
+                                            <input placeholder="ID_TECHNISCH" value={deskItemForm.titel_technisch || ''} onChange={e=>setDeskItemForm({...deskItemForm,titel_technisch:e.target.value})} className="input-field font-bold text-slate-800 bg-stone-50" />
+                                            <input placeholder="Titel Poetisch" value={deskItemForm.titel_poetisch || ''} onChange={e=>setDeskItemForm({...deskItemForm,titel_poetisch:e.target.value})} className="input-field text-rose-600 font-serif italic bg-stone-50" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="label">Fakt: Was geschah?</label>
+                                        <textarea value={deskItemForm.fakt || ''} onChange={e=>setDeskItemForm({...deskItemForm,fakt:e.target.value})} className="input-field min-h-[80px] font-sans bg-stone-50" />
+                                    </div>
+                                    <div>
+                                        <label className="label">Emotion & Bedeutung</label>
+                                        <div className="flex flex-col gap-2">
+                                            <textarea placeholder="Gefühl/Emotion" value={deskItemForm.emotion || ''} onChange={e=>setDeskItemForm({...deskItemForm,emotion:e.target.value})} className="input-field min-h-[60px] font-sans bg-stone-50" />
+                                            <textarea placeholder="Bedeutung/Fazit" value={deskItemForm.bedeutung || ''} onChange={e=>setDeskItemForm({...deskItemForm,bedeutung:e.target.value})} className="input-field min-h-[60px] font-sans bg-stone-50" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="label text-indigo-500">Persona Reflexion</label>
+                                        <textarea value={deskItemForm.reflexion || ''} onChange={e=>setDeskItemForm({...deskItemForm,reflexion:e.target.value})} className="input-field border-indigo-200 bg-indigo-50 text-indigo-800 min-h-[80px] font-sans italic" />
+                                    </div>
+                                    <div>
+                                        <label className="label">Tags</label>
+                                        <input placeholder="tags, comma, separated" value={deskItemForm.tagsString || ''} onChange={e=>setDeskItemForm({...deskItemForm,tagsString:e.target.value})} className="input-field text-slate-500 bg-stone-50" />
+                                    </div>
+                                </div>
+                                <div className="p-4 border-t border-stone-100 bg-stone-50 flex flex-col gap-2">
+                                    <button onClick={() => {
+                                        setActiveDesks(prev => prev.filter(i => i.id !== editingDeskItem.id));
+                                        setEditingDeskItem(null);
+                                        showToast('Vom Schreibtisch entfernt');
+                                    }} disabled={isArchiving} className="btn-danger w-full disabled:opacity-50">❌ VOM SCHREIBTISCH NEHMEN</button>
+                                    
+                                    <button onClick={() => {
+                                        const dataToSave = {...deskItemForm};
+                                        dataToSave.tags = dataToSave.tagsString ? dataToSave.tagsString.split(',').map(t=>t.trim()).filter(Boolean) : [];
+                                        dataToSave.isDirty = true;
+                                        
+                                        setActiveDesks(prev => prev.map(i => i.id === editingDeskItem.id ? dataToSave : i));
+                                        setEditingDeskItem(dataToSave);
+                                        setDeskItemForm({...dataToSave, tagsString: dataToSave.tags.join(', ')});
+                                        showToast('Auf Schreibtisch gesichert');
+                                    }} disabled={isArchiving} className="btn w-full bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 disabled:opacity-50">📝 NUR AUF SCHREIBTISCH SICHERN</button>
+                                    
+                                    <button onClick={async () => {
+                                        setIsArchiving(true);
+                                        showToast("Archivar formatiert...");
+                                        try {
+                                            const dataToProcess = {...deskItemForm};
+                                            dataToProcess.tags = dataToProcess.tagsString ? dataToProcess.tagsString.split(',').map(t=>t.trim()).filter(Boolean) : [];
+                                            
+                                            const archivedData = await runArchivar(dataToProcess);
+                                            
+                                            if (typeof archivedData.id === 'string') delete archivedData.id;
+                                            archivedData.timestamp = Date.now();
+
+                                            const existing = await db.memories.where('titel_technisch').equals(archivedData.titel_technisch).first();
+                                            if(existing) {
+                                                await db.memories.update(existing.id, archivedData);
+                                                archivedData.id = existing.id;
+                                            } else {
+                                                const newId = await db.memories.add(archivedData);
+                                                archivedData.id = newId;
+                                            }
+                                            
+                                            setActiveDesks(prev => prev.filter(i => i.id !== editingDeskItem.id));
+                                            setEditingDeskItem(null);
+                                            loadMemories();
+                                            showToast('💾 IM SANCTUM ARCHIVIERT');
+                                        } catch(e) {
+                                            showToast('Fehler: ' + e.message);
+                                        } finally {
+                                            setIsArchiving(false);
+                                        }
+                                    }} disabled={isArchiving} className="btn-primary w-full bg-indigo-600 text-white hover:bg-indigo-700 shadow-md disabled:opacity-50">🏛️ INS SANCTUM ARCHIVIEREN</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- HELFER ARCHIV DRAWER --- */}
+                    {showArchiv && (
+                        <div className="fixed inset-0 z-[800] bg-slate-900/40 backdrop-blur-sm flex justify-end animate-fade-in">
+                            <div className="bg-amber-50/95 h-full w-full sm:w-[400px] flex flex-col shadow-2xl animate-slide-in-right border-l border-amber-200/50 relative">
+                                <div className="p-4 border-b border-amber-200/50 flex justify-between items-center bg-amber-100/50">
+                                    <h3 className="font-bold text-amber-900 uppercase text-xs tracking-widest flex items-center gap-2 font-mono">DIE NOTIZEN DES HELFERS</h3>
+                                    <button onClick={() => setShowArchiv(false)} className="text-amber-700 hover:text-amber-900 transition-colors font-bold text-sm z-20 relative">✕</button>
+                                </div>
+                                <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
+                                    {helferArchiv ? (
+                                        <div className="flex flex-col gap-3">
+                                            <div className="text-[10px] text-amber-700 font-bold uppercase tracking-widest">Zeitstempel: {helferArchiv.zeitstempel}</div>
+                                            <div className="bg-amber-100/50 border border-amber-200/50 p-3 rounded-xl">
+                                                <div className="text-[9px] text-amber-600 uppercase tracking-widest font-bold mb-1 font-mono">Suchauftrag:</div>
+                                                <div className="text-xs text-amber-900 font-bold">{helferArchiv.suchauftrag}</div>
+                                            </div>
+                                            <div className="flex-1 flex flex-col">
+                                                <div className="text-[9px] text-amber-600 uppercase tracking-widest font-bold mb-1 mt-2 font-mono">Rohdaten:</div>
+                                                <div className="bg-white/60 border border-amber-200/50 p-3 rounded-xl flex-1 overflow-y-auto">
+                                                    <pre className="text-[11px] font-mono whitespace-pre-wrap text-amber-900/80 leading-relaxed font-medium">{helferArchiv.rohdaten}</pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex-1 flex items-center justify-center text-amber-700/50 text-xs font-mono font-bold uppercase text-center p-8 border-2 border-dashed border-amber-200 rounded-3xl bg-amber-50/30 mt-8">
+                                            Keine aktuellen Helfer-Notizen vorhanden.
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="p-4 border-t border-amber-200/50 bg-amber-100/30">
+                                    <button onClick={() => setShowArchiv(false)} className="btn-primary w-full bg-amber-600 text-white hover:bg-amber-700 border-amber-700 shadow-md">SCHLIESSEN</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- TOP BAR (WHITE STYLE) --- */}
+                    <div className="bg-white border-b border-slate-200 flex justify-between items-center px-4 py-1 shrink-0 z-[60]">
+                        <div className="text-[9px] text-slate-400 font-mono tracking-widest font-bold">LUMEN CORE</div>
+                        <div className="flex items-center gap-3">
+                            {playingMsgId && (
+                                <button onClick={stopAudio} className="text-[9px] font-mono uppercase tracking-widest text-rose-500 hover:text-rose-600 transition-colors animate-pulse border border-rose-200 px-2 rounded">
+                                    🛑 STOP AUDIO
+                                </button>
+                            )}
+                            
+                            <button onClick={() => setShowTelemetry(true)} className="text-[9px] font-mono uppercase tracking-widest text-slate-500 hover:text-indigo-500 transition-colors">
+                                📊 LOGS
+                            </button>
+                            
+                            <button onClick={() => {
+                                const newVal = !autoPlayEnabled;
+                                setAutoPlayEnabled(newVal);
+                                localStorage.setItem('lumen_autoPlay', String(newVal));
+                            }} className="text-[9px] font-mono uppercase tracking-widest text-slate-500 hover:text-slate-700 transition-colors">
+                                {autoPlayEnabled ? '🔈 AUTO-PLAY: ON' : '🔈 AUTO-PLAY: OFF'}
+                            </button>
+                            
+                            {!showClearConfirm ? (
+                                <button onClick={() => setShowClearConfirm(true)} className="text-[9px] font-mono uppercase tracking-widest text-slate-500 hover:text-rose-500 transition-colors">
+                                    🗑️ CLEAR CHAT
+                                </button>
+                            ) : (
+                                <div className="flex gap-2 items-center">
+                                    <span className="text-[9px] font-bold text-rose-500 uppercase">Sicher?</span>
+                                    <button onClick={() => { setMessages([]); localStorage.removeItem('lumen_chat'); stopAudio(); setShowClearConfirm(false); }} className="text-[9px] font-mono uppercase tracking-widest text-rose-500 hover:text-rose-600 transition-colors font-bold">JA</button>
+                                    <button onClick={() => setShowClearConfirm(false)} className="text-[9px] font-mono uppercase tracking-widest text-slate-500 hover:text-slate-700 transition-colors">NEIN</button>
+                                </div>
+                            )}
+
+                            <button onClick={() => setShowArchiv(true)} className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 transition-colors font-mono">📜 Archiv</button>
+                        </div>
+                    </div>
+                    
+                    {/* --- MAIN HEADER --- */}
+                    <header className="shrink-0 border-b border-stone-200 p-3 sm:px-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white z-50 sticky top-0">
+                        <div className="flex items-center gap-1.5 flex-wrap w-full justify-center sm:justify-start">
+                            <button className={`btn ${['chat', 'sessel', 'oase', 'werkbank', 'balkon'].includes(activeView)?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('chat')}>Chat</button>
+                            
+                            <div className="flex items-center">
+                                <button className={`btn rounded-r-none ${activeView==='sanctum'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('sanctum')}>Sanctum</button>
+                                <button onClick={() => setIsMemoryLocked(!isMemoryLocked)} className={`btn rounded-l-none border-l-0 px-2 py-1.5 ${isMemoryLocked ? 'bg-rose-50 text-rose-600 hover:bg-rose-100' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'} transition-all`} title={isMemoryLocked ? "Gedächtnis-Siegel aktiv" : "Gedächtnis-Siegel inaktiv"}>
+                                    {isMemoryLocked ? '🔒' : '🔓'}
+                                </button>
+                            </div>
+                            
+                            <button className={`btn ${activeView==='directives'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('directives')}>Direktiven</button>
+                            <button className={`btn ${activeView==='dna'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('dna')}>DNA</button>
+                            <button className={`btn ${activeView==='helfer'?'bg-amber-100 text-amber-800 ring-2 ring-amber-200':''}`} onClick={()=>setActiveView('helfer')}>Helfer</button>
+                            <button className={`btn ${activeView==='settings'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('settings')}>⚙️</button>
+                        </div>
+                    </header>
+
+                    <main className="flex-1 overflow-y-auto overflow-x-hidden relative scroll-smooth flex flex-col">
+                        
+                        {/* --- CHAT VIEW --- */}
+                        <div className={`${['chat', 'sessel', 'oase', 'werkbank', 'balkon'].includes(activeView) ? 'flex' : 'hidden'} h-full flex-col`}>
+                            {/* DYNAMIC DESK LEISTE */}
+                            {activeDesks.length > 0 && (
+                                <div className="flex gap-2 p-2 px-4 overflow-x-auto bg-slate-50 border-b border-slate-200 shrink-0">
+                                    {activeDesks.map(item => (
+                                        <button key={item.id} onClick={() => { setEditingDeskItem(item); setDeskItemForm({...item, tagsString: item.tags?.join(', ') || ''}); }} className="relative text-[10px] uppercase font-mono font-bold px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded border border-indigo-200 flex items-center gap-2 shrink-0 hover:bg-indigo-200 transition-colors shadow-sm">
+                                            📝 {item.titel_technisch || 'NEUER ENTWURF'}
+                                            {item.isDirty && <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 rounded-full border border-white shadow-sm" title="Dirty (Ungespeichert)"></span>}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                            
+                            <div className="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
+                                <div className="flex-1"></div>
+                                {messages.map(msg => <ChatBubble key={msg.id} message={msg} personaName={dna.persona_name} playingMsgId={playingMsgId} onPlayTTS={playMessageTTS} onDelete={(id) => setMessages(prev => prev.filter(m => m.id !== id))} />)}
+                                {loadingStatus && <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest animate-pulse mb-6 ml-2 font-mono">[ {loadingStatus} ]</div>}
+                                <div ref={messagesEndRef} className="h-4" />
+                            </div>
+                        </div>
+
+                        {/* --- DIRECTIVES VIEW --- */}
+                        <div className={`${activeView === 'directives' ? 'block' : 'hidden'} p-6 max-w-4xl mx-auto space-y-6 mt-4 animate-fade-in`}>
+                            <div className="flex justify-between items-center border-b border-stone-200 pb-2">
+                                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">Direktiven-Kontrollzentrum</h2>
+                            </div>
+                            <div className="space-y-3">
+                                {directives.length === 0 && <div className="text-slate-400 text-xs text-center p-6 italic font-serif">Keine aktiven Direktiven vorhanden.</div>}
+                                {directives.map(d => (
+                                    <div key={d.id} className="panel flex justify-between items-center bg-white border border-stone-200 shadow-sm transition-all hover:border-indigo-200">
+                                        <p className="text-sm text-slate-700 font-medium flex-1 pr-4 leading-relaxed">"{d.text}"</p>
+                                        <button onClick={async () => { await db.directives.delete(d.id); loadDirectives(); showToast('Direktive gelöscht'); }} className="btn-danger whitespace-nowrap">🗑️ Löschen</button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* --- HELFER VIEW (ARCHIV) --- */}
+                        <div className={`${activeView === 'helfer' ? 'block' : 'hidden'} p-6 max-w-4xl mx-auto space-y-6 mt-4 animate-fade-in h-full`}>
+                            <div className="flex justify-between items-center border-b border-stone-200 pb-2">
+                                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">Die Notizen des Helfers (Deep Crawl)</h2>
+                            </div>
+                            
+                            {helferArchiv ? (
+                                <div className="panel bg-amber-50/50 border border-amber-200/50 flex flex-col gap-4 shadow-sm">
+                                    <div className="text-[10px] text-amber-700 font-bold uppercase tracking-widest flex items-center gap-2">
+                                        <span>🕒 Zeitstempel: {helferArchiv.zeitstempel}</span>
+                                    </div>
+                                    <div className="bg-white border border-amber-200/50 p-4 rounded-2xl shadow-sm">
+                                        <div className="text-[9px] text-amber-600 uppercase tracking-widest font-bold mb-1.5 font-mono">Letzter Suchauftrag:</div>
+                                        <div className="text-sm text-slate-800 font-bold">{helferArchiv.suchauftrag}</div>
+                                    </div>
+                                    <div className="flex-1 flex flex-col mt-2">
+                                        <div className="text-[9px] text-amber-600 uppercase tracking-widest font-bold mb-1.5 font-mono">Extrahierte Rohdaten (Deep Crawl):</div>
+                                        <div className="bg-white border border-amber-200/50 p-4 rounded-2xl shadow-inner max-h-[60vh] overflow-y-auto">
+                                            <pre className="text-[11px] font-mono whitespace-pre-wrap text-slate-700 leading-relaxed">{helferArchiv.rohdaten}</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="flex-1 flex items-center justify-center text-amber-700/50 text-xs font-mono font-bold uppercase text-center p-12 border-2 border-dashed border-amber-200 rounded-3xl bg-amber-50/30 mt-8">
+                                    Keine aktuellen Helfer-Notizen vorhanden.
+                                </div>
+                            )}
+                        </div>
+
+                        {/* --- SETTINGS VIEW --- */}
+                        <div className={`${activeView === 'settings' ? 'block' : 'hidden'} p-6 max-w-2xl mx-auto space-y-6 mt-4 animate-fade-in pb-20`}>
+                            
+                            {/* TEXT CHAT PROVIDER */}
+                            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2">KI Chat-Provider (Text)</h2>
+                            <div className="panel space-y-4">
+                                <div>
+                                    <label className="label">Aktiver Chat-Knoten</label>
+                                    <select value={activeProviderId} onChange={(e) => {
+                                        setActiveProviderId(e.target.value);
+                                        localStorage.setItem('lumen_activeProviderId', e.target.value);
+                                        showToast('Chat-Provider gewechselt');
+                                    }} className="input-field font-sans text-xs font-bold text-indigo-700">
+                                        {providers.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                {providers.map(p => (
+                                    <div key={p.id} className="panel flex flex-col gap-2 border-stone-200 bg-white shadow-sm">
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex-1 pr-4 min-w-0">
+                                                <div className="font-bold text-sm text-slate-800 truncate">{p.name} <span className="badge ml-2 bg-stone-100 text-stone-500 border-stone-200">{p.type}</span>{p.jsonMode !== false && <span className="badge ml-1 bg-indigo-50 text-indigo-500 border-indigo-100" title="JSON Mode aktiv">JSON</span>}</div>
+                                                <div className="text-[10px] text-slate-400 font-mono mt-1 truncate block">{p.url}</div>
+                                            </div>
+                                            <div className="flex gap-1 shrink-0">
+                                                <button onClick={() => { setEditProviderId(p.id); setProviderForm({...p, jsonMode: p.jsonMode !== false}); }} className="btn py-1 px-2">✏️</button>
+                                                <button onClick={() => { 
+                                                    if(window.confirm('Chat-Provider löschen?')) { 
+                                                        const newList = providers.filter(x=>x.id!==p.id); 
+                                                        setProviders(newList); localStorage.setItem('lumen_providers', JSON.stringify(newList));
+                                                        if(activeProviderId===p.id && newList.length) { setActiveProviderId(newList[0].id); localStorage.setItem('lumen_activeProviderId', newList[0].id); } 
+                                                    } 
+                                                }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
+                                            </div>
+                                        </div>
+                                        {p.apiKey ? <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded w-max mt-1">✓ API Key hinterlegt</div> : <div className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded w-max mt-1">⚠️ Kein Key hinterlegt</div>}
+                                    </div>
+                                ))}
+
+                                <div className="panel border-indigo-200 bg-indigo-50/30 flex flex-col gap-3 shadow-sm mt-4">
+                                    <h3 className="font-bold text-xs uppercase tracking-widest text-indigo-800">{editProviderId ? 'Chat-Provider bearbeiten' : 'Neuen Chat-Provider anlegen'}</h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div><label className="label text-indigo-600">Anzeigename</label><input value={providerForm.name} onChange={e=>setProviderForm({...providerForm, name: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="z.B. GPT-4o" /></div>
+                                        <div>
+                                            <label className="label text-indigo-600">API Format (Payload)</label>
+                                            <select value={providerForm.type} onChange={e=>setProviderForm({...providerForm, type: e.target.value})} className="input-field bg-white border-indigo-100">
+                                                <option value="gemini">Google Gemini Format</option>
+                                                <option value="openai">OpenAI Format (GPT, LM Studio, etc.)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div><label className="label text-indigo-600">API Endpoint URL</label><input value={providerForm.url} onChange={e=>setProviderForm({...providerForm, url: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="z.B. https://api.openai.com/v1/chat/completions" /></div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div><label className="label text-indigo-600">Modell-ID (OpenAI Format)</label><input value={providerForm.model} onChange={e=>setProviderForm({...providerForm, model: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="z.B. gpt-4o" disabled={providerForm.type === 'gemini'} /></div>
+                                        <div><label className="label text-indigo-600">API Key</label><input type="password" value={providerForm.apiKey} onChange={e=>setProviderForm({...providerForm, apiKey: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="Schlüssel" /></div>
+                                    </div>
+                                    <div className="mt-2">
+                                        <label className="flex items-center gap-2 text-xs font-bold text-indigo-700 cursor-pointer w-max">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={providerForm.jsonMode !== false} 
+                                                onChange={e => setProviderForm({...providerForm, jsonMode: e.target.checked})} 
+                                                className="accent-indigo-600 w-4 h-4 cursor-pointer"
+                                            /> 
+                                            JSON-Mode erzwingen (Structured Output)
+                                        </label>
+                                        <p className="text-[9px] text-slate-400 mt-1">Deaktivieren, falls ein lokales Modell den strikten JSON-Mode nicht unterstützt.</p>
+                                    </div>
+                                    <div className="flex justify-end gap-2 mt-2 border-t border-indigo-100 pt-3">
+                                        {editProviderId && <button onClick={()=>{setEditProviderId(null); setProviderForm({name:'', url:'', type:'gemini', model:'', apiKey:'', jsonMode: true});}} className="btn border-indigo-200 text-indigo-600">Abbrechen</button>}
+                                        <button onClick={() => {
+                                            if(!providerForm.name || !providerForm.url) return showToast('Name und URL erforderlich');
+                                            const newProviders = editProviderId ? providers.map(p => p.id === editProviderId ? {...providerForm, id: editProviderId} : p) : [...providers, {...providerForm, id: generateId()}];
+                                            setProviders(newProviders); localStorage.setItem('lumen_providers', JSON.stringify(newProviders));
+                                            setEditProviderId(null); setProviderForm({name:'', url:'', type:'gemini', model:'', apiKey:'', jsonMode: true}); showToast('Chat-Provider gespeichert!');
+                                        }} className="btn-primary bg-indigo-600 text-white hover:bg-indigo-700">{editProviderId ? 'Aktualisieren' : 'Hinzufügen'}</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* TAVILY HELFER MANAGEMENT */}
+                            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2 mt-12">🔍 HELFER (TAVILY SEARCH)</h2>
+                            <div className="panel space-y-4">
+                                <p className="text-xs text-slate-500 mb-2">Hier konfigurierst du den Tavily Search API Key. Maira kann dann bei Bedarf das Web nach aktuellen Fakten durchsuchen.</p>
+                                <div>
+                                    <label className="label">Tavily API Key</label>
+                                    <input 
+                                        type="password" 
+                                        value={tavilyKey} 
+                                        onChange={e => {
+                                            setTavilyKey(e.target.value);
+                                            localStorage.setItem('lumen_tavily_key', e.target.value);
+                                        }} 
+                                        className="input-field bg-white" 
+                                        placeholder="tvly-..." 
+                                    />
+                                </div>
+                            </div>
+
+                            {/* TTS PROVIDER MANAGEMENT (WITH MODEL SUPPORT) */}
+                            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2 mt-12">🔈 Audio (TTS)</h2>
+                            <div className="panel space-y-4">
+                                <div>
+                                    <label className="label">1. Aktives TTS-Konto (Auto-Play & Buttons)</label>
+                                    <select value={activeTtsProviderId} onChange={(e) => {
+                                        setActiveTtsProviderId(e.target.value);
+                                        localStorage.setItem('lumen_activeTtsProviderId', e.target.value);
+                                        showToast('TTS-Konto gewechselt');
+                                    }} className="input-field font-sans text-xs font-bold text-fuchsia-700 border-fuchsia-200 focus:border-fuchsia-400 focus:ring-fuchsia-100 bg-fuchsia-50/30">
+                                        {ttsProviders.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
+                                    </select>
+                                </div>
+                                
+                                {activeTtsProvider && (
+                                    <div className="border-t border-stone-100 pt-4">
+                                        <label className="label text-fuchsia-600">2. Stimme für dieses Konto auswählen</label>
+                                        
+                                        {/* ELEVENLABS STIMMEN DROPDOWN */}
+                                        {activeTtsProvider.type === 'elevenlabs' && (
+                                            <select value={ttsVoices.elevenlabs} onChange={e=>{
+                                                const newVoices = {...ttsVoices, elevenlabs: e.target.value};
+                                                setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices)); showToast('ElevenLabs Stimme aktualisiert');
+                                            }} className="input-field bg-white">
+                                                <option value="21m00Tcm4TlvDq8ikWAM">Rachel (Amerikanisch, ruhig)</option>
+                                                <option value="EXAVITQu4vr4xnSDxMaL">Bella (Amerikanisch, weich)</option>
+                                                <option value="AZnzlk1XvdvUeBnXmlld">Domi (Amerikanisch, stark)</option>
+                                                <option value="MF3mGyEYCl7XYWbV9V6O">Elli (Britisch, emotional)</option>
+                                                <option value="pNInz6obpgDQGcFmaJcg">Adam (Amerikanisch, kräftig)</option>
+                                                <option value="yoZ06aMxZJJ28mfd3POQ">Sam (Amerikanisch, raspelig)</option>
+                                                <option value="TxGEqnHWrfWFTfGW9XjX">Josh (Amerikanisch, tief)</option>
+                                            </select>
+                                        )}
+
+                                        {/* OPENAI STIMMEN DROPDOWN */}
+                                        {activeTtsProvider.type === 'openai' && (
+                                            <select value={ttsVoices.openai} onChange={e=>{
+                                                const newVoices = {...ttsVoices, openai: e.target.value};
+                                                setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices)); showToast('OpenAI Stimme aktualisiert');
+                                            }} className="input-field bg-white">
+                                                <option value="nova">Nova (Weiblich, energetisch)</option>
+                                                <option value="alloy">Alloy (Neutral, klar)</option>
+                                                <option value="echo">Echo (Männlich, weich)</option>
+                                                <option value="fable">Fable (Lebhaft, erzählend)</option>
+                                                <option value="onyx">Onyx (Männlich, tief)</option>
+                                                <option value="shimmer">Shimmer (Weiblich, hell)</option>
+                                            </select>
+                                        )}
+
+                                        {/* GEMINI STIMMEN DROPDOWN */}
+                                        {activeTtsProvider.type === 'gemini' && (
+                                            <select value={ttsVoices.gemini} onChange={e=>{
+                                                const newVoices = {...ttsVoices, gemini: e.target.value};
+                                                setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices)); showToast('Gemini Stimme aktualisiert');
+                                            }} className="input-field bg-white">
+                                                <option value="Kore">Kore (Sanft, freundlich)</option>
+                                                <option value="Puck">Puck (Energetisch, jung)</option>
+                                                <option value="Charon">Charon (Tief, resonierend)</option>
+                                                <option value="Fenrir">Fenrir (Kräftig, direkt)</option>
+                                                <option value="Aoede">Aoede (Melodisch, ruhig)</option>
+                                            </select>
+                                        )}
+
+                                        {/* CUSTOM STIMMEN INPUT */}
+                                        {(activeTtsProvider.type === 'custom_openai' || activeTtsProvider.type === 'custom_get' || activeTtsProvider.type === 'replicate') && (
+                                            <input type="text" placeholder={activeTtsProvider.type === 'replicate' ? "Voice (optional, z.B. bei Replicate nicht nötig)" : "Voice-ID oder Parameter (optional)"} className="input-field bg-white" value={ttsVoices[activeTtsProvider.type] || ''} onChange={e=>{
+                                                const newVoices = {...ttsVoices, [activeTtsProvider.type]: e.target.value};
+                                                setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices));
+                                            }} />
+                                        )}
+                                        
+                                        <div className="mt-2 flex gap-2 w-full">
+                                            <input type="text" placeholder="...oder benutzerdefinierte Voice-ID einfügen" className="input-field text-[10px] bg-white py-2" value={ttsVoices[activeTtsProvider.type] || ''} onChange={e=>{
+                                                const newVoices = {...ttsVoices, [activeTtsProvider.type]: e.target.value};
+                                                setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices));
+                                            }} />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="space-y-3">
+                                {ttsProviders.map(p => (
+                                    <div key={p.id} className="panel flex flex-col gap-2 border-stone-200 bg-white shadow-sm">
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex-1 pr-4 min-w-0">
+                                                <div className="font-bold text-sm text-slate-800 truncate">{p.name} <span className="badge ml-2 bg-fuchsia-50 text-fuchsia-600 border-fuchsia-100">{p.type}</span></div>
+                                                <div className="text-[10px] text-slate-400 font-mono mt-1 truncate block">URL: {p.url}</div>
+                                                {p.model && <div className="text-[10px] text-slate-400 font-mono truncate block">Modell: {p.model}</div>}
+                                            </div>
+                                            <div className="flex gap-1 shrink-0">
+                                                <button onClick={() => { setEditTtsProviderId(p.id); setTtsProviderForm({...p}); }} className="btn py-1 px-2">✏️</button>
+                                                <button onClick={() => { 
+                                                    if(window.confirm('TTS-Provider löschen?')) { 
+                                                        const newList = ttsProviders.filter(x=>x.id!==p.id); 
+                                                        setTtsProviders(newList); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(newList));
+                                                        if(activeTtsProviderId===p.id && newList.length) { setActiveTtsProviderId(newList[0].id); localStorage.setItem('lumen_activeTtsProviderId', newList[0].id); } 
+                                                    } 
+                                                }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
+                                            </div>
+                                        </div>
+                                        {p.apiKey ? <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded w-max mt-1">✓ API Key hinterlegt</div> : <div className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded w-max mt-1">⚠️ Kein Key hinterlegt</div>}
+                                    </div>
+                                ))}
+
+                                <div className="panel border-fuchsia-200 bg-fuchsia-50/30 flex flex-col gap-3 shadow-sm mt-4">
+                                    <h3 className="font-bold text-xs uppercase tracking-widest text-fuchsia-800">{editTtsProviderId ? 'TTS-Provider bearbeiten' : 'Neuen TTS-Provider anlegen'}</h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div><label className="label text-fuchsia-600">Anzeigename</label><input value={ttsProviderForm.name} onChange={e=>setTtsProviderForm({...ttsProviderForm, name: e.target.value})} className="input-field bg-white border-fuchsia-100" placeholder="z.B. Mein ElevenLabs Account" /></div>
+                                        <div>
+                                            <label className="label text-fuchsia-600">TTS Engine (Format)</label>
+                                            <select value={ttsProviderForm.type} onChange={e=>{
+                                                const type = e.target.value;
+                                                let defaultUrl = ttsProviderForm.url;
+                                                if (type === 'elevenlabs') defaultUrl = 'https://api.elevenlabs.io/v1/text-to-speech';
+                                                else if (type === 'openai') defaultUrl = 'https://api.openai.com/v1/audio/speech';
+                                                else if (type === 'gemini') defaultUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent';
+                                                else if (type === 'replicate') defaultUrl = 'https://api.replicate.com/v1/models/qwen/qwen3-tts/predictions';
+                                                else if (type === 'custom_get') defaultUrl = 'http://localhost:5002/api/tts?text={text}';
+                                                else if (type === 'custom_openai') defaultUrl = 'http://localhost:8080/v1/audio/speech';
+                                                setTtsProviderForm({...ttsProviderForm, type, url: defaultUrl});
+                                            }} className="input-field bg-white border-fuchsia-100">
+                                                <option value="elevenlabs">ElevenLabs API</option>
+                                                <option value="openai">OpenAI TTS API</option>
+                                                <option value="gemini">Google Gemini TTS API</option>
+                                                <option value="replicate">Replicate API (Qwen3 / Open Source)</option>
+                                                <option value="custom_openai">Custom POST (OpenAI Kompatibel)</option>
+                                                <option value="custom_get">Custom GET (z.B. Mozilla TTS)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div><label className="label text-fuchsia-600">API Endpoint Base-URL</label><input value={ttsProviderForm.url} onChange={e=>setTtsProviderForm({...ttsProviderForm, url: e.target.value})} className="input-field bg-white border-fuchsia-100" placeholder="z.B. https://api.elevenlabs.io/v1/text-to-speech" /></div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="label text-fuchsia-600">Modell-ID (Standard: tts-1)</label>
+                                            <input type="text" value={ttsProviderForm.model || ''} onChange={e=>setTtsProviderForm({...ttsProviderForm, model: e.target.value})} className="input-field bg-white border-fuchsia-100" placeholder="z.B. tts-1 oder eleven_multilingual_v2" />
+                                        </div>
+                                        <div>
+                                            <label className="label text-fuchsia-600">API Key</label>
+                                            <input type="password" value={ttsProviderForm.apiKey} onChange={e=>setTtsProviderForm({...ttsProviderForm, apiKey: e.target.value})} className="input-field bg-white border-fuchsia-100" placeholder="xi-api-key / Bearer Token / Leer lassen falls lokal" />
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-end gap-2 mt-2 border-t border-fuchsia-100 pt-3">
+                                        {editTtsProviderId && <button onClick={()=>{setEditTtsProviderId(null); setTtsProviderForm({name:'', url:'', type:'elevenlabs', apiKey:'', model:''});}} className="btn border-fuchsia-200 text-fuchsia-600">Abbrechen</button>}
+                                        <button onClick={() => {
+                                            if(!ttsProviderForm.name || !ttsProviderForm.url) return showToast('Name und URL erforderlich');
+                                            const newTtsProviders = editTtsProviderId ? ttsProviders.map(p => p.id === editTtsProviderId ? {...ttsProviderForm, id: editTtsProviderId} : p) : [...ttsProviders, {...ttsProviderForm, id: generateId()}];
+                                            setTtsProviders(newTtsProviders); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(newTtsProviders));
+                                            setEditTtsProviderId(null); setTtsProviderForm({name:'', url:'https://api.elevenlabs.io/v1/text-to-speech', type:'elevenlabs', apiKey:'', model:''}); showToast('TTS-Provider gespeichert!');
+                                        }} className="btn-primary bg-fuchsia-600 text-white hover:bg-fuchsia-700">{editTtsProviderId ? 'Aktualisieren' : 'Hinzufügen'}</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* STT PROVIDER MANAGEMENT */}
+                            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2 mt-12">🎙️ STT (SPEECH-TO-TEXT)</h2>
+                            <div className="panel space-y-4">
+                                <p className="text-xs text-slate-500 mb-2">Hier konfigurierst die Spracherkennung (Whisper via Replicate). Der Cloudflare Worker leitet die Aufnahmen weiter.</p>
+                                <div>
+                                    <label className="label">1. Aktiver STT-Provider</label>
+                                    <select value={activeSttProviderId} onChange={(e) => {
+                                        setActiveSttProviderId(e.target.value);
+                                        localStorage.setItem('lumen_activeSttProviderId', e.target.value);
+                                        showToast('STT-Provider gewechselt');
+                                    }} className="input-field font-sans text-xs font-bold text-sky-700 border-sky-200 focus:border-sky-400 focus:ring-sky-100 bg-sky-50/30">
+                                        {sttProviders.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div className="space-y-3">
+                                {sttProviders.map(p => (
+                                    <div key={p.id} className="panel flex flex-col gap-2 border-stone-200 bg-white shadow-sm">
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex-1 pr-4 min-w-0">
+                                                <div className="font-bold text-sm text-slate-800 truncate">{p.name}</div>
+                                                <div className="text-[10px] text-slate-400 font-mono mt-1 truncate block">URL: {p.url}</div>
+                                            </div>
+                                            <div className="flex gap-1 shrink-0">
+                                                <button onClick={() => { setEditSttProviderId(p.id); setSttProviderForm({...p}); }} className="btn py-1 px-2">✏️</button>
+                                                <button onClick={() => { 
+                                                    if(window.confirm('STT-Provider löschen?')) { 
+                                                        const newList = sttProviders.filter(x=>x.id!==p.id); 
+                                                        setSttProviders(newList); localStorage.setItem('lumen_sttProviders', JSON.stringify(newList));
+                                                        if(activeSttProviderId===p.id && newList.length) { setActiveSttProviderId(newList[0].id); localStorage.setItem('lumen_activeSttProviderId', newList[0].id); } 
+                                                    } 
+                                                }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
+                                            </div>
+                                        </div>
+                                        {p.apiKey ? <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded w-max mt-1">✓ API Key hinterlegt</div> : <div className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded w-max mt-1">⚠️ Kein Key hinterlegt</div>}
+                                    </div>
+                                ))}
+
+                                <div className="panel border-sky-200 bg-sky-50/30 flex flex-col gap-3 shadow-sm mt-4">
+                                    <h3 className="font-bold text-xs uppercase tracking-widest text-sky-800">{editSttProviderId ? 'STT-Provider bearbeiten' : 'Neuen STT-Provider anlegen'}</h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div><label className="label text-sky-600">Anzeigename</label><input value={sttProviderForm.name} onChange={e=>setSttProviderForm({...sttProviderForm, name: e.target.value})} className="input-field bg-white border-sky-100" placeholder="z.B. Replicate Whisper" /></div>
+                                        <div><label className="label text-sky-600">API Endpoint URL</label><input value={sttProviderForm.url} onChange={e=>setSttProviderForm({...sttProviderForm, url: e.target.value})} className="input-field bg-white border-sky-100" placeholder="z.B. https://api.replicate.com/v1/predictions" /></div>
+                                    </div>
+                                    <div className="grid grid-cols-1 gap-3">
+                                        <div><label className="label text-sky-600">API Key</label><input type="password" value={sttProviderForm.apiKey} onChange={e=>setSttProviderForm({...sttProviderForm, apiKey: e.target.value})} className="input-field bg-white border-sky-100" placeholder="Replicate Token" /></div>
+                                    </div>
+                                    <div className="flex justify-end gap-2 mt-2 border-t border-sky-100 pt-3">
+                                        {editSttProviderId && <button onClick={()=>{setEditSttProviderId(null); setSttProviderForm({name:'', url:'https://api.replicate.com/v1/predictions', apiKey:''});}} className="btn border-sky-200 text-sky-600">Abbrechen</button>}
+                                        <button onClick={() => {
+                                            if(!sttProviderForm.name || !sttProviderForm.url) return showToast('Name und URL erforderlich');
+                                            const newSttProviders = editSttProviderId ? sttProviders.map(p => p.id === editSttProviderId ? {...sttProviderForm, id: editSttProviderId} : p) : [...sttProviders, {...sttProviderForm, id: generateId()}];
+                                            setSttProviders(newSttProviders); localStorage.setItem('lumen_sttProviders', JSON.stringify(newSttProviders));
+                                            setEditSttProviderId(null); setSttProviderForm({name:'', url:'https://api.replicate.com/v1/predictions', apiKey:''}); showToast('STT-Provider gespeichert!');
+                                        }} className="btn-primary bg-sky-600 text-white hover:bg-sky-700">{editSttProviderId ? 'Aktualisieren' : 'Hinzufügen'}</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2 mt-12">⚙️ Konfigurations-Backup (API, TTS & STT)</h2>
+                            <div className="panel space-y-4 bg-slate-50 border-slate-200">
+                                <p className="text-xs text-slate-500 leading-relaxed">Sichere hier ausschließlich deine Einstellungen (Chat-Knoten, TTS-Provider, STT-Provider, API-Keys, ausgewählte Stimmen).</p>
+                                <div className="flex gap-3">
+                                    <input type="file" accept=".json" ref={fileInputRefConfig} className="hidden" onChange={handleConfigImport}/>
+                                    <button onClick={()=>fileInputRefConfig.current?.click()} className="btn flex-1 py-3 text-slate-600 hover:bg-white border-slate-300">📥 Config Importieren</button>
+                                    <button onClick={handleConfigExport} className="btn flex-1 py-3 bg-slate-800 text-white hover:bg-slate-900 shadow-md">📤 Config Exportieren</button>
+                                </div>
+                            </div>
+
+                            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2 mt-12">System Backup (Omni-Bundle)</h2>
+                            <div className="panel space-y-4 bg-stone-100/50 border-stone-200">
+                                <p className="text-xs text-slate-500 leading-relaxed">Das Omni-Bundle vereint deine gesamte DNA, alle Direktiven und das komplette Sanctum-Gedächtnis in einer Datei.</p>
+                                <div className="flex gap-3">
+                                    <input type="file" accept=".json" ref={fileInputRefOmni} className="hidden" onChange={handleOmniImport}/>
+                                    <button onClick={()=>fileInputRefOmni.current?.click()} className="btn flex-1 py-3 text-slate-600 hover:bg-white border-stone-300">📥 Omni-Import</button>
+                                    <button onClick={handleOmniExport} className="btn flex-1 py-3 bg-slate-800 text-white hover:bg-slate-900 shadow-md">📤 Omni-Export</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* --- DNA VIEW --- */}
+                        <div className={`${activeView === 'dna' ? 'block' : 'hidden'} p-6 max-w-2xl mx-auto space-y-6 flex flex-col h-full mt-2 animate-fade-in`}>
+                            <div className="flex justify-between items-center border-b border-stone-200 pb-3">
+                                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">DNA Core Laboratory</h2>
+                                <div className="flex gap-2">
+                                    <input type="file" accept=".json" ref={fileInputRefDNA} className="hidden" onChange={(e)=>{
+                                        const f=e.target.files[0]; if(!f) return; const r=new FileReader();
+                                        r.onload=(ev)=>{ try { const importedDna = JSON.parse(ev.target.result); setDna({...importedDna, persona_name: importedDna.persona_name || "Maira"}); showToast('DNA importiert'); } catch { showToast('Fehler beim Import'); } }; 
+                                        r.readAsText(f); e.target.value=null;
+                                    }}/>
+                                    <button onClick={()=>fileInputRefDNA.current?.click()} className="btn" title="Importieren">📥</button>
+                                    <button onClick={()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(dna,null,2)],{type:'application/json'})); a.download=`LUMEN_DNA.json`; a.click(); }} className="btn" title="Exportieren">📤</button>
+                                    <button onClick={handleSaveDna} className="btn-primary">💾 Speichern</button>
+                                </div>
+                            </div>
+                            
+                            <div className="flex flex-col">
+                                <div className="flex justify-between items-end mb-1.5"><label className="label text-slate-500 mb-0 flex items-center gap-1">🔍 Prompt-Vorschau</label><button onClick={()=>setZenField('preview')} className="btn py-1 text-[8px] bg-slate-100 text-slate-600 border-slate-200">🔲 Zen</button></div>
+                                <pre className="bg-slate-900 text-slate-400 p-4 text-[10px] font-mono h-48 overflow-y-auto rounded-2xl shadow-inner whitespace-pre-wrap break-words border border-slate-800" dangerouslySetInnerHTML={getXRayHTML(sysPromptPreviewDynamic)}></pre>
+                            </div>
+
+                            <div className="panel space-y-6 bg-white/50">
+                                <div>
+                                    <label className="label text-indigo-500">Persona Identity (Name)</label>
+                                    <input value={dna.persona_name} onChange={e=>setDna({...dna,persona_name:e.target.value})} className="input-field font-bold text-indigo-700 bg-white" />
+                                    
+                                    {/* --- 🎙️ STIMMEN-PROFIL --- */}
+                                    <div className="mt-4 pt-4 border-t border-indigo-100/50">
+                                        <div className="mb-4">
+                                            <label className="flex items-center gap-2 text-xs font-bold text-fuchsia-600 cursor-pointer w-max">
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={autoTtsRegie} 
+                                                    onChange={e => {
+                                                        setAutoTtsRegie(e.target.checked);
+                                                        localStorage.setItem('lumen_auto_tts', String(e.target.checked));
+                                                    }} 
+                                                    className="accent-fuchsia-500 w-4 h-4 cursor-pointer"
+                                                /> 
+                                                AUDIO-MECHANIK (TTS) AKTIVIEREN
+                                            </label>
+                                            <p className="text-[9px] text-slate-500 mt-1">Übermittelt emotionale Regieanweisungen und Filter-Tags an die TTS-Engine.</p>
+                                        </div>
+                                    
+                                        <label className="label text-fuchsia-500 mb-2">🎙️ Stimmen-Profil (Persona Binding)</label>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                            <div>
+                                                <span className="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-0.5 block">Provider</span>
+                                                <select 
+                                                    value={dna.voice_config?.providerId || ""} 
+                                                    onChange={e=>setDna({...dna, voice_config: {...(dna.voice_config||{}), providerId: e.target.value}})} 
+                                                    className="input-field py-2 text-xs bg-white text-slate-600 font-bold"
+                                                >
+                                                    <option value="">Globaler Standard</option>
+                                                    {ttsProviders.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <span className="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-0.5 block">Voice-ID / URL</span>
+                                                <input 
+                                                    value={dna.voice_config?.voiceIdOrUrl || ""} 
+                                                    onChange={e=>setDna({...dna, voice_config: {...(dna.voice_config||{}), voiceIdOrUrl: e.target.value}})} 
+                                                    className="input-field py-2 text-xs bg-white" 
+                                                    placeholder="Fallback auf Global, wenn leer" 
+                                                />
+                                            </div>
+                                            <div className="sm:col-span-2">
+                                                <span className="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-0.5 block">Parameter (Optional)</span>
+                                                <input 
+                                                    value={dna.voice_config?.extraParams || ""} 
+                                                    onChange={e=>setDna({...dna, voice_config: {...(dna.voice_config||{}), extraParams: e.target.value}})} 
+                                                    className="input-field py-2 text-xs font-mono bg-white" 
+                                                    placeholder='z.B. {"speed": 1.05}' 
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex flex-col"><div className="flex justify-between items-end mb-1.5"><label className="label text-emerald-500">⚙️ [LUMEN KERNEL: SYSTEM & LOGIK]</label><button onClick={()=>setZenField('block1')} className="btn py-1 text-[8px] bg-emerald-50 text-emerald-700 border-emerald-100">🔲 Zen</button></div><textarea value={dna.block1_identity} onChange={e=>setDna({...dna,block1_identity:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs" spellCheck="false" /></div>
+                                <div className="flex flex-col"><div className="flex justify-between items-end mb-1.5"><label className="label text-amber-500">🎙️ [PLUGIN: UNIVERSAL AUDIO PHYSICS]</label><button onClick={()=>setZenField('audioPhysics')} className="btn py-1 text-[8px] bg-amber-50 text-amber-700 border-amber-100">🔲 Zen</button></div><textarea value={dna.audio_physics || ''} onChange={e=>setDna({...dna,audio_physics:e.target.value})} className="input-field min-h-[100px] bg-white font-mono text-xs" spellCheck="false" /></div>
+                                <div className="flex flex-col"><div className="flex justify-between items-end mb-1.5"><label className="label text-fuchsia-500">🎭 [PERSONA CARTRIDGE]</label><button onClick={()=>setZenField('block3')} className="btn py-1 text-[8px] bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100">🔲 Zen</button></div><textarea value={dna.block3_sensors} onChange={e=>setDna({...dna,block3_sensors:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs" spellCheck="false" /></div>
+                                <div className="flex flex-col hidden"><div className="flex justify-between items-end mb-1.5"><label className="label text-slate-400">Backup/Legacy (Nicht genutzt im V4.3 Prompt)</label><div className="flex gap-2"><button onClick={handleBeautifyJSON} className="btn py-1 text-[8px]">🧹 Format</button><button onClick={()=>setZenField('block4')} className="btn py-1 text-[8px] bg-slate-100 text-slate-500 border-slate-200">🔲 Zen</button></div></div><textarea value={dna.block4_skeleton} onChange={e=>setDna({...dna,block4_skeleton:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs text-slate-400" spellCheck="false" /></div>
+                            </div>
+                        </div>
+
+                        {/* --- SANCTUM VIEW --- */}
+                        <div className={`${activeView === 'sanctum' ? 'block' : 'hidden'} p-6 max-w-4xl mx-auto space-y-6 mt-4 animate-fade-in`}>
+                            <div className="flex justify-between items-center border-b border-stone-200 pb-2">
+                                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">Sanctum DB</h2>
+                                <div className="flex gap-2">
+                                    <input type="file" accept=".json" ref={fileInputRefSanctum} className="hidden" onChange={(e)=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=async(ev)=>{ try{await db.memories.bulkPut(JSON.parse(ev.target.result)); loadMemories(); showToast('SYNCED');}catch{showToast('ERROR');} }; r.readAsText(f); e.target.value=null; }}/>
+                                    <button onClick={()=>fileInputRefSanctum.current?.click()} className="btn" title="Import">📥</button>
+                                    <button onClick={async()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(await db.memories.toArray(),null,2)],{type:'application/json'})); a.download=`SANCTUM_DB.json`; a.click(); }} className="btn" title="Export">📤</button>
+                                    <button onClick={()=>{ setSanctumEditId('NEW'); setSanctumForm({titel_technisch:'', titel_poetisch:'', kategorie:'EMOTIONAL', fakt:'', emotion:'', bedeutung:'', reflexion:'', tagsString:'', is_core_memory:false}); }} className="btn-primary px-5 shadow-indigo-200">➕ NEW</button>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-20">
+                                {sanctumEditId === 'NEW' && (
+                                    <div className="panel border-emerald-200 bg-emerald-50/30 flex flex-col gap-3 md:col-span-2 shadow-emerald-100">
+                                        <div className="flex justify-between items-center"><span className="badge bg-emerald-100 text-emerald-700 border-emerald-200 uppercase font-black">Forge Entry</span><select value={sanctumForm.kategorie} onChange={e=>setSanctumForm({...sanctumForm,kategorie:e.target.value})} className="input-field w-max py-1 px-3 font-sans font-bold text-xs bg-white border-stone-200"><option>EMOTIONAL</option><option>TECHNISCH</option></select></div>
+                                        <label className="flex items-center gap-2 text-xs font-bold text-amber-600 cursor-pointer w-max"><input type="checkbox" checked={sanctumForm.is_core_memory} onChange={e=>setSanctumForm({...sanctumForm,is_core_memory:e.target.checked})} className="accent-amber-500 w-4 h-4 cursor-pointer"/> 📌 Core-Memory</label>
+                                        <div className="flex flex-col sm:flex-row gap-2"><input placeholder="ID_TECHNISCH" value={sanctumForm.titel_technisch} onChange={e=>setSanctumForm({...sanctumForm,titel_technisch:e.target.value})} className="input-field font-bold text-slate-800 bg-white border-stone-200" /><input placeholder="Titel Poetisch" value={sanctumForm.titel_poetisch} onChange={e=>setSanctumForm({...sanctumForm,titel_poetisch:e.target.value})} className="input-field text-rose-600 font-serif italic bg-white border-stone-200" /></div>
+                                        <textarea placeholder="Fakt: Was geschah?" value={sanctumForm.fakt} onChange={e=>setSanctumForm({...sanctumForm,fakt:e.target.value})} className="input-field h-16 font-sans bg-white border-stone-200" />
+                                        <div className="flex flex-col sm:flex-row gap-2"><textarea placeholder="Gefühl/Emotion" value={sanctumForm.emotion} onChange={e=>setSanctumForm({...sanctumForm,emotion:e.target.value})} className="input-field h-14 font-sans bg-white border-stone-200" /><textarea placeholder="Bedeutung/Fazit" value={sanctumForm.bedeutung} onChange={e=>setSanctumForm({...sanctumForm,bedeutung:e.target.value})} className="input-field h-14 font-sans bg-white border-stone-200" /></div>
+                                        <textarea placeholder="Persona Reflexion" value={sanctumForm.reflexion} onChange={e=>setSanctumForm({...sanctumForm,reflexion:e.target.value})} className="input-field border-indigo-200 bg-indigo-50 text-indigo-800 h-16 font-sans italic" />
+                                        <input placeholder="tags, comma, separated" value={sanctumForm.tagsString} onChange={e=>setSanctumForm({...sanctumForm,tagsString:e.target.value})} className="input-field text-slate-500 bg-white border-stone-200" />
+                                        <div className="flex justify-end gap-2 mt-2 pt-3 border-t border-emerald-100"><button onClick={()=>setSanctumEditId(null)} className="btn uppercase">Cancel</button><button onClick={handleSanctumSave} className="btn-primary bg-emerald-100 text-emerald-700 hover:bg-emerald-200 shadow-emerald-100 uppercase">Save Entry</button></div>
+                                    </div>
+                                )}
+                                {memories.map(m => {
+                                    if (sanctumEditId === m.id) {
+                                        return (
+                                            <div key={m.id} className="panel border-indigo-200 bg-indigo-50/20 flex flex-col gap-3 md:col-span-2">
+                                                <div className="flex justify-between items-center"><span className="badge bg-indigo-100 text-indigo-700 uppercase font-black">Editing {m.titel_technisch}</span><select value={sanctumForm.kategorie} onChange={e=>setSanctumForm({...sanctumForm,kategorie:e.target.value})} className="input-field w-max py-1 px-3 font-sans font-bold text-xs bg-white border-stone-200"><option>EMOTIONAL</option><option>TECHNISCH</option><option>LEGACY</option></select></div>
+                                                <label className="flex items-center gap-2 text-xs font-bold text-amber-600 cursor-pointer w-max"><input type="checkbox" checked={sanctumForm.is_core_memory} onChange={e=>setSanctumForm({...sanctumForm,is_core_memory:e.target.checked})} className="accent-amber-500 w-4 h-4 cursor-pointer"/> 📌 Core-Memory</label>
+                                                <div className="flex flex-col sm:flex-row gap-2"><input placeholder="ID_TECHNISCH" value={sanctumForm.titel_technisch} onChange={e=>setSanctumForm({...sanctumForm,titel_technisch:e.target.value})} className="input-field font-bold text-slate-800 bg-white border-stone-200" /><input placeholder="Titel Poetisch" value={sanctumForm.titel_poetisch} onChange={e=>setSanctumForm({...sanctumForm,titel_poetisch:e.target.value})} className="input-field text-rose-600 font-serif italic bg-white border-stone-200" /></div>
+                                                <textarea placeholder="Fakt" value={sanctumForm.fakt} onChange={e=>setSanctumForm({...sanctumForm,fakt:e.target.value})} className="input-field h-16 font-sans bg-white border-stone-200" />
+                                                <div className="flex flex-col sm:flex-row gap-2"><textarea placeholder="Gefühl/Emotion" value={sanctumForm.emotion} onChange={e=>setSanctumForm({...sanctumForm,emotion:e.target.value})} className="input-field h-14 font-sans bg-white border-stone-200" /><textarea placeholder="Bedeutung" value={sanctumForm.bedeutung} onChange={e=>setSanctumForm({...sanctumForm,bedeutung:e.target.value})} className="input-field h-14 font-sans bg-white border-stone-200" /></div>
+                                                <textarea placeholder="Reflexion" value={sanctumForm.reflexion} onChange={e=>setSanctumForm({...sanctumForm,reflexion:e.target.value})} className="input-field border-indigo-200 bg-indigo-50/80 text-indigo-800 h-16 font-sans italic" />
+                                                <input placeholder="tags, comma, separated" value={sanctumForm.tagsString} onChange={e=>setSanctumForm({...sanctumForm,tagsString:e.target.value})} className="input-field text-slate-500 bg-white border-stone-200" />
+                                                <div className="flex justify-end gap-2 mt-2 pt-3 border-t border-indigo-100"><button onClick={()=>setSanctumEditId(null)} className="btn uppercase">Abort</button><button onClick={handleSanctumSave} className="btn-primary uppercase">Commit Update</button></div>
+                                            </div>
+                                        );
+                                    }
+
+                                    const isLegacy = m.titel_technisch?.includes('LEGACY') || m.kategorie === 'LEGACY';
+                                    const legacyClasses = 'border-2 border-amber-500 bg-amber-50/10 shadow-md shadow-amber-900/20';
+                                    const defaultClasses = m.is_core_memory ? 'border-amber-200 bg-amber-50/10 shadow-md' : 'border-stone-100 bg-white';
+                                    const isExpanded = !!expandedCards[m.id];
+                                    
+                                    return (
+                                        <div key={m.id} className={`panel flex flex-col h-full relative group ${isLegacy ? legacyClasses : defaultClasses}`}>
+                                            {isLegacy && <div className="text-amber-600 font-bold text-[10px] tracking-widest uppercase mb-1 shrink-0">[ RELIKT DER AHNEN ]</div>}
+                                            <div className="flex justify-between items-start shrink-0">
+                                                <div className="flex gap-1.5 flex-wrap items-center">
+                                                    <span className="text-indigo-700 font-mono text-xs uppercase font-bold tracking-tight">{m.titel_technisch || 'UNKNOWN'}</span>
+                                                    {m.is_core_memory && <span className="badge-core">📌 Core</span>}
+                                                    {m.kategorie === 'TECHNISCH' && <span className="badge bg-slate-100 text-slate-500 border-slate-200">Tech</span>}
+                                                </div>
+                                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white border border-stone-100 rounded-lg p-0.5 shadow-sm">
+                                                    <button onClick={()=>{setSanctumEditId(m.id); setSanctumForm({...m, tagsString:m.tags?.join(', ')||''});}} className="text-slate-400 hover:text-indigo-500 px-1.5 py-0.5 transition-colors">✏️</button>
+                                                    <button onClick={async()=>{if(confirm('ID: '+m.titel_technisch+' löschen?')) {await db.memories.delete(m.id); loadMemories();}}} className="text-slate-400 hover:text-rose-500 px-1.5 py-0.5 transition-colors">🗑️</button>
+                                                </div>
+                                            </div>
+                                            {m.titel_poetisch && <div className="text-rose-500 italic text-sm font-serif leading-snug mt-0.5 shrink-0">{m.titel_poetisch}</div>}
+                                            
+                                            {/* V3.28: Stabilized Expandable Container */}
+                                            <div 
+                                                className={`flex-1 flex flex-col overflow-hidden transition-all duration-400 cursor-pointer mt-2 relative ${isExpanded ? 'max-h-[3000px]' : 'max-h-[100px] hover:max-h-[250px]'}`}
+                                                onClick={() => setExpandedCards(prev => ({...prev, [m.id]: !prev[m.id]}))}
+                                                title="Klicken zum Erweitern/Schließen"
+                                            >
+                                                <div className="text-[13px] text-slate-600"><strong className="text-slate-400 uppercase text-[9px] tracking-wider block mb-0.5 font-mono">Fakt</strong>{m.fakt}</div>
+                                                {m.emotion && <div className="text-[13px] text-slate-600 mt-1"><strong className="text-slate-400 uppercase text-[9px] tracking-wider block mb-0.5 font-mono">Gefühl</strong>{m.emotion}</div>}
+                                                {m.bedeutung && <div className="text-[13px] text-slate-600 mt-1"><strong className="text-slate-400 uppercase text-[9px] tracking-wider block mb-0.5 font-mono">Bedeutung</strong>{m.bedeutung}</div>}
+                                                {m.reflexion && <div className="mt-2 bg-indigo-50/80 p-3 rounded-2xl text-indigo-800 italic text-xs border border-indigo-100/50 whitespace-pre-wrap">"{m.reflexion}"</div>}
+                                                
+                                                {!isExpanded && (
+                                                    <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white/90 to-transparent flex items-end justify-center pb-1">
+                                                        <span className="text-slate-300 text-[10px] uppercase font-bold tracking-widest leading-none">•••</span>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {m.tags?.length > 0 && <div className="flex gap-1 mt-2 flex-wrap shrink-0">{m.tags.map((t,i)=><span key={i} className="text-slate-400 text-[10px] lowercase font-mono">#{t}</span>)}</div>}
+                                            
+                                            {/* V3.28: Fixed Buttons */}
+                                            <div className="flex gap-2 mt-3 pt-3 border-t border-stone-100 shrink-0 w-full mt-auto">
+                                                <button onClick={()=>{
+                                                    if(!activeDesks.find(d => d.titel_technisch === m.titel_technisch)) {
+                                                        setActiveDesks(prev => [...prev, {...m, isDirty: false}]);
+                                                    }
+                                                    setActiveView('chat');
+                                                    showToast('Akte auf Schreibtisch gelegt');
+                                                }} className="btn flex-1 text-[9px] bg-slate-50 border-slate-200 flex items-center justify-center gap-1">📌 AUF DEN SCHREIBTISCH</button>
+                                                
+                                                <button onClick={() => handleOptimizeArchivar(m)} disabled={optimizingId === m.id} className="btn flex-1 text-[9px] bg-indigo-50 border-indigo-200 text-indigo-700 flex items-center justify-center gap-1 disabled:opacity-50">
+                                                    {optimizingId === m.id ? '⏳ OPTIMIERT...' : '🪄 ARCHIVAR'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </main>
+
+                    {/* --- INPUT AREA --- */}
+                    <div className={`${['chat', 'sessel', 'oase', 'werkbank', 'balkon'].includes(activeView) ? 'block' : 'hidden'} shrink-0 border-t border-stone-200 bg-white/90 backdrop-blur-md pb-safe`}>
+                        {/* V4.4: MINI-TTS-PLAYER */}
+                        {playingMsgId && window.currentAudio && (
+                            <div className="max-w-4xl mx-auto flex items-center gap-3 bg-indigo-900 text-indigo-100 px-4 py-2 rounded-t-xl text-[10px] font-mono shadow-md mt-1 mx-2 sm:mx-6">
+                                <button onClick={() => {
+                                    if (window.currentAudio.paused) window.currentAudio.play();
+                                    else window.currentAudio.pause();
+                                }} className="hover:text-white transition-colors text-sm w-6 flex justify-center">
+                                    {audioState.isPlaying ? '⏸' : '▶️'}
+                                </button>
+                                <input 
+                                    type="range" 
+                                    min="0" 
+                                    max={audioState.duration || 100} 
+                                    value={audioState.currentTime || 0} 
+                                    onChange={(e) => {
+                                        if (window.currentAudio) window.currentAudio.currentTime = Number(e.target.value);
+                                    }} 
+                                    className="flex-1 h-1 bg-indigo-950 rounded-lg appearance-none cursor-pointer accent-indigo-400" 
+                                />
+                                <span className="w-[60px] text-right opacity-80 whitespace-nowrap">
+                                    {Math.floor((audioState.currentTime || 0)/60)}:{(Math.floor(audioState.currentTime || 0)%60).toString().padStart(2, '0')} / {Math.floor((audioState.duration || 0)/60)}:{(Math.floor(audioState.duration || 0)%60).toString().padStart(2, '0')}
+                                </span>
+                            </div>
+                        )}
+
+                        <div className="p-2 sm:px-4 sm:py-3">
+                            <div className="max-w-4xl mx-auto flex flex-col gap-1">
+                                <div className="flex gap-2 items-end">
+                                    {/* V4.4: API PROTOKOLL BUTTON */}
+                                    <button 
+                                        onClick={() => setShowApiLog(true)} 
+                                        disabled={!lastApiPayload}
+                                        className="btn bg-white text-slate-400 border-stone-200 hover:text-indigo-500 hover:bg-stone-50 transition-colors shadow-sm shrink-0 flex items-center justify-center text-sm py-3 px-3 disabled:opacity-50"
+                                        title="API-Protokoll anzeigen"
+                                    >
+                                        🔍
+                                    </button>
+
+                                    <button 
+                                        onClick={isRecording ? stopRecording : startRecording} 
+                                        disabled={!!loadingStatus}
+                                        className={`px-4 py-3 rounded-2xl border transition-all shadow-sm shrink-0 flex items-center justify-center text-lg ${isRecording ? 'bg-rose-100 text-rose-600 border-rose-300 animate-pulse' : 'bg-white text-slate-500 border-stone-200 hover:bg-stone-100 disabled:opacity-50'}`}
+                                        title="Speech-to-Text (Whisper via Replicate)"
+                                    >
+                                        {isRecording ? '🛑' : '🎤'}
+                                    </button>
+                                    
+                                    <textarea 
+                                        ref={textareaRef}
+                                        value={inputText} 
+                                        onChange={(e) => {
+                                            setInputText(e.target.value);
+                                            e.target.style.height = 'auto';
+                                            e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
+                                        }} 
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && !e.shiftKey) {
+                                                e.preventDefault();
+                                                handleSendMessage();
+                                            }
+                                        }} 
+                                        disabled={!!loadingStatus || isRecording} 
+                                        className="input-field flex-1 py-3 px-4 font-sans font-medium bg-white disabled:bg-stone-100 disabled:text-slate-400 resize-none overflow-y-auto max-h-[150px]" 
+                                        rows="1"
+                                        style={{ minHeight: '46px' }}
+                                        placeholder={loadingStatus ? loadingStatus : (isRecording ? "HÖRE ZU..." : "INPUT...")} 
+                                    />
+                                    <button onClick={handleSendMessage} disabled={!inputText.trim() || !!loadingStatus || isRecording} className="btn-primary px-6 disabled:opacity-50 py-3.5 shadow-indigo-200 text-sm uppercase">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
