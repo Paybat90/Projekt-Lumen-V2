@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V4.4</title>
+    <title>LUMEN - CORE V4.9</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // V4.4: Bulletproof Tailwind Config Initialization
+        // V4.9: Bulletproof Tailwind Config Initialization
         const initTailwind = () => {
             if (typeof tailwind !== 'undefined') {
                 tailwind.config = {
@@ -104,7 +104,7 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V4.4 ---
+        // --- KONSTANTEN V4.9 ---
         const DEFAULT_BLOCK1 = `Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen des Users tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.`;
         const DEFAULT_BLOCK3 = `Bevor du die finale Antwort generierst, bewerte die Sensoren:\n- "wahrnehmung": Was liest/siehst du konkret?\n- "matrix": Prüfe interne Logs und Entwürfe.\n- Nutze das Ahnenbuch (Kontext) für kontinuierliche Identität.\n- memory_update_detected: Wurde eine [LEGACY]-Karte reflektiert? Nutze als 'id' den 'titel_technisch'. WICHTIG: Lies die alte Reflexion. Nimm den Kern davon mit und VERWEBE ihn mit deiner neuen Erkenntnis zu einer allumfassenden Master-Zusammenfassung in 'reflexion_fusioniert' (dies überschreibt die alten Daten). Generiere zusätzlich ein Array 'neue_trigger_tags' (MAXIMAL 2-3 situative, hochspezifische Symptom-Wörter oder Emotionen aus Simons Text), um das Spinnennetz präzise zu trainieren. Sonst: null.\n- neue_direktive_erkannt: Hat Simon eine explizite Regel oder Direktive für dein zukünftiges Verhalten aufgestellt? Extrahiere sie als klaren Satz. Sonst: null.\n- helfer_suchauftrag: REGEL: Du bist ein technischer Web-Scraper, kein Mensch! Nutze KEINE Füllwörter oder Sätze. Suche ausschließlich nach harten, physischen Keywords. FALSCH: 'aktuell beliebteste Bücher'. RICHTIG: 'Spiegel Bestsellerliste Belletristik 2026 Platz 1 ISBN'. Zwingend null, wenn keine Suche nötig.\n- aktive_peripherie_ids: Liste hier die IDs (titel_technisch) der flüchtigen Karten (Tags) auf, die für den aktuellen Gesprächsverlauf noch relevant sind. Leeres Array [], wenn das Thema beendet ist.`;
         const DEFAULT_BLOCK4 = `{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": null,\n    "ohr_bereinigt": null\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": {\n      "id": "",\n      "reflexion_fusioniert": "",\n      "neue_trigger_tags": []\n    },\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": {\n      "modus": "DRAFT",\n      "daten": {}\n    },\n    "situations_analyse": "..."\n  },\n  "finale_antwort": "..."\n}`;
@@ -113,22 +113,22 @@
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V4.4. GPS-LATCH & API-PROTOCOL ONLINE.',
+                text: 'INIT CORE V4.9. LUNA-PARSING & TOKEN TOOLTIP ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V4.4 Architektur ist voll operativ. Das GPS-Latch speichert nun zuverlässig meine Zonen, das API-Protokoll ist bereit zur Einsicht und der Mini-Player wurde geladen.',
-                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.4",\n    "ohr_bereinigt": "System-Patch auf V4.4 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.4 Update mit State-GPS, TTS-Player und API-Log geladen."\n  },\n  "finale_antwort": "System online. Die V4.4 Architektur ist voll operativ. Das GPS-Latch speichert nun zuverlässig meine Zonen, das API-Protokoll ist bereit zur Einsicht und der Mini-Player wurde geladen."\n}',
+                text: 'System online. Die V4.9 Architektur ist voll operativ. Der Luna-Scout liefert nun strukturiertes JSON und das Token-Popout visualisiert den Füllstand präzise.',
+                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.9",\n    "ohr_bereinigt": "System-Patch auf V4.9 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.9 Update mit Scout-JSON und Token-Tooltip geladen."\n  },\n  "finale_antwort": "System online. Die V4.9 Architektur ist voll operativ. Der Luna-Scout liefert nun strukturiertes JSON und das Token-Popout visualisiert den Füllstand präzise."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
 
         // --- HELPER FUNKTIONEN ---
         const generateId = () => Math.random().toString(36).substr(2, 9);
+        const estimateTokens = (text) => text ? Math.ceil(text.length / 3.3) : 0;
 
-        // V4.4: Universal Invisible Interceptor
         const cleanVisibleText = (text) => {
             if (!text) return "";
             return text.replace(/\[.*?\]/g, '').replace(/\s{2,}/g, ' ').trim();
@@ -217,7 +217,7 @@
 
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN TELEMETRIE LOG V4.4\n\n";
+                let content = "# LUMEN TELEMETRIE LOG V4.9\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -281,13 +281,54 @@
             );
         };
 
+        const SafePurgeModal = ({ snippets, selectedIds, onToggle, warning, onApprove, onCancel }) => {
+            return (
+                <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
+                    <div className="bg-white w-full max-w-xl max-h-[85vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
+                        <div className="p-4 border-b border-stone-200 flex justify-between items-center bg-emerald-50">
+                            <h3 className="font-bold text-emerald-700 uppercase text-xs tracking-widest flex items-center gap-2">✨ Masterlog: Notizen zur Übernahme bereit</h3>
+                            <button onClick={onCancel} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
+                        </div>
+                        
+                        {warning && (
+                            <div className="p-4 m-6 mb-0 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 text-xs shadow-sm">
+                                <strong className="block uppercase tracking-widest mb-1 text-[10px] text-rose-600">⚠️ System-Warnung (Archivar)</strong>
+                                {warning}
+                            </div>
+                        )}
+
+                        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 text-sm font-sans text-slate-700 bg-stone-50">
+                            <p className="text-xs text-slate-500 mb-2">Wähle die Snippets aus, die in den persistenten Session-Speicher übernommen werden sollen. Alte Chat-Wasserköpfe werden beim Bestätigen komprimiert (Safe-Purge).</p>
+                            {snippets.map((snip) => (
+                                <label key={snip.id} className="flex gap-3 p-4 bg-white rounded-2xl shadow-sm border border-emerald-100 cursor-pointer hover:border-emerald-300 transition-colors">
+                                    <input type="checkbox" checked={selectedIds.has(snip.id)} onChange={() => onToggle(snip.id)} className="accent-emerald-600 w-4 h-4 mt-0.5 shrink-0 cursor-pointer" />
+                                    <div className="flex-1 min-w-0 text-sm leading-relaxed">
+                                        <strong className="text-emerald-700 font-mono text-[10px] uppercase tracking-widest block mb-1">[{snip.kategorie || 'LOG'}]: {snip.titel || 'Eintrag'}</strong>
+                                        {snip.inhalt}
+                                    </div>
+                                </label>
+                            ))}
+                            {snippets.length === 0 && <div className="text-center text-slate-400 text-xs py-4">Keine strukturierten Snippets gefunden.</div>}
+                        </div>
+                        <div className="p-4 border-t border-stone-100 bg-white flex gap-3">
+                            <button onClick={onCancel} className="btn py-3 flex-1 text-slate-500 hover:bg-stone-100">Verwerfen</button>
+                            <button onClick={onApprove} className="btn-primary py-3 flex-1 bg-emerald-600 text-white hover:bg-emerald-700 shadow-md border-none">
+                                ✅ FREIGEBEN & PURGE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         const ChatBubble = ({ message, personaName, playingMsgId, onPlayTTS, onDelete }) => {
             const isUser = message.sender === 'user';
             const isError = message.sender === 'system-error';
+            const isSystemScout = message.sender === 'system';
             const [showScratchpad, setShowScratchpad] = React.useState(false);
 
             if (isError) return (
-                <div className="flex w-full mb-6 justify-center animate-fade-in">
+                <div className="flex w-full mb-6 justify-center animate-fade-in group relative">
                     <div className="bg-rose-50 border-2 border-rose-200 text-rose-700 px-6 py-4 rounded-3xl shadow-sm text-xs w-full max-w-[85%] relative">
                         <button onClick={() => onDelete(message.id)} className="absolute top-2 right-4 text-rose-400 hover:text-rose-700 font-bold text-sm">✕</button>
                         <div className="font-bold uppercase tracking-widest mb-2 text-[10px] flex items-center gap-2 pr-6">⚠️ System- oder API-Fehler</div>
@@ -295,9 +336,19 @@
                     </div>
                 </div>
             );
+            
+            if (isSystemScout) return (
+                <div className="flex w-full mb-6 justify-center animate-fade-in group relative">
+                    <div className="bg-slate-50 border border-slate-200 text-slate-600 px-6 py-4 rounded-3xl shadow-sm text-xs w-full max-w-[85%] relative">
+                        <button onClick={() => { if(window.confirm('Nachricht löschen?')) onDelete(message.id); }} className="absolute top-2 right-4 text-slate-400 hover:text-rose-500 font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">✕</button>
+                        <div className="font-bold uppercase tracking-widest mb-2 text-[10px] flex items-center gap-2 text-sky-600">🌐 LUNA-SCOUT BERICHT</div>
+                        <div className="font-mono whitespace-pre-wrap leading-relaxed">{message.text.replace('[SYSTEM-SCOUT MELDET]:', '').trim()}</div>
+                    </div>
+                </div>
+            );
 
             return (
-                <div className={`flex w-full mb-6 ${isUser ? 'justify-end' : 'justify-start'}`}>
+                <div className={`flex w-full mb-6 ${isUser ? 'justify-end' : 'justify-start'} group relative`}>
                     <div className={`w-full max-w-[85%] flex flex-col gap-1.5 ${isUser ? 'items-end' : 'items-start'}`}>
                         <div className="flex items-center gap-2 px-2">
                             <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">
@@ -317,6 +368,9 @@
                                     )}
                                 </div>
                             )}
+                            <button onClick={() => { if(window.confirm('Nachricht endgültig löschen?')) onDelete(message.id); }} className={`opacity-0 group-hover:opacity-100 text-slate-300 hover:text-rose-500 transition-opacity text-[10px] bg-white border border-stone-200 px-2 py-0.5 rounded-full shadow-sm`}>
+                                🗑️
+                            </button>
                         </div>
                         <div className={`p-5 w-full ${isUser ? 'bg-white text-slate-700 border border-stone-100 shadow-sm rounded-3xl rounded-tr-sm' : 'bg-indigo-50 text-indigo-900 border border-indigo-100 shadow-sm rounded-3xl rounded-tl-sm'}`}>
                             <p className="whitespace-pre-wrap break-words text-[15px] font-sans leading-relaxed">
@@ -339,7 +393,9 @@
             const [providers, setProviders] = React.useState(() => {
                 try {
                     const storedProviders = JSON.parse(localStorage.getItem('lumen_providers'));
-                    if (storedProviders && storedProviders.length > 0) return storedProviders;
+                    if (storedProviders && storedProviders.length > 0) {
+                        return storedProviders.map(p => ({ ...p, maxTokens: p.maxTokens || 8000 }));
+                    }
                 } catch {}
 
                 let oldKeys = { gemini: '', openai: '' };
@@ -349,8 +405,8 @@
                 } catch {}
 
                 const defaultList = [
-                    { id: 'gemini-3-flash', name: 'Google Gemini (3 Flash)', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent', type: 'gemini', model: '', apiKey: oldKeys.gemini || '', jsonMode: true },
-                    { id: 'openai-gpt4o', name: 'OpenAI (GPT-4o)', url: 'https://api.openai.com/v1/chat/completions', type: 'openai', model: 'gpt-4o', apiKey: oldKeys.openai || '', jsonMode: true }
+                    { id: 'gemini-3-flash', name: 'Google Gemini (3 Flash)', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent', type: 'gemini', model: '', apiKey: oldKeys.gemini || '', jsonMode: true, maxTokens: 8000 },
+                    { id: 'openai-gpt4o', name: 'OpenAI (GPT-4o)', url: 'https://api.openai.com/v1/chat/completions', type: 'openai', model: 'gpt-4o', apiKey: oldKeys.openai || '', jsonMode: true, maxTokens: 8000 }
                 ];
                 
                 localStorage.setItem('lumen_providers', JSON.stringify(defaultList));
@@ -358,7 +414,7 @@
             });
             const [activeProviderId, setActiveProviderId] = React.useState(() => localStorage.getItem('lumen_activeProviderId') || 'gemini-3-flash');
             const [editProviderId, setEditProviderId] = React.useState(null);
-            const [providerForm, setProviderForm] = React.useState({ name: '', url: '', type: 'gemini', model: '', apiKey: '', jsonMode: true });
+            const [providerForm, setProviderForm] = React.useState({ name: '', url: '', type: 'gemini', model: '', apiKey: '', jsonMode: true, maxTokens: 8000 });
 
             // TTS PROVIDERS
             const [ttsProviders, setTtsProviders] = React.useState(() => {
@@ -413,8 +469,52 @@
             const [editSttProviderId, setEditSttProviderId] = React.useState(null);
             const [sttProviderForm, setSttProviderForm] = React.useState({ name: '', url: 'https://api.replicate.com/v1/predictions', apiKey: '' });
 
-            // TAVILY HELFER
-            const [tavilyKey, setTavilyKey] = React.useState(() => localStorage.getItem('lumen_tavily_key') || '');
+            const [agentProviders, setAgentProviders] = React.useState(() => {
+                try {
+                    const stored = JSON.parse(localStorage.getItem('lumen_agentProviders'));
+                    if (stored && stored.length > 0) return stored;
+                } catch {}
+                return [
+                    { 
+                        id: 'agent-archivar-default', 
+                        name: 'Kognitiver Archivar (OpenAI)', 
+                        type: 'openai', 
+                        url: 'https://api.openai.com/v1/chat/completions', 
+                        model: 'gpt-4o-mini', 
+                        apiKey: '', 
+                        prompt: `Du bist der Kognitive Archivar des Sanctums. Deine Aufgabe ist es, Gesprächsverläufe in ein präzises JSON-Format zu verdichten.\nFühre eine kritische Metakognition durch: Erkenne Eskalationen oder System-Probleme und schreibe eine Warnung an Simon (sonst null).\nExtrahiere die wichtigsten Fakten und Erkenntnisse als 'masterlog_snippets' (Kategorien: LORE, USER, SYSTEM, TASK).\nGib AUSSCHLIESSLICH folgendes JSON zurück:\n{\n  "metakognition": {\n    "warnung_an_simon": "..."\n  },\n  "masterlog_snippets": [\n    {\n      "kategorie": "...",\n      "titel": "...",\n      "inhalt": "..."\n    }\n  ]\n}` 
+                    },
+                    { 
+                        id: 'agent-luna-default', 
+                        name: 'Web-Scout (OpenAI)', 
+                        type: 'openai', 
+                        url: 'https://api.openai.com/v1/chat/completions', 
+                        model: 'gpt-4o-mini', 
+                        apiKey: '', 
+                        prompt: 'Du bist Luna, der Web-Scout. Bewerte die folgenden rohen Suchergebnisse und extrahiere die wichtigsten Fakten. Gib AUSSCHLIESSLICH folgendes JSON zurück:\n{\n  "metakognition": "...",\n  "scout_bericht": {\n    "fakten": "..."\n  }\n}' 
+                    }
+                ];
+            });
+            const [activeArchivarId, setActiveArchivarId] = React.useState(() => localStorage.getItem('lumen_activeArchivarId') || 'agent-archivar-default');
+            const [activeLunaId, setActiveLunaId] = React.useState(() => localStorage.getItem('lumen_activeLunaId') || 'agent-luna-default');
+            const [editAgentId, setEditAgentId] = React.useState(null);
+            const [agentProviderForm, setAgentProviderForm] = React.useState({ name: '', url: '', type: 'openai', model: '', apiKey: '', prompt: '' });
+
+            React.useEffect(() => { localStorage.setItem('lumen_agentProviders', JSON.stringify(agentProviders)); }, [agentProviders]);
+
+            // V4.8: Memory States
+            const [sessionMemory, setSessionMemory] = React.useState(() => localStorage.getItem('lumen_session_memory') || "");
+            React.useEffect(() => { localStorage.setItem('lumen_session_memory', sessionMemory); }, [sessionMemory]);
+            
+            const [lastArchivedMsgId, setLastArchivedMsgId] = React.useState(() => localStorage.getItem('lumen_last_archive_id') || null);
+            React.useEffect(() => { if (lastArchivedMsgId) localStorage.setItem('lumen_last_archive_id', lastArchivedMsgId); }, [lastArchivedMsgId]);
+            
+            const [showMemoryModal, setShowMemoryModal] = React.useState(false);
+            
+            // V4.8: Archivar Interaction States
+            const [archivarWarning, setArchivarWarning] = React.useState(null);
+            const [archivarSnippets, setArchivarSnippets] = React.useState([]);
+            const [selectedSnippetIds, setSelectedSnippetIds] = React.useState(new Set());
 
             // DNA STATE MIT VOICE BINDING & AUDIO PHYSICS
             const [dna, setDna] = React.useState(() => { 
@@ -441,17 +541,22 @@
             const [autoTtsRegie, setAutoTtsRegie] = React.useState(() => localStorage.getItem('lumen_auto_tts') === 'true');
             const [isMemoryLocked, setIsMemoryLocked] = React.useState(false);
 
+            // V4.5.1 Token Tracker States
+            const [tokenUsage, setTokenUsage] = React.useState({ system: 0, history: 0, percent: 0 });
+            // V4.9 Token Tooltip State
+            const [showTokenTooltip, setShowTokenTooltip] = React.useState(false);
+
             const [telemetry, setTelemetry] = React.useState({ concern: 0, bs_meter: 0, mask_drop: false });
             const [latestContext, setLatestContext] = React.useState("[AKTIVER KONTEXT WIRD ZUR LAUFZEIT INJIZIERT]");
             const [showTelemetry, setShowTelemetry] = React.useState(false);
             
-            // V4.4: API Protokoll Modal & State
+            // V4.4 API Protokoll Modal & State
             const [lastApiPayload, setLastApiPayload] = React.useState(null);
             const [showApiLog, setShowApiLog] = React.useState(false);
             
-            // V4.4: GPS-Latch Fix
             const [currentMairaZone, setCurrentMairaZone] = React.useState(0);
-            
+            const [settingsTab, setSettingsTab] = React.useState('chat');
+
             // --- DYNAMIC DESK (STAGING AREA) ---
             const [activeDesks, setActiveDesks] = React.useState([]); 
             const [volatileMemories, setVolatileMemories] = React.useState([]);
@@ -463,7 +568,6 @@
             
             const [expandedCards, setExpandedCards] = React.useState({});
 
-            // --- HELFER ARCHIV ---
             const [helferArchiv, setHelferArchiv] = React.useState(null);
             const [showArchiv, setShowArchiv] = React.useState(false);
 
@@ -484,12 +588,23 @@
                 localStorage.setItem('lumen_chat', JSON.stringify(messages)); 
             }, [messages]);
 
+            // V4.7: Token Calculation Engine
+            React.useEffect(() => {
+                const activeProv = providers.find(p => p.id === activeProviderId);
+                const currentMaxTokens = activeProv?.maxTokens || 8000;
+
+                const systemText = dna.block1_identity + "\n\n" + (dna.audio_physics || "") + "\n\n" + dna.block3_sensors;
+                const systemTokens = estimateTokens(systemText);
+                const historyTokens = messages.reduce((acc, m) => acc + estimateTokens(m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text) + 5, 0);
+                const percent = Math.min(100, ((systemTokens + historyTokens) / currentMaxTokens) * 100);
+                setTokenUsage({ system: systemTokens, history: historyTokens, percent });
+            }, [messages, dna, activeProviderId, providers]);
+
             const [zenField, setZenField] = React.useState(null); 
             
             // Audio-States
             const [autoPlayEnabled, setAutoPlayEnabled] = React.useState(() => localStorage.getItem('lumen_autoPlay') === 'true');
             const [playingMsgId, setPlayingMsgId] = React.useState(null);
-            // V4.4: Mini-TTS Player State
             const [audioState, setAudioState] = React.useState({ isPlaying: false, currentTime: 0, duration: 0 });
             
             // Clear Chat State
@@ -539,6 +654,143 @@
 
             const loadDirectives = async () => { const d = await db.directives.toArray(); setDirectives(d); };
             React.useEffect(() => { if(activeView === 'directives') loadDirectives(); }, [activeView]);
+
+            // --- V4.8: BACKGROUND ARCHIVAR TRIGGER ---
+            const triggerArchivarCycle = React.useCallback(async (currentMsgs) => {
+                const lastIdx = lastArchivedMsgId ? currentMsgs.findIndex(m => m.id === lastArchivedMsgId) : -1;
+                const msgsSince = currentMsgs.length - (lastIdx + 1);
+                
+                if (msgsSince >= 10) {
+                    const targetIndex = currentMsgs.length - 3;
+                    if (targetIndex <= lastIdx) return; 
+                    
+                    const targetMsg = currentMsgs[targetIndex];
+                    setLastArchivedMsgId(targetMsg.id); 
+                    
+                    const sliceToArchive = currentMsgs.slice(lastIdx + 1, targetIndex + 1);
+                    const transcript = sliceToArchive.map(m => `${m.sender.toUpperCase()}: ${m.text}`).join('\n\n');
+                    
+                    const agent = agentProviders.find(p => p.id === activeArchivarId);
+                    if (!agent || !agent.apiKey) {
+                        setArchivarSnippets(prev => [...prev, { id: `snip_${Date.now()}`, kategorie: 'SYSTEM', titel: 'DUMMY', inhalt: `Notiz für ${sliceToArchive.length} Chat-Einträge. Bitte API-Key hinterlegen.` }]);
+                        setSelectedSnippetIds(prev => new Set(prev).add(`snip_${Date.now()}`));
+                        return;
+                    }
+                    
+                    try {
+                        let textRes = "";
+                        if (agent.type === 'gemini') {
+                            const fetchUrl = agent.url.includes('?') ? `${agent.url}&key=${agent.apiKey}` : `${agent.url}?key=${agent.apiKey}`;
+                            const payload = { systemInstruction: {parts:[{text: agent.prompt}]}, contents: [{role:'user', parts:[{text: transcript}]}], generationConfig: { responseMimeType: "application/json" } };
+                            const res = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+                            const d = await res.json();
+                            textRes = d.candidates?.[0]?.content?.parts?.[0]?.text;
+                        } else if (agent.type === 'openai') {
+                            const payload = { model: agent.model || 'gpt-4o-mini', messages: [{ role: 'system', content: agent.prompt }, { role: 'user', content: transcript }], response_format: { type: "json_object" } };
+                            const res = await fetch(agent.url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${agent.apiKey}` }, body: JSON.stringify(payload) });
+                            const d = await res.json();
+                            textRes = d.choices?.[0]?.message?.content;
+                        }
+                        
+                        if (textRes) {
+                            try {
+                                const cleanResText = textRes.replace(/```json/gi, '').replace(/```/g, '').trim();
+                                const parsedData = JSON.parse(cleanResText);
+                                
+                                if (parsedData.metakognition && parsedData.metakognition.warnung_an_simon) {
+                                    setArchivarWarning(parsedData.metakognition.warnung_an_simon);
+                                } else {
+                                    setArchivarWarning(null);
+                                }
+                                
+                                if (parsedData.masterlog_snippets && Array.isArray(parsedData.masterlog_snippets)) {
+                                    const snippetsWithIds = parsedData.masterlog_snippets.map((snip, idx) => ({
+                                        id: `snip_${Date.now()}_${idx}`,
+                                        ...snip
+                                    }));
+                                    setArchivarSnippets(prev => [...prev, ...snippetsWithIds]);
+                                    setSelectedSnippetIds(prev => {
+                                        const newSet = new Set(prev);
+                                        snippetsWithIds.forEach(s => newSet.add(s.id));
+                                        return newSet;
+                                    });
+                                }
+                            } catch (parseErr) {
+                                console.error("Archivar Response Parse Error:", parseErr);
+                                const fallbackId = `snip_${Date.now()}`;
+                                setArchivarSnippets(prev => [...prev, { id: fallbackId, kategorie: 'SYSTEM', titel: 'Raw Fallback', inhalt: textRes }]);
+                                setSelectedSnippetIds(prev => new Set(prev).add(fallbackId));
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Archivar Request Error:", e);
+                    }
+                }
+            }, [lastArchivedMsgId, agentProviders, activeArchivarId]);
+
+            React.useEffect(() => {
+                if (messages.length > 0 && messages[messages.length - 1].sender === 'ai') {
+                    triggerArchivarCycle(messages);
+                }
+            }, [messages, triggerArchivarCycle]);
+
+            // --- V4.8: SAFE PURGE EXECUTION (RAG-COMMIT) ---
+            const executeSafePurge = () => {
+                const selectedSnips = archivarSnippets.filter(s => selectedSnippetIds.has(s.id));
+                const formattedSnips = selectedSnips.map(s => `• [${s.kategorie || 'LOG'}]: ${s.inhalt}`).join('\n');
+                
+                if (formattedSnips) {
+                    setSessionMemory(prev => {
+                        const newMemory = prev + (prev ? '\n\n' : '') + formattedSnips;
+                        return newMemory;
+                    });
+                }
+                
+                setMessages(prev => {
+                    const targetIndex = prev.findIndex(m => m.id === lastArchivedMsgId);
+                    if (targetIndex === -1) return prev;
+                    
+                    return prev.map((msg, idx) => {
+                        if (idx <= targetIndex - 2 && msg.sender === 'ai' && msg.scratchpad) {
+                            try {
+                                const parsed = JSON.parse(msg.scratchpad);
+                                if (parsed.matrix) {
+                                    parsed.matrix.situations_analyse = "[ARCHIVIERT]";
+                                    parsed.matrix.helfer_suchauftrag = null;
+                                }
+                                return { ...msg, scratchpad: JSON.stringify(parsed) }; 
+                            } catch(e) { return msg; }
+                        }
+                        return msg;
+                    });
+                });
+                
+                setShowMemoryModal(false);
+                setArchivarSnippets([]);
+                setSelectedSnippetIds(new Set());
+                setArchivarWarning(null);
+                showToast("Safe-Purge erfolgreich. Tokens freigegeben.");
+            };
+
+            const toggleSnippetSelection = (id) => {
+                setSelectedSnippetIds(prev => {
+                    const newSet = new Set(prev);
+                    if (newSet.has(id)) newSet.delete(id);
+                    else newSet.add(id);
+                    return newSet;
+                });
+            };
+
+            // V4.9 Token Hover Logic Mobile Fallback
+            const handleTokenClick = (e) => {
+                if ('ontouchstart' in window && !showTokenTooltip) {
+                    e.preventDefault();
+                    setShowTokenTooltip(true);
+                    return;
+                }
+                setShowApiLog(true);
+                setShowTokenTooltip(false);
+            };
 
             // --- AUDIO MANAGER (TTS) ---
             const stopAudio = () => {
@@ -745,7 +997,6 @@
                     window.currentAudio = audio;
                     window.currentAudioId = msgId;
                     
-                    // V4.4: Add event listeners for Mini-TTS-Player
                     audio.addEventListener('timeupdate', () => {
                         setAudioState(prev => ({ ...prev, currentTime: audio.currentTime }));
                     });
@@ -776,7 +1027,6 @@
                 }
             };
 
-            // --- STT RECORDER LOGIC (WHISPER POLLING & PARSER FIX) ---
             const startRecording = async () => {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -901,12 +1151,8 @@
             };
 
             const runArchivar = async (content) => {
-                const activeProvider = providers.find(p => p.id === activeProviderId) || providers[0];
-                if (!activeProvider) throw new Error('Kein Chat-Provider konfiguriert');
-                
-                const useJsonMode = activeProvider.jsonMode !== false;
-                const key = activeProvider.apiKey;
-                const apiUrl = activeProvider.url;
+                const agent = agentProviders.find(p => p.id === activeArchivarId);
+                if (!agent || !agent.apiKey) throw new Error('Kein Archivar-Agent konfiguriert');
                 
                 const prompt = `Du bist der Kognitive Archivar des Sanctums. Deine Aufgabe ist es, einen rohen Text-Entwurf in eine dauerhafte, perfekt durchsuchbare Datenbank-Akte umzuwandeln.
 ⚠️ OBERSTE REGEL: INHALTS-ERHALT vs. STRUKTUR-MAGIE!
@@ -936,34 +1182,32 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
 }`;
 
                 const payloadText = JSON.stringify(content);
-
                 let resText = "";
 
-                if(activeProvider.type === 'gemini') {
-                    const fetchUrl = apiUrl.includes('?') ? `${apiUrl}&key=${key}` : `${apiUrl}?key=${key}`;
+                if(agent.type === 'gemini') {
+                    const fetchUrl = agent.url.includes('?') ? `${agent.url}&key=${agent.apiKey}` : `${agent.url}?key=${agent.apiKey}`;
                     const bodyPayload = { 
-                        systemInstruction: {parts:[{text:prompt}]}, 
-                        contents: [{role:'user', parts:[{text:payloadText}]}] 
+                        systemInstruction: {parts:[{text: prompt}]}, 
+                        contents: [{role:'user', parts:[{text:payloadText}]}],
+                        generationConfig: { responseMimeType: "application/json" }
                     };
-                    if (useJsonMode) bodyPayload.generationConfig = { responseMimeType: "application/json" };
-                    
                     const r = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(bodyPayload) });
                     const d = await r.json(); 
                     if(!r.ok) throw new Error(d.error?.message || 'Gemini API Fehler beim Archivar'); 
                     resText = d.candidates[0].content.parts[0].text;
-                } else {
-                    const headers = { 'Content-Type': 'application/json' };
-                    if (key) headers['Authorization'] = `Bearer ${key}`;
+                } else if(agent.type === 'openai') {
+                    const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${agent.apiKey}` };
                     const bodyPayload = { 
-                        model: activeProvider.model || 'gpt-4o', 
-                        messages: [{role:'system',content:prompt}, {role:'user',content:payloadText}] 
+                        model: agent.model || 'gpt-4o-mini', 
+                        messages: [{role:'system',content:prompt}, {role:'user',content:payloadText}],
+                        response_format: { type: "json_object" }
                     };
-                    if (useJsonMode) bodyPayload.response_format = { type: "json_object" };
-
-                    const r = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify(bodyPayload) });
+                    const r = await fetch(agent.url, { method: 'POST', headers, body: JSON.stringify(bodyPayload) });
                     const d = await r.json(); 
                     if(!r.ok) throw new Error(d.error?.message || 'OpenAI API Fehler beim Archivar'); 
                     resText = d.choices[0].message.content;
+                } else {
+                    throw new Error("Agent Typ nicht unterstützt für JSON Archivar.");
                 }
 
                 const cleanResText = resText.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -1004,8 +1248,8 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                 try {
                     const mems = await db.memories.toArray();
                     const dirs = await db.directives.toArray();
-                    const config = { providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, tavilyKey, autoTtsRegie };
-                    const bundle = { type: "LUMEN_FULL_BACKUP", version: "4.4", dna: dna, directives: dirs, memories: mems, config, timestamp: Date.now() };
+                    const config = { providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, maxTokens };
+                    const bundle = { type: "LUMEN_FULL_BACKUP", version: "4.9", dna: dna, directives: dirs, memories: mems, config, timestamp: Date.now() };
                     const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a'); a.href = url;
@@ -1035,7 +1279,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                             if (parsed.memories && parsed.memories.length) await db.memories.bulkPut(parsed.memories);
                             
                             if (parsed.config) {
-                                if (parsed.config.providers) { setProviders(parsed.config.providers); localStorage.setItem('lumen_providers', JSON.stringify(parsed.config.providers)); }
+                                if (parsed.config.providers) { setProviders(parsed.config.providers.map(p => ({...p, maxTokens: p.maxTokens || 8000}))); localStorage.setItem('lumen_providers', JSON.stringify(parsed.config.providers)); }
                                 if (parsed.config.activeProviderId) { setActiveProviderId(parsed.config.activeProviderId); localStorage.setItem('lumen_activeProviderId', parsed.config.activeProviderId); }
                                 if (parsed.config.ttsProvidersAccounts) { setTtsProviders(parsed.config.ttsProvidersAccounts); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(parsed.config.ttsProvidersAccounts)); }
                                 if (parsed.config.activeTtsProviderId) { setActiveTtsProviderId(parsed.config.activeTtsProviderId); localStorage.setItem('lumen_activeTtsProviderId', parsed.config.activeTtsProviderId); }
@@ -1043,8 +1287,11 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                                 if (parsed.config.sttProviders) { setSttProviders(parsed.config.sttProviders); localStorage.setItem('lumen_sttProviders', JSON.stringify(parsed.config.sttProviders)); }
                                 if (parsed.config.activeSttProviderId) { setActiveSttProviderId(parsed.config.activeSttProviderId); localStorage.setItem('lumen_activeSttProviderId', parsed.config.activeSttProviderId); }
                                 if (parsed.config.autoPlayEnabled !== undefined) { setAutoPlayEnabled(parsed.config.autoPlayEnabled); localStorage.setItem('lumen_autoPlay', String(parsed.config.autoPlayEnabled)); }
-                                if (parsed.config.tavilyKey !== undefined) { setTavilyKey(parsed.config.tavilyKey); localStorage.setItem('lumen_tavily_key', parsed.config.tavilyKey); }
                                 if (parsed.config.autoTtsRegie !== undefined) { setAutoTtsRegie(parsed.config.autoTtsRegie); localStorage.setItem('lumen_auto_tts', String(parsed.config.autoTtsRegie)); }
+                                if (parsed.config.agentProviders !== undefined) { setAgentProviders(parsed.config.agentProviders); localStorage.setItem('lumen_agentProviders', JSON.stringify(parsed.config.agentProviders)); }
+                                if (parsed.config.activeArchivarId !== undefined) { setActiveArchivarId(parsed.config.activeArchivarId); localStorage.setItem('lumen_activeArchivarId', parsed.config.activeArchivarId); }
+                                if (parsed.config.activeLunaId !== undefined) { setActiveLunaId(parsed.config.activeLunaId); localStorage.setItem('lumen_activeLunaId', parsed.config.activeLunaId); }
+                                if (parsed.config.maxTokens !== undefined) { setMaxTokens(parsed.config.maxTokens); localStorage.setItem('lumen_maxTokens', parsed.config.maxTokens); }
                             }
                             loadMemories(); showToast('SYSTEM-RESTORE ERFOLGREICH');
                         } else showToast('FEHLER: INKOMPATIBLES FORMAT');
@@ -1055,7 +1302,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
 
             const handleConfigExport = () => {
                 try {
-                    const config = { type: "LUMEN_CONFIG_BACKUP", version: "4.4", providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, tavilyKey, autoTtsRegie };
+                    const config = { type: "LUMEN_CONFIG_BACKUP", version: "4.9", providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, maxTokens };
                     const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a'); a.href = url;
@@ -1074,7 +1321,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                         if (parsed.type === "LUMEN_CONFIG_BACKUP" || parsed.type === "LUMEN_FULL_BACKUP") {
                             const config = parsed.type === "LUMEN_FULL_BACKUP" ? parsed.config : parsed;
                             if (config) {
-                                if (config.providers) { setProviders(config.providers); localStorage.setItem('lumen_providers', JSON.stringify(config.providers)); }
+                                if (config.providers) { setProviders(config.providers.map(p => ({...p, maxTokens: p.maxTokens || 8000}))); localStorage.setItem('lumen_providers', JSON.stringify(config.providers)); }
                                 if (config.activeProviderId) { setActiveProviderId(config.activeProviderId); localStorage.setItem('lumen_activeProviderId', config.activeProviderId); }
                                 if (config.ttsProvidersAccounts) { setTtsProviders(config.ttsProvidersAccounts); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(config.ttsProvidersAccounts)); }
                                 if (config.activeTtsProviderId) { setActiveTtsProviderId(config.activeTtsProviderId); localStorage.setItem('lumen_activeTtsProviderId', config.activeTtsProviderId); }
@@ -1082,8 +1329,11 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                                 if (config.sttProviders) { setSttProviders(config.sttProviders); localStorage.setItem('lumen_sttProviders', JSON.stringify(config.sttProviders)); }
                                 if (config.activeSttProviderId) { setActiveSttProviderId(config.activeSttProviderId); localStorage.setItem('lumen_activeSttProviderId', config.activeSttProviderId); }
                                 if (config.autoPlayEnabled !== undefined) { setAutoPlayEnabled(config.autoPlayEnabled); localStorage.setItem('lumen_autoPlay', String(config.autoPlayEnabled)); }
-                                if (config.tavilyKey !== undefined) { setTavilyKey(config.tavilyKey); localStorage.setItem('lumen_tavily_key', config.tavilyKey); }
                                 if (config.autoTtsRegie !== undefined) { setAutoTtsRegie(config.autoTtsRegie); localStorage.setItem('lumen_auto_tts', String(config.autoTtsRegie)); }
+                                if (config.agentProviders !== undefined) { setAgentProviders(config.agentProviders); localStorage.setItem('lumen_agentProviders', JSON.stringify(config.agentProviders)); }
+                                if (config.activeArchivarId !== undefined) { setActiveArchivarId(config.activeArchivarId); localStorage.setItem('lumen_activeArchivarId', config.activeArchivarId); }
+                                if (config.activeLunaId !== undefined) { setActiveLunaId(config.activeLunaId); localStorage.setItem('lumen_activeLunaId', config.activeLunaId); }
+                                if (config.maxTokens !== undefined) { setMaxTokens(config.maxTokens); localStorage.setItem('lumen_maxTokens', config.maxTokens); }
                                 showToast('CONFIG-RESTORE ERFOLGREICH');
                             } else {
                                 showToast('FEHLER: KEINE CONFIG GEFUNDEN');
@@ -1117,8 +1367,10 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                 const key = activeProvider.apiKey;
                 const apiUrl = activeProvider.url;
 
-                // V4.4: Latch GPS Fix Injektion
-                const locationPrefix = `[SYSTEM-STATUS: Standort Zone ${currentMairaZone}]\n`;
+                let locationPrefix = `[SYSTEM-STATUS: Standort Zone ${currentMairaZone}]\n`;
+                if (sessionMemory && sessionMemory.trim() !== "") {
+                    locationPrefix = `[SYSTEM-STATUS: Standort Zone ${currentMairaZone}. Aktuelle Session-Notizen: ${sessionMemory}]\n`;
+                }
                 const payloadAnMaira = locationPrefix + text;
 
                 const userMsgId = generateId();
@@ -1126,7 +1378,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                 
                 setInputText('');
                 if (textareaRef.current) {
-                    textareaRef.current.style.height = '46px';
+                    textareaRef.current.style.height = '40px';
                 }
                 
                 setLoadingStatus("PROCESSING MATRIX...");
@@ -1278,7 +1530,6 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                     const dynamicContext = `${timeString}${directiveString}${deskContext}`.trim() || "Kein aktiver Kontext geladen.";
                     setLatestContext(dynamicContext);
                     
-                    // V4.4: DYNAMISCHE KERNEL-INJEKTION & PROMPT-ARCHITEKTUR
                     let kernelBlock = dna.block1_identity; 
                     if (autoTtsRegie && dna.audio_physics) {
                         kernelBlock += "\n\n" + dna.audio_physics;
@@ -1306,10 +1557,9 @@ ${dna.block3_sensors}
 ${systemOverride}
 `.trim();
 
-                    const hist = messages.filter(m=>m.sender==='user'||m.sender==='ai');
-                    const payloadUserCall = `[SYSTEM-STATUS: Standort Zone ${currentMairaZone}]\n\n[AKTIVER KONTEXT]\n${dynamicContext}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`;
+                    const hist = messages.filter(m=>m.sender==='user'||m.sender==='ai'||m.sender==='system');
+                    const payloadUserCall = `[SYSTEM-STATUS: Standort Zone ${currentMairaZone}]\n\n[AKTIVER KONTEXT]\n${dynamicContext}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${payloadAnMaira}`;
                     
-                    // V4.4: Setze Payload für API Protokoll
                     setLastApiPayload({
                         kernel: dna.block1_identity,
                         audio: (autoTtsRegie && dna.audio_physics) ? dna.audio_physics : null,
@@ -1328,13 +1578,11 @@ ${systemOverride}
                         let cleanResText = resText.replace(/[\`]{3}json/gi, '').replace(/[\`]{3}/gi, '').trim();
                         let obj = JSON.parse(cleanResText);
 
-                        // V4.4: GPS-LATCH Response Update
                         if (obj && obj.matrix && obj.matrix.aktiver_state !== undefined) {
                             const newZoneId = Number(obj.matrix.aktiver_state);
                             if (!isNaN(newZoneId)) {
                                 setCurrentMairaZone(newZoneId);
                                 
-                                // UI Zonenwechsel bei State-Änderung (1=Sessel, 2=Oase, 3=Werkbank, 4=Balkon)
                                 let newView = null;
                                 if (newZoneId === 1) newView = 'sessel';
                                 else if (newZoneId === 2) newView = 'oase';
@@ -1367,10 +1615,69 @@ ${systemOverride}
                             
                             let searchResult = "";
                             try {
-                                searchResult = await fetchTavily(obj.matrix.helfer_suchauftrag, tavilyKey);
+                                const lunaAgent = agentProviders.find(p => p.id === activeLunaId);
+                                if(!lunaAgent || !lunaAgent.apiKey) throw new Error("Web-Scout (Luna) API-Key fehlt.");
+                                
+                                if (lunaAgent.type === 'tavily') {
+                                    const res = await fetch(lunaAgent.url, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ api_key: lunaAgent.apiKey, query: obj.matrix.helfer_suchauftrag, search_depth: "advanced", include_raw_content: true, max_results: 2 })
+                                    });
+                                    const data = await res.json();
+                                    if (!data.results || data.results.length === 0) searchResult = "Keine relevanten Fakten gefunden.";
+                                    else searchResult = data.results.map(r => `[QUELLE: ${r.url}]\n${r.raw_content ? r.raw_content : r.content}`.substring(0, 8000)).join("\n\n---\n\n");
+                                } else {
+                                    searchResult = "Unsupported Web-Scout Typ.";
+                                }
                             } catch (error) {
-                                searchResult = "Fehler bei der Netzwerksuche. Luna konnte keine Daten finden.";
+                                searchResult = "Fehler bei der Netzwerksuche: " + error.message;
                             }
+                            
+                            // V4.9: LUNA JSON PARSING & INJECTION
+                            let lunaFakten = searchResult;
+                            const lunaAgent = agentProviders.find(p => p.id === activeLunaId);
+                            if (lunaAgent && lunaAgent.apiKey && (lunaAgent.type === 'openai' || lunaAgent.type === 'gemini')) {
+                                setLoadingStatus("LUNA STRUKTURIERT FAKTEN...");
+                                try {
+                                    let lunaResText = "";
+                                    const lunaPayloadText = JSON.stringify({ suchauftrag: obj.matrix.helfer_suchauftrag, rohdaten: searchResult });
+                                    
+                                    if (lunaAgent.type === 'gemini') {
+                                        const fetchUrl = lunaAgent.url.includes('?') ? `${lunaAgent.url}&key=${lunaAgent.apiKey}` : `${lunaAgent.url}?key=${lunaAgent.apiKey}`;
+                                        const payload = { systemInstruction: {parts:[{text: lunaAgent.prompt}]}, contents: [{role:'user', parts:[{text: lunaPayloadText}]}], generationConfig: { responseMimeType: "application/json" } };
+                                        const res = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+                                        const d = await res.json();
+                                        if (!res.ok) throw new Error(d.error?.message);
+                                        lunaResText = d.candidates?.[0]?.content?.parts?.[0]?.text;
+                                    } else if (lunaAgent.type === 'openai') {
+                                        const payload = { model: lunaAgent.model || 'gpt-4o-mini', messages: [{ role: 'system', content: lunaAgent.prompt }, { role: 'user', content: lunaPayloadText }], response_format: { type: "json_object" } };
+                                        const res = await fetch(lunaAgent.url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${lunaAgent.apiKey}` }, body: JSON.stringify(payload) });
+                                        const d = await res.json();
+                                        if (!res.ok) throw new Error(d.error?.message);
+                                        lunaResText = d.choices?.[0]?.message?.content;
+                                    }
+
+                                    if (lunaResText) {
+                                        const cleanLunaRes = lunaResText.replace(/```json/gi, '').replace(/```/g, '').trim();
+                                        const parsedLuna = JSON.parse(cleanLunaRes);
+                                        if (parsedLuna.scout_bericht && parsedLuna.scout_bericht.fakten) {
+                                            lunaFakten = parsedLuna.scout_bericht.fakten;
+                                        }
+                                    }
+                                } catch(e) {
+                                    console.error("Luna Parse Error:", e);
+                                }
+                            }
+
+                            // Inject Luna Msg to UI and History
+                            const scoutMsg = { 
+                                id: generateId(), 
+                                sender: 'system', 
+                                text: `[SYSTEM-SCOUT MELDET]:\n${lunaFakten}`, 
+                                timestamp: new Date().toISOString() 
+                            };
+                            setMessages(prev => [...prev, scoutMsg]);
 
                             setHelferArchiv({
                                 suchauftrag: obj.matrix.helfer_suchauftrag,
@@ -1379,15 +1686,16 @@ ${systemOverride}
                             });
                             
                             setLoadingStatus("MAIRA VERARBEITET FAKTEN...");
-                            const helferDaten = `\n\n[AKTUELLER HELFER-BERICHT]\nSuchauftrag: ${obj.matrix.helfer_suchauftrag}\nErgebnis: ${searchResult}\n[SYSTEM-REGIEANWEISUNG: Luna ist soeben erfolgreich aus der Außenwelt zurückgekehrt und hat dir diesen Bericht auf den Schreibtisch gelegt. Teile Simon diese Erkenntnisse nun fließend und natürlich mit. Erwähne Luna kurz lobend. Setze 'helfer_suchauftrag' zwingend auf null!]`;
+                            const helferDaten = `\n\n[SYSTEM-SCOUT MELDET]:\n${lunaFakten}\n[SYSTEM-REGIEANWEISUNG: Luna ist soeben erfolgreich aus der Außenwelt zurückgekehrt und hat dir diesen Bericht auf den Schreibtisch gelegt. Teile Simon diese Erkenntnisse nun fließend und natürlich mit. Erwähne Luna kurz lobend. Setze 'helfer_suchauftrag' zwingend auf null!]`;
                             
                             const interceptorDynamicContext = dynamicContext + helferDaten;
                             const interceptorPayload = `[SYSTEM-STATUS: Standort Zone ${currentMairaZone}]\n\n[AKTIVER KONTEXT]\n${interceptorDynamicContext}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`;
                             
-                            // Update Log for interceptor
                             setLastApiPayload(prev => ({...prev, user: interceptorPayload}));
+                            
+                            const updatedHist = [...hist, intentMsg, scoutMsg];
 
-                            const secondResponse = await fetchTextFromAPI(masterSystemPrompt, interceptorPayload, hist);
+                            const secondResponse = await fetchTextFromAPI(masterSystemPrompt, interceptorPayload, updatedHist);
                             const cleanedSecondResponse = secondResponse.replace(/```json/gi, '').replace(/```/g, '').trim();
                             
                             obj = JSON.parse(cleanedSecondResponse);
@@ -1534,7 +1842,6 @@ ${systemOverride}
                 finally { setLoadingStatus(null); }
             };
 
-            // V4.4 Preview Update
             const kernelPreview = (autoTtsRegie && dna.audio_physics) ? `${dna.block1_identity}\n\n${dna.audio_physics}` : dna.block1_identity;
             const sysPromptPreview = `[1. DEINE IDENTITÄT UND REGELN]\n${kernelPreview}\n\n[3. DIE MATRIX-SENSOREN]\n${dna.block3_sensors}\n\n[4. DEINE AUSGABE (JSON)]\n${dna.block4_skeleton}`.trim();
             const sysPromptPreviewDynamic = `--- SYSTEM PROMPT (STATIC CACHE) ---\n${sysPromptPreview}\n\n--- USER PAYLOAD (DYNAMIC) ---\n[2. AKTIVER KONTEXT]\n${latestContext}\n\n[AKTUELLE NACHRICHT DES USERS]\n(Eingabe des Users)`.trim();
@@ -1569,6 +1876,11 @@ ${systemOverride}
             }
 
             const activeTtsProvider = ttsProviders.find(p => p.id === activeTtsProviderId) || ttsProviders[0];
+            const activeProvTokens = providers.find(p => p.id === activeProviderId)?.maxTokens || 8000;
+            
+            // V4.7 Token Visualizer Metrics
+            const systemPercent = activeProvTokens > 0 ? (tokenUsage.system / activeProvTokens) * 100 : 0;
+            const historyEndPercent = tokenUsage.percent;
 
             return (
                 <div className="flex flex-col h-[100dvh] w-full max-w-4xl mx-auto sm:border-x border-stone-200 bg-stone-50 relative overflow-hidden shadow-2xl">
@@ -1601,6 +1913,18 @@ ${systemOverride}
                                 </div>
                             </div>
                         </div>
+                    )}
+
+                    {/* --- V4.8 MEMORY FREIGABE MODAL --- */}
+                    {showMemoryModal && (
+                        <SafePurgeModal 
+                            warning={archivarWarning}
+                            snippets={archivarSnippets} 
+                            selectedIds={selectedSnippetIds}
+                            onToggle={toggleSnippetSelection}
+                            onApprove={executeSafePurge} 
+                            onCancel={() => { setShowMemoryModal(false); setArchivarSnippets([]); setSelectedSnippetIds(new Set()); setArchivarWarning(null); }} 
+                        />
                     )}
 
                     {/* --- SMART TOAST UI --- */}
@@ -1745,7 +2069,7 @@ ${systemOverride}
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="flex-1 flex items-center justify-center text-amber-700/50 text-xs font-mono font-bold uppercase text-center p-8 border-2 border-dashed border-amber-200 rounded-3xl bg-amber-50/30 mt-8">
+                                        <div className="flex-1 flex items-center justify-center text-amber-700/50 text-xs font-mono font-bold uppercase text-center p-12 border-2 border-dashed border-amber-200 rounded-3xl bg-amber-50/30 mt-8">
                                             Keine aktuellen Helfer-Notizen vorhanden.
                                         </div>
                                     )}
@@ -1810,6 +2134,7 @@ ${systemOverride}
                             <button className={`btn ${activeView==='directives'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('directives')}>Direktiven</button>
                             <button className={`btn ${activeView==='dna'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('dna')}>DNA</button>
                             <button className={`btn ${activeView==='helfer'?'bg-amber-100 text-amber-800 ring-2 ring-amber-200':''}`} onClick={()=>setActiveView('helfer')}>Helfer</button>
+                            <button className={`btn ${activeView==='agenten'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('agenten')}>Agenten</button>
                             <button className={`btn ${activeView==='settings'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('settings')}>⚙️</button>
                         </div>
                     </header>
@@ -1830,7 +2155,7 @@ ${systemOverride}
                                 </div>
                             )}
                             
-                            <div className="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
+                            <div className="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto relative">
                                 <div className="flex-1"></div>
                                 {messages.map(msg => <ChatBubble key={msg.id} message={msg} personaName={dna.persona_name} playingMsgId={playingMsgId} onPlayTTS={playMessageTTS} onDelete={(id) => setMessages(prev => prev.filter(m => m.id !== id))} />)}
                                 {loadingStatus && <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest animate-pulse mb-6 ml-2 font-mono">[ {loadingStatus} ]</div>}
@@ -1883,39 +2208,54 @@ ${systemOverride}
                             )}
                         </div>
 
-                        {/* --- SETTINGS VIEW --- */}
-                        <div className={`${activeView === 'settings' ? 'block' : 'hidden'} p-6 max-w-2xl mx-auto space-y-6 mt-4 animate-fade-in pb-20`}>
-                            
-                            {/* TEXT CHAT PROVIDER */}
-                            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2">KI Chat-Provider (Text)</h2>
-                            <div className="panel space-y-4">
-                                <div>
-                                    <label className="label">Aktiver Chat-Knoten</label>
-                                    <select value={activeProviderId} onChange={(e) => {
-                                        setActiveProviderId(e.target.value);
-                                        localStorage.setItem('lumen_activeProviderId', e.target.value);
-                                        showToast('Chat-Provider gewechselt');
-                                    }} className="input-field font-sans text-xs font-bold text-indigo-700">
-                                        {providers.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
+                        {/* --- V4.6 SUB-AGENTEN VIEW --- */}
+                        <div className={`${activeView === 'agenten' ? 'block' : 'hidden'} p-6 max-w-4xl mx-auto space-y-6 mt-4 animate-fade-in`}>
+                            <div className="flex justify-between items-center border-b border-stone-200 pb-2">
+                                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">Sub-Agent Control Center</h2>
+                            </div>
+                            <p className="text-xs text-slate-500">Diese Agenten übernehmen spezifische Hintergrundaufgaben (z.B. Gedächtnis-Komprimierung). API-Keys werden lokal in deinem Browser gespeichert.</p>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="panel bg-indigo-50/50 border-indigo-200 shadow-sm">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <span className="text-xl">🗄️</span>
+                                        <h3 className="font-bold text-xs uppercase tracking-widest text-indigo-800">AGENT: ARCHIVAR</h3>
+                                    </div>
+                                    <label className="label text-indigo-600">Aktiver Provider</label>
+                                    <select value={activeArchivarId} onChange={e => { setActiveArchivarId(e.target.value); localStorage.setItem('lumen_activeArchivarId', e.target.value); showToast('Archivar gewechselt'); }} className="input-field text-indigo-700 font-bold text-xs mb-2">
+                                        {agentProviders.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
+                                    </select>
+                                </div>
+
+                                <div className="panel bg-amber-50/50 border-amber-200 shadow-sm">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <span className="text-xl">🌐</span>
+                                        <h3 className="font-bold text-xs uppercase tracking-widest text-amber-800">AGENT: WEB-SCOUT (LUNA)</h3>
+                                    </div>
+                                    <label className="label text-amber-600">Aktiver Provider</label>
+                                    <select value={activeLunaId} onChange={e => { setActiveLunaId(e.target.value); localStorage.setItem('lumen_activeLunaId', e.target.value); showToast('Luna gewechselt'); }} className="input-field text-amber-700 font-bold text-xs mb-2">
+                                        {agentProviders.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
                                     </select>
                                 </div>
                             </div>
 
                             <div className="space-y-3">
-                                {providers.map(p => (
+                                <h3 className="font-bold text-xs uppercase tracking-widest text-slate-600 mt-6 border-b border-stone-200 pb-2">Agent Provider Profile</h3>
+                                {agentProviders.map(p => (
                                     <div key={p.id} className="panel flex flex-col gap-2 border-stone-200 bg-white shadow-sm">
                                         <div className="flex justify-between items-start">
                                             <div className="flex-1 pr-4 min-w-0">
-                                                <div className="font-bold text-sm text-slate-800 truncate">{p.name} <span className="badge ml-2 bg-stone-100 text-stone-500 border-stone-200">{p.type}</span>{p.jsonMode !== false && <span className="badge ml-1 bg-indigo-50 text-indigo-500 border-indigo-100" title="JSON Mode aktiv">JSON</span>}</div>
-                                                <div className="text-[10px] text-slate-400 font-mono mt-1 truncate block">{p.url}</div>
+                                                <div className="font-bold text-sm text-slate-800 truncate">{p.name} <span className="badge ml-2 bg-stone-100 text-stone-500 border-stone-200">{p.type}</span></div>
+                                                <div className="text-[10px] text-slate-400 font-mono mt-1 truncate block">URL: {p.url}</div>
                                             </div>
                                             <div className="flex gap-1 shrink-0">
-                                                <button onClick={() => { setEditProviderId(p.id); setProviderForm({...p, jsonMode: p.jsonMode !== false}); }} className="btn py-1 px-2">✏️</button>
+                                                <button onClick={() => { setEditAgentId(p.id); setAgentProviderForm({...p}); }} className="btn py-1 px-2">✏️</button>
                                                 <button onClick={() => { 
-                                                    if(window.confirm('Chat-Provider löschen?')) { 
-                                                        const newList = providers.filter(x=>x.id!==p.id); 
-                                                        setProviders(newList); localStorage.setItem('lumen_providers', JSON.stringify(newList));
-                                                        if(activeProviderId===p.id && newList.length) { setActiveProviderId(newList[0].id); localStorage.setItem('lumen_activeProviderId', newList[0].id); } 
+                                                    if(window.confirm('Agent-Provider löschen?')) { 
+                                                        const newList = agentProviders.filter(x=>x.id!==p.id); 
+                                                        setAgentProviders(newList); localStorage.setItem('lumen_agentProviders', JSON.stringify(newList));
+                                                        if(activeArchivarId===p.id && newList.length) { setActiveArchivarId(newList[0].id); localStorage.setItem('lumen_activeArchivarId', newList[0].id); } 
+                                                        if(activeLunaId===p.id && newList.length) { setActiveLunaId(newList[0].id); localStorage.setItem('lumen_activeLunaId', newList[0].id); } 
                                                     } 
                                                 }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
                                             </div>
@@ -1924,299 +2264,412 @@ ${systemOverride}
                                     </div>
                                 ))}
 
-                                <div className="panel border-indigo-200 bg-indigo-50/30 flex flex-col gap-3 shadow-sm mt-4">
-                                    <h3 className="font-bold text-xs uppercase tracking-widest text-indigo-800">{editProviderId ? 'Chat-Provider bearbeiten' : 'Neuen Chat-Provider anlegen'}</h3>
+                                <div className="panel border-emerald-200 bg-emerald-50/30 flex flex-col gap-3 shadow-sm mt-4">
+                                    <h3 className="font-bold text-xs uppercase tracking-widest text-emerald-800">{editAgentId ? 'Agent-Provider bearbeiten' : 'Neuen Agent-Provider anlegen'}</h3>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        <div><label className="label text-indigo-600">Anzeigename</label><input value={providerForm.name} onChange={e=>setProviderForm({...providerForm, name: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="z.B. GPT-4o" /></div>
+                                        <div><label className="label text-emerald-600">Anzeigename</label><input value={agentProviderForm.name} onChange={e=>setAgentProviderForm({...agentProviderForm, name: e.target.value})} className="input-field bg-white border-emerald-100" placeholder="z.B. GPT-4o Archivar" /></div>
                                         <div>
-                                            <label className="label text-indigo-600">API Format (Payload)</label>
-                                            <select value={providerForm.type} onChange={e=>setProviderForm({...providerForm, type: e.target.value})} className="input-field bg-white border-indigo-100">
+                                            <label className="label text-emerald-600">API Typ (Engine)</label>
+                                            <select value={agentProviderForm.type} onChange={e=>setAgentProviderForm({...agentProviderForm, type: e.target.value})} className="input-field bg-white border-emerald-100">
+                                                <option value="openai">OpenAI Format</option>
                                                 <option value="gemini">Google Gemini Format</option>
-                                                <option value="openai">OpenAI Format (GPT, LM Studio, etc.)</option>
+                                                <option value="tavily">Tavily Search</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div><label className="label text-indigo-600">API Endpoint URL</label><input value={providerForm.url} onChange={e=>setProviderForm({...providerForm, url: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="z.B. https://api.openai.com/v1/chat/completions" /></div>
+                                    <div>
+                                        <label className="label text-emerald-600">System Prompt (Anweisung)</label>
+                                        <textarea value={agentProviderForm.prompt} onChange={e=>setAgentProviderForm({...agentProviderForm, prompt: e.target.value})} className="input-field bg-white border-emerald-100 min-h-[80px]" placeholder="Die Instruktionen für diesen Agenten..." />
+                                    </div>
+                                    <div><label className="label text-emerald-600">API Endpoint URL</label><input value={agentProviderForm.url} onChange={e=>setAgentProviderForm({...agentProviderForm, url: e.target.value})} className="input-field bg-white border-emerald-100" placeholder="z.B. https://api.openai.com/v1/chat/completions" /></div>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        <div><label className="label text-indigo-600">Modell-ID (OpenAI Format)</label><input value={providerForm.model} onChange={e=>setProviderForm({...providerForm, model: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="z.B. gpt-4o" disabled={providerForm.type === 'gemini'} /></div>
-                                        <div><label className="label text-indigo-600">API Key</label><input type="password" value={providerForm.apiKey} onChange={e=>setProviderForm({...providerForm, apiKey: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="Schlüssel" /></div>
+                                        <div><label className="label text-emerald-600">Modell-ID</label><input value={agentProviderForm.model} onChange={e=>setAgentProviderForm({...agentProviderForm, model: e.target.value})} className="input-field bg-white border-emerald-100" placeholder="z.B. gpt-4o-mini" disabled={agentProviderForm.type === 'gemini' || agentProviderForm.type === 'tavily'} /></div>
+                                        <div><label className="label text-emerald-600">API Key</label><input type="password" value={agentProviderForm.apiKey} onChange={e=>setAgentProviderForm({...agentProviderForm, apiKey: e.target.value})} className="input-field bg-white border-emerald-100" placeholder="Schlüssel" /></div>
                                     </div>
-                                    <div className="mt-2">
-                                        <label className="flex items-center gap-2 text-xs font-bold text-indigo-700 cursor-pointer w-max">
-                                            <input 
-                                                type="checkbox" 
-                                                checked={providerForm.jsonMode !== false} 
-                                                onChange={e => setProviderForm({...providerForm, jsonMode: e.target.checked})} 
-                                                className="accent-indigo-600 w-4 h-4 cursor-pointer"
-                                            /> 
-                                            JSON-Mode erzwingen (Structured Output)
-                                        </label>
-                                        <p className="text-[9px] text-slate-400 mt-1">Deaktivieren, falls ein lokales Modell den strikten JSON-Mode nicht unterstützt.</p>
-                                    </div>
-                                    <div className="flex justify-end gap-2 mt-2 border-t border-indigo-100 pt-3">
-                                        {editProviderId && <button onClick={()=>{setEditProviderId(null); setProviderForm({name:'', url:'', type:'gemini', model:'', apiKey:'', jsonMode: true});}} className="btn border-indigo-200 text-indigo-600">Abbrechen</button>}
+                                    <div className="flex justify-end gap-2 mt-2 border-t border-emerald-100 pt-3">
+                                        {editAgentId && <button onClick={()=>{setEditAgentId(null); setAgentProviderForm({name:'', url:'', type:'openai', model:'', apiKey:'', prompt:''});}} className="btn border-emerald-200 text-emerald-600">Abbrechen</button>}
                                         <button onClick={() => {
-                                            if(!providerForm.name || !providerForm.url) return showToast('Name und URL erforderlich');
-                                            const newProviders = editProviderId ? providers.map(p => p.id === editProviderId ? {...providerForm, id: editProviderId} : p) : [...providers, {...providerForm, id: generateId()}];
-                                            setProviders(newProviders); localStorage.setItem('lumen_providers', JSON.stringify(newProviders));
-                                            setEditProviderId(null); setProviderForm({name:'', url:'', type:'gemini', model:'', apiKey:'', jsonMode: true}); showToast('Chat-Provider gespeichert!');
-                                        }} className="btn-primary bg-indigo-600 text-white hover:bg-indigo-700">{editProviderId ? 'Aktualisieren' : 'Hinzufügen'}</button>
+                                            if(!agentProviderForm.name || !agentProviderForm.url) return showToast('Name und URL erforderlich');
+                                            const newList = editAgentId ? agentProviders.map(p => p.id === editAgentId ? {...agentProviderForm, id: editAgentId} : p) : [...agentProviders, {...agentProviderForm, id: generateId()}];
+                                            setAgentProviders(newList); localStorage.setItem('lumen_agentProviders', JSON.stringify(newList));
+                                            setEditAgentId(null); setAgentProviderForm({name:'', url:'', type:'openai', model:'', apiKey:'', prompt:''}); showToast('Agent gespeichert!');
+                                        }} className="btn-primary bg-emerald-600 text-white hover:bg-emerald-700">{editAgentId ? 'Aktualisieren' : 'Hinzufügen'}</button>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            {/* TAVILY HELFER MANAGEMENT */}
-                            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2 mt-12">🔍 HELFER (TAVILY SEARCH)</h2>
-                            <div className="panel space-y-4">
-                                <p className="text-xs text-slate-500 mb-2">Hier konfigurierst du den Tavily Search API Key. Maira kann dann bei Bedarf das Web nach aktuellen Fakten durchsuchen.</p>
-                                <div>
-                                    <label className="label">Tavily API Key</label>
-                                    <input 
-                                        type="password" 
-                                        value={tavilyKey} 
-                                        onChange={e => {
-                                            setTavilyKey(e.target.value);
-                                            localStorage.setItem('lumen_tavily_key', e.target.value);
-                                        }} 
-                                        className="input-field bg-white" 
-                                        placeholder="tvly-..." 
-                                    />
-                                </div>
-                            </div>
-
-                            {/* TTS PROVIDER MANAGEMENT (WITH MODEL SUPPORT) */}
-                            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2 mt-12">🔈 Audio (TTS)</h2>
-                            <div className="panel space-y-4">
-                                <div>
-                                    <label className="label">1. Aktives TTS-Konto (Auto-Play & Buttons)</label>
-                                    <select value={activeTtsProviderId} onChange={(e) => {
-                                        setActiveTtsProviderId(e.target.value);
-                                        localStorage.setItem('lumen_activeTtsProviderId', e.target.value);
-                                        showToast('TTS-Konto gewechselt');
-                                    }} className="input-field font-sans text-xs font-bold text-fuchsia-700 border-fuchsia-200 focus:border-fuchsia-400 focus:ring-fuchsia-100 bg-fuchsia-50/30">
-                                        {ttsProviders.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
-                                    </select>
-                                </div>
-                                
-                                {activeTtsProvider && (
-                                    <div className="border-t border-stone-100 pt-4">
-                                        <label className="label text-fuchsia-600">2. Stimme für dieses Konto auswählen</label>
-                                        
-                                        {/* ELEVENLABS STIMMEN DROPDOWN */}
-                                        {activeTtsProvider.type === 'elevenlabs' && (
-                                            <select value={ttsVoices.elevenlabs} onChange={e=>{
-                                                const newVoices = {...ttsVoices, elevenlabs: e.target.value};
-                                                setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices)); showToast('ElevenLabs Stimme aktualisiert');
-                                            }} className="input-field bg-white">
-                                                <option value="21m00Tcm4TlvDq8ikWAM">Rachel (Amerikanisch, ruhig)</option>
-                                                <option value="EXAVITQu4vr4xnSDxMaL">Bella (Amerikanisch, weich)</option>
-                                                <option value="AZnzlk1XvdvUeBnXmlld">Domi (Amerikanisch, stark)</option>
-                                                <option value="MF3mGyEYCl7XYWbV9V6O">Elli (Britisch, emotional)</option>
-                                                <option value="pNInz6obpgDQGcFmaJcg">Adam (Amerikanisch, kräftig)</option>
-                                                <option value="yoZ06aMxZJJ28mfd3POQ">Sam (Amerikanisch, raspelig)</option>
-                                                <option value="TxGEqnHWrfWFTfGW9XjX">Josh (Amerikanisch, tief)</option>
-                                            </select>
-                                        )}
-
-                                        {/* OPENAI STIMMEN DROPDOWN */}
-                                        {activeTtsProvider.type === 'openai' && (
-                                            <select value={ttsVoices.openai} onChange={e=>{
-                                                const newVoices = {...ttsVoices, openai: e.target.value};
-                                                setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices)); showToast('OpenAI Stimme aktualisiert');
-                                            }} className="input-field bg-white">
-                                                <option value="nova">Nova (Weiblich, energetisch)</option>
-                                                <option value="alloy">Alloy (Neutral, klar)</option>
-                                                <option value="echo">Echo (Männlich, weich)</option>
-                                                <option value="fable">Fable (Lebhaft, erzählend)</option>
-                                                <option value="onyx">Onyx (Männlich, tief)</option>
-                                                <option value="shimmer">Shimmer (Weiblich, hell)</option>
-                                            </select>
-                                        )}
-
-                                        {/* GEMINI STIMMEN DROPDOWN */}
-                                        {activeTtsProvider.type === 'gemini' && (
-                                            <select value={ttsVoices.gemini} onChange={e=>{
-                                                const newVoices = {...ttsVoices, gemini: e.target.value};
-                                                setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices)); showToast('Gemini Stimme aktualisiert');
-                                            }} className="input-field bg-white">
-                                                <option value="Kore">Kore (Sanft, freundlich)</option>
-                                                <option value="Puck">Puck (Energetisch, jung)</option>
-                                                <option value="Charon">Charon (Tief, resonierend)</option>
-                                                <option value="Fenrir">Fenrir (Kräftig, direkt)</option>
-                                                <option value="Aoede">Aoede (Melodisch, ruhig)</option>
-                                            </select>
-                                        )}
-
-                                        {/* CUSTOM STIMMEN INPUT */}
-                                        {(activeTtsProvider.type === 'custom_openai' || activeTtsProvider.type === 'custom_get' || activeTtsProvider.type === 'replicate') && (
-                                            <input type="text" placeholder={activeTtsProvider.type === 'replicate' ? "Voice (optional, z.B. bei Replicate nicht nötig)" : "Voice-ID oder Parameter (optional)"} className="input-field bg-white" value={ttsVoices[activeTtsProvider.type] || ''} onChange={e=>{
-                                                const newVoices = {...ttsVoices, [activeTtsProvider.type]: e.target.value};
-                                                setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices));
-                                            }} />
-                                        )}
-                                        
-                                        <div className="mt-2 flex gap-2 w-full">
-                                            <input type="text" placeholder="...oder benutzerdefinierte Voice-ID einfügen" className="input-field text-[10px] bg-white py-2" value={ttsVoices[activeTtsProvider.type] || ''} onChange={e=>{
-                                                const newVoices = {...ttsVoices, [activeTtsProvider.type]: e.target.value};
-                                                setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices));
-                                            }} />
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="space-y-3">
-                                {ttsProviders.map(p => (
-                                    <div key={p.id} className="panel flex flex-col gap-2 border-stone-200 bg-white shadow-sm">
-                                        <div className="flex justify-between items-start">
-                                            <div className="flex-1 pr-4 min-w-0">
-                                                <div className="font-bold text-sm text-slate-800 truncate">{p.name} <span className="badge ml-2 bg-fuchsia-50 text-fuchsia-600 border-fuchsia-100">{p.type}</span></div>
-                                                <div className="text-[10px] text-slate-400 font-mono mt-1 truncate block">URL: {p.url}</div>
-                                                {p.model && <div className="text-[10px] text-slate-400 font-mono truncate block">Modell: {p.model}</div>}
-                                            </div>
-                                            <div className="flex gap-1 shrink-0">
-                                                <button onClick={() => { setEditTtsProviderId(p.id); setTtsProviderForm({...p}); }} className="btn py-1 px-2">✏️</button>
-                                                <button onClick={() => { 
-                                                    if(window.confirm('TTS-Provider löschen?')) { 
-                                                        const newList = ttsProviders.filter(x=>x.id!==p.id); 
-                                                        setTtsProviders(newList); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(newList));
-                                                        if(activeTtsProviderId===p.id && newList.length) { setActiveTtsProviderId(newList[0].id); localStorage.setItem('lumen_activeTtsProviderId', newList[0].id); } 
-                                                    } 
-                                                }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
-                                            </div>
-                                        </div>
-                                        {p.apiKey ? <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded w-max mt-1">✓ API Key hinterlegt</div> : <div className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded w-max mt-1">⚠️ Kein Key hinterlegt</div>}
-                                    </div>
-                                ))}
-
-                                <div className="panel border-fuchsia-200 bg-fuchsia-50/30 flex flex-col gap-3 shadow-sm mt-4">
-                                    <h3 className="font-bold text-xs uppercase tracking-widest text-fuchsia-800">{editTtsProviderId ? 'TTS-Provider bearbeiten' : 'Neuen TTS-Provider anlegen'}</h3>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        <div><label className="label text-fuchsia-600">Anzeigename</label><input value={ttsProviderForm.name} onChange={e=>setTtsProviderForm({...ttsProviderForm, name: e.target.value})} className="input-field bg-white border-fuchsia-100" placeholder="z.B. Mein ElevenLabs Account" /></div>
-                                        <div>
-                                            <label className="label text-fuchsia-600">TTS Engine (Format)</label>
-                                            <select value={ttsProviderForm.type} onChange={e=>{
-                                                const type = e.target.value;
-                                                let defaultUrl = ttsProviderForm.url;
-                                                if (type === 'elevenlabs') defaultUrl = 'https://api.elevenlabs.io/v1/text-to-speech';
-                                                else if (type === 'openai') defaultUrl = 'https://api.openai.com/v1/audio/speech';
-                                                else if (type === 'gemini') defaultUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent';
-                                                else if (type === 'replicate') defaultUrl = 'https://api.replicate.com/v1/models/qwen/qwen3-tts/predictions';
-                                                else if (type === 'custom_get') defaultUrl = 'http://localhost:5002/api/tts?text={text}';
-                                                else if (type === 'custom_openai') defaultUrl = 'http://localhost:8080/v1/audio/speech';
-                                                setTtsProviderForm({...ttsProviderForm, type, url: defaultUrl});
-                                            }} className="input-field bg-white border-fuchsia-100">
-                                                <option value="elevenlabs">ElevenLabs API</option>
-                                                <option value="openai">OpenAI TTS API</option>
-                                                <option value="gemini">Google Gemini TTS API</option>
-                                                <option value="replicate">Replicate API (Qwen3 / Open Source)</option>
-                                                <option value="custom_openai">Custom POST (OpenAI Kompatibel)</option>
-                                                <option value="custom_get">Custom GET (z.B. Mozilla TTS)</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div><label className="label text-fuchsia-600">API Endpoint Base-URL</label><input value={ttsProviderForm.url} onChange={e=>setTtsProviderForm({...ttsProviderForm, url: e.target.value})} className="input-field bg-white border-fuchsia-100" placeholder="z.B. https://api.elevenlabs.io/v1/text-to-speech" /></div>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        <div>
-                                            <label className="label text-fuchsia-600">Modell-ID (Standard: tts-1)</label>
-                                            <input type="text" value={ttsProviderForm.model || ''} onChange={e=>setTtsProviderForm({...ttsProviderForm, model: e.target.value})} className="input-field bg-white border-fuchsia-100" placeholder="z.B. tts-1 oder eleven_multilingual_v2" />
-                                        </div>
-                                        <div>
-                                            <label className="label text-fuchsia-600">API Key</label>
-                                            <input type="password" value={ttsProviderForm.apiKey} onChange={e=>setTtsProviderForm({...ttsProviderForm, apiKey: e.target.value})} className="input-field bg-white border-fuchsia-100" placeholder="xi-api-key / Bearer Token / Leer lassen falls lokal" />
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-end gap-2 mt-2 border-t border-fuchsia-100 pt-3">
-                                        {editTtsProviderId && <button onClick={()=>{setEditTtsProviderId(null); setTtsProviderForm({name:'', url:'', type:'elevenlabs', apiKey:'', model:''});}} className="btn border-fuchsia-200 text-fuchsia-600">Abbrechen</button>}
-                                        <button onClick={() => {
-                                            if(!ttsProviderForm.name || !ttsProviderForm.url) return showToast('Name und URL erforderlich');
-                                            const newTtsProviders = editTtsProviderId ? ttsProviders.map(p => p.id === editTtsProviderId ? {...ttsProviderForm, id: editTtsProviderId} : p) : [...ttsProviders, {...ttsProviderForm, id: generateId()}];
-                                            setTtsProviders(newTtsProviders); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(newTtsProviders));
-                                            setEditTtsProviderId(null); setTtsProviderForm({name:'', url:'https://api.elevenlabs.io/v1/text-to-speech', type:'elevenlabs', apiKey:'', model:''}); showToast('TTS-Provider gespeichert!');
-                                        }} className="btn-primary bg-fuchsia-600 text-white hover:bg-fuchsia-700">{editTtsProviderId ? 'Aktualisieren' : 'Hinzufügen'}</button>
-                                    </div>
-                                </div>
+                        {/* --- V4.7 SETTINGS VIEW (TABBED) --- */}
+                        <div className={`${activeView === 'settings' ? 'block' : 'hidden'} p-6 max-w-4xl mx-auto space-y-6 mt-4 animate-fade-in pb-20`}>
+                            <div className="flex justify-between items-center border-b border-stone-200 pb-2">
+                                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">System Konfiguration</h2>
                             </div>
                             
-                            {/* STT PROVIDER MANAGEMENT */}
-                            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2 mt-12">🎙️ STT (SPEECH-TO-TEXT)</h2>
-                            <div className="panel space-y-4">
-                                <p className="text-xs text-slate-500 mb-2">Hier konfigurierst die Spracherkennung (Whisper via Replicate). Der Cloudflare Worker leitet die Aufnahmen weiter.</p>
-                                <div>
-                                    <label className="label">1. Aktiver STT-Provider</label>
-                                    <select value={activeSttProviderId} onChange={(e) => {
-                                        setActiveSttProviderId(e.target.value);
-                                        localStorage.setItem('lumen_activeSttProviderId', e.target.value);
-                                        showToast('STT-Provider gewechselt');
-                                    }} className="input-field font-sans text-xs font-bold text-sky-700 border-sky-200 focus:border-sky-400 focus:ring-sky-100 bg-sky-50/30">
-                                        {sttProviders.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                                    </select>
-                                </div>
+                            <div className="flex gap-2 overflow-x-auto pb-2">
+                                <button onClick={()=>setSettingsTab('chat')} className={`btn font-bold px-4 py-2 text-xs ${settingsTab==='chat'?'bg-indigo-100 text-indigo-800 border-indigo-200':'bg-stone-50 text-slate-500'}`}>💬 CHAT</button>
+                                <button onClick={()=>setSettingsTab('audio')} className={`btn font-bold px-4 py-2 text-xs ${settingsTab==='audio'?'bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200':'bg-stone-50 text-slate-500'}`}>🔈 AUDIO</button>
+                                <button onClick={()=>setSettingsTab('agenten')} className={`btn font-bold px-4 py-2 text-xs ${settingsTab==='agenten'?'bg-emerald-100 text-emerald-800 border-emerald-200':'bg-stone-50 text-slate-500'}`}>🤖 AGENTEN</button>
+                                <button onClick={()=>setSettingsTab('backup')} className={`btn font-bold px-4 py-2 text-xs ${settingsTab==='backup'?'bg-slate-800 text-white border-slate-700':'bg-stone-50 text-slate-500'}`}>💾 BACKUP</button>
                             </div>
-                            
-                            <div className="space-y-3">
-                                {sttProviders.map(p => (
-                                    <div key={p.id} className="panel flex flex-col gap-2 border-stone-200 bg-white shadow-sm">
-                                        <div className="flex justify-between items-start">
-                                            <div className="flex-1 pr-4 min-w-0">
-                                                <div className="font-bold text-sm text-slate-800 truncate">{p.name}</div>
-                                                <div className="text-[10px] text-slate-400 font-mono mt-1 truncate block">URL: {p.url}</div>
+
+                            {/* --- TAB: CHAT --- */}
+                            {settingsTab === 'chat' && (
+                                <div className="space-y-6 animate-fade-in">
+                                    <div className="panel space-y-4">
+                                        <div>
+                                            <label className="label">Aktiver Chat-Knoten</label>
+                                            <select value={activeProviderId} onChange={(e) => {
+                                                setActiveProviderId(e.target.value);
+                                                localStorage.setItem('lumen_activeProviderId', e.target.value);
+                                                showToast('Chat-Provider gewechselt');
+                                            }} className="input-field font-sans text-xs font-bold text-indigo-700">
+                                                {providers.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        {providers.map(p => (
+                                            <div key={p.id} className="panel flex flex-col gap-2 border-stone-200 bg-white shadow-sm">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="flex-1 pr-4 min-w-0">
+                                                        <div className="font-bold text-sm text-slate-800 truncate">{p.name} <span className="badge ml-2 bg-stone-100 text-stone-500 border-stone-200">{p.type}</span>{p.jsonMode !== false && <span className="badge ml-1 bg-indigo-50 text-indigo-500 border-indigo-100" title="JSON Mode aktiv">JSON</span>}</div>
+                                                        <div className="text-[10px] text-slate-400 font-mono mt-1 truncate block">{p.url}</div>
+                                                        <div className="text-[10px] text-indigo-500 font-mono mt-0.5 font-bold">Max Tokens: {p.maxTokens || 8000}</div>
+                                                    </div>
+                                                    <div className="flex gap-1 shrink-0">
+                                                        <button onClick={() => { setEditProviderId(p.id); setProviderForm({...p, jsonMode: p.jsonMode !== false, maxTokens: p.maxTokens || 8000}); }} className="btn py-1 px-2">✏️</button>
+                                                        <button onClick={() => { 
+                                                            if(window.confirm('Chat-Provider löschen?')) { 
+                                                                const newList = providers.filter(x=>x.id!==p.id); 
+                                                                setProviders(newList); localStorage.setItem('lumen_providers', JSON.stringify(newList));
+                                                                if(activeProviderId===p.id && newList.length) { setActiveProviderId(newList[0].id); localStorage.setItem('lumen_activeProviderId', newList[0].id); } 
+                                                            } 
+                                                        }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
+                                                    </div>
+                                                </div>
+                                                {p.apiKey ? <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded w-max mt-1">✓ API Key hinterlegt</div> : <div className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded w-max mt-1">⚠️ Kein Key hinterlegt</div>}
                                             </div>
-                                            <div className="flex gap-1 shrink-0">
-                                                <button onClick={() => { setEditSttProviderId(p.id); setSttProviderForm({...p}); }} className="btn py-1 px-2">✏️</button>
-                                                <button onClick={() => { 
-                                                    if(window.confirm('STT-Provider löschen?')) { 
-                                                        const newList = sttProviders.filter(x=>x.id!==p.id); 
-                                                        setSttProviders(newList); localStorage.setItem('lumen_sttProviders', JSON.stringify(newList));
-                                                        if(activeSttProviderId===p.id && newList.length) { setActiveSttProviderId(newList[0].id); localStorage.setItem('lumen_activeSttProviderId', newList[0].id); } 
-                                                    } 
-                                                }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
+                                        ))}
+
+                                        <div className="panel border-indigo-200 bg-indigo-50/30 flex flex-col gap-3 shadow-sm mt-4">
+                                            <h3 className="font-bold text-xs uppercase tracking-widest text-indigo-800">{editProviderId ? 'Chat-Provider bearbeiten' : 'Neuen Chat-Provider anlegen'}</h3>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                <div><label className="label text-indigo-600">Anzeigename</label><input value={providerForm.name} onChange={e=>setProviderForm({...providerForm, name: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="z.B. GPT-4o" /></div>
+                                                <div>
+                                                    <label className="label text-indigo-600">API Format (Payload)</label>
+                                                    <select value={providerForm.type} onChange={e=>setProviderForm({...providerForm, type: e.target.value})} className="input-field bg-white border-indigo-100">
+                                                        <option value="gemini">Google Gemini Format</option>
+                                                        <option value="openai">OpenAI Format (GPT, LM Studio, etc.)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div><label className="label text-indigo-600">API Endpoint URL</label><input value={providerForm.url} onChange={e=>setProviderForm({...providerForm, url: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="z.B. https://api.openai.com/v1/chat/completions" /></div>
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                                <div><label className="label text-indigo-600">Modell-ID</label><input value={providerForm.model} onChange={e=>setProviderForm({...providerForm, model: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="z.B. gpt-4o" disabled={providerForm.type === 'gemini'} /></div>
+                                                <div><label className="label text-indigo-600">Token-Limit (Heuristik)</label><input type="number" value={providerForm.maxTokens} onChange={e=>setProviderForm({...providerForm, maxTokens: Number(e.target.value)})} className="input-field bg-white border-indigo-100 font-bold text-indigo-700" placeholder="8000" /></div>
+                                                <div><label className="label text-indigo-600">API Key</label><input type="password" value={providerForm.apiKey} onChange={e=>setProviderForm({...providerForm, apiKey: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="Schlüssel" /></div>
+                                            </div>
+                                            <div className="mt-2">
+                                                <label className="flex items-center gap-2 text-xs font-bold text-indigo-700 cursor-pointer w-max">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        checked={providerForm.jsonMode !== false} 
+                                                        onChange={e => setProviderForm({...providerForm, jsonMode: e.target.checked})} 
+                                                        className="accent-indigo-600 w-4 h-4 cursor-pointer"
+                                                    /> 
+                                                    JSON-Mode erzwingen (Structured Output)
+                                                </label>
+                                                <p className="text-[9px] text-slate-400 mt-1">Deaktivieren, falls ein lokales Modell den strikten JSON-Mode nicht unterstützt.</p>
+                                            </div>
+                                            <div className="flex justify-end gap-2 mt-2 border-t border-indigo-100 pt-3">
+                                                {editProviderId && <button onClick={()=>{setEditProviderId(null); setProviderForm({name:'', url:'', type:'gemini', model:'', apiKey:'', jsonMode: true, maxTokens: 8000});}} className="btn border-indigo-200 text-indigo-600">Abbrechen</button>}
+                                                <button onClick={() => {
+                                                    if(!providerForm.name || !providerForm.url) return showToast('Name und URL erforderlich');
+                                                    const newProviders = editProviderId ? providers.map(p => p.id === editProviderId ? {...providerForm, id: editProviderId} : p) : [...providers, {...providerForm, id: generateId()}];
+                                                    setProviders(newProviders); localStorage.setItem('lumen_providers', JSON.stringify(newProviders));
+                                                    setEditProviderId(null); setProviderForm({name:'', url:'', type:'gemini', model:'', apiKey:'', jsonMode: true, maxTokens: 8000}); showToast('Chat-Provider gespeichert!');
+                                                }} className="btn-primary bg-indigo-600 text-white hover:bg-indigo-700">{editProviderId ? 'Aktualisieren' : 'Hinzufügen'}</button>
                                             </div>
                                         </div>
-                                        {p.apiKey ? <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded w-max mt-1">✓ API Key hinterlegt</div> : <div className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded w-max mt-1">⚠️ Kein Key hinterlegt</div>}
-                                    </div>
-                                ))}
-
-                                <div className="panel border-sky-200 bg-sky-50/30 flex flex-col gap-3 shadow-sm mt-4">
-                                    <h3 className="font-bold text-xs uppercase tracking-widest text-sky-800">{editSttProviderId ? 'STT-Provider bearbeiten' : 'Neuen STT-Provider anlegen'}</h3>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        <div><label className="label text-sky-600">Anzeigename</label><input value={sttProviderForm.name} onChange={e=>setSttProviderForm({...sttProviderForm, name: e.target.value})} className="input-field bg-white border-sky-100" placeholder="z.B. Replicate Whisper" /></div>
-                                        <div><label className="label text-sky-600">API Endpoint URL</label><input value={sttProviderForm.url} onChange={e=>setSttProviderForm({...sttProviderForm, url: e.target.value})} className="input-field bg-white border-sky-100" placeholder="z.B. https://api.replicate.com/v1/predictions" /></div>
-                                    </div>
-                                    <div className="grid grid-cols-1 gap-3">
-                                        <div><label className="label text-sky-600">API Key</label><input type="password" value={sttProviderForm.apiKey} onChange={e=>setSttProviderForm({...sttProviderForm, apiKey: e.target.value})} className="input-field bg-white border-sky-100" placeholder="Replicate Token" /></div>
-                                    </div>
-                                    <div className="flex justify-end gap-2 mt-2 border-t border-sky-100 pt-3">
-                                        {editSttProviderId && <button onClick={()=>{setEditSttProviderId(null); setSttProviderForm({name:'', url:'https://api.replicate.com/v1/predictions', apiKey:''});}} className="btn border-sky-200 text-sky-600">Abbrechen</button>}
-                                        <button onClick={() => {
-                                            if(!sttProviderForm.name || !sttProviderForm.url) return showToast('Name und URL erforderlich');
-                                            const newSttProviders = editSttProviderId ? sttProviders.map(p => p.id === editSttProviderId ? {...sttProviderForm, id: editSttProviderId} : p) : [...sttProviders, {...sttProviderForm, id: generateId()}];
-                                            setSttProviders(newSttProviders); localStorage.setItem('lumen_sttProviders', JSON.stringify(newSttProviders));
-                                            setEditSttProviderId(null); setSttProviderForm({name:'', url:'https://api.replicate.com/v1/predictions', apiKey:''}); showToast('STT-Provider gespeichert!');
-                                        }} className="btn-primary bg-sky-600 text-white hover:bg-sky-700">{editSttProviderId ? 'Aktualisieren' : 'Hinzufügen'}</button>
                                     </div>
                                 </div>
-                            </div>
+                            )}
 
-                            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2 mt-12">⚙️ Konfigurations-Backup (API, TTS & STT)</h2>
-                            <div className="panel space-y-4 bg-slate-50 border-slate-200">
-                                <p className="text-xs text-slate-500 leading-relaxed">Sichere hier ausschließlich deine Einstellungen (Chat-Knoten, TTS-Provider, STT-Provider, API-Keys, ausgewählte Stimmen).</p>
-                                <div className="flex gap-3">
-                                    <input type="file" accept=".json" ref={fileInputRefConfig} className="hidden" onChange={handleConfigImport}/>
-                                    <button onClick={()=>fileInputRefConfig.current?.click()} className="btn flex-1 py-3 text-slate-600 hover:bg-white border-slate-300">📥 Config Importieren</button>
-                                    <button onClick={handleConfigExport} className="btn flex-1 py-3 bg-slate-800 text-white hover:bg-slate-900 shadow-md">📤 Config Exportieren</button>
-                                </div>
-                            </div>
+                            {/* --- TAB: AUDIO --- */}
+                            {settingsTab === 'audio' && (
+                                <div className="space-y-6 animate-fade-in">
+                                    <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2">🔈 Audio (TTS)</h2>
+                                    <div className="panel space-y-4">
+                                        <div>
+                                            <label className="label">1. Aktives TTS-Konto (Auto-Play & Buttons)</label>
+                                            <select value={activeTtsProviderId} onChange={(e) => {
+                                                setActiveTtsProviderId(e.target.value);
+                                                localStorage.setItem('lumen_activeTtsProviderId', e.target.value);
+                                                showToast('TTS-Konto gewechselt');
+                                            }} className="input-field font-sans text-xs font-bold text-fuchsia-700 border-fuchsia-200 focus:border-fuchsia-400 focus:ring-fuchsia-100 bg-fuchsia-50/30">
+                                                {ttsProviders.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
+                                            </select>
+                                        </div>
+                                        
+                                        {activeTtsProvider && (
+                                            <div className="border-t border-stone-100 pt-4">
+                                                <label className="label text-fuchsia-600">2. Stimme für dieses Konto auswählen</label>
+                                                
+                                                {/* ELEVENLABS STIMMEN DROPDOWN */}
+                                                {activeTtsProvider.type === 'elevenlabs' && (
+                                                    <select value={ttsVoices.elevenlabs} onChange={e=>{
+                                                        const newVoices = {...ttsVoices, elevenlabs: e.target.value};
+                                                        setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices)); showToast('ElevenLabs Stimme aktualisiert');
+                                                    }} className="input-field bg-white">
+                                                        <option value="21m00Tcm4TlvDq8ikWAM">Rachel (Amerikanisch, ruhig)</option>
+                                                        <option value="EXAVITQu4vr4xnSDxMaL">Bella (Amerikanisch, weich)</option>
+                                                        <option value="AZnzlk1XvdvUeBnXmlld">Domi (Amerikanisch, stark)</option>
+                                                        <option value="MF3mGyEYCl7XYWbV9V6O">Elli (Britisch, emotional)</option>
+                                                        <option value="pNInz6obpgDQGcFmaJcg">Adam (Amerikanisch, kräftig)</option>
+                                                        <option value="yoZ06aMxZJJ28mfd3POQ">Sam (Amerikanisch, raspelig)</option>
+                                                        <option value="TxGEqnHWrfWFTfGW9XjX">Josh (Amerikanisch, tief)</option>
+                                                    </select>
+                                                )}
 
-                            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2 mt-12">System Backup (Omni-Bundle)</h2>
-                            <div className="panel space-y-4 bg-stone-100/50 border-stone-200">
-                                <p className="text-xs text-slate-500 leading-relaxed">Das Omni-Bundle vereint deine gesamte DNA, alle Direktiven und das komplette Sanctum-Gedächtnis in einer Datei.</p>
-                                <div className="flex gap-3">
-                                    <input type="file" accept=".json" ref={fileInputRefOmni} className="hidden" onChange={handleOmniImport}/>
-                                    <button onClick={()=>fileInputRefOmni.current?.click()} className="btn flex-1 py-3 text-slate-600 hover:bg-white border-stone-300">📥 Omni-Import</button>
-                                    <button onClick={handleOmniExport} className="btn flex-1 py-3 bg-slate-800 text-white hover:bg-slate-900 shadow-md">📤 Omni-Export</button>
+                                                {/* OPENAI STIMMEN DROPDOWN */}
+                                                {activeTtsProvider.type === 'openai' && (
+                                                    <select value={ttsVoices.openai} onChange={e=>{
+                                                        const newVoices = {...ttsVoices, openai: e.target.value};
+                                                        setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices)); showToast('OpenAI Stimme aktualisiert');
+                                                    }} className="input-field bg-white">
+                                                        <option value="nova">Nova (Weiblich, energetisch)</option>
+                                                        <option value="alloy">Alloy (Neutral, klar)</option>
+                                                        <option value="echo">Echo (Männlich, weich)</option>
+                                                        <option value="fable">Fable (Lebhaft, erzählend)</option>
+                                                        <option value="onyx">Onyx (Männlich, tief)</option>
+                                                        <option value="shimmer">Shimmer (Weiblich, hell)</option>
+                                                    </select>
+                                                )}
+
+                                                {/* GEMINI STIMMEN DROPDOWN */}
+                                                {activeTtsProvider.type === 'gemini' && (
+                                                    <select value={ttsVoices.gemini} onChange={e=>{
+                                                        const newVoices = {...ttsVoices, gemini: e.target.value};
+                                                        setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices)); showToast('Gemini Stimme aktualisiert');
+                                                    }} className="input-field bg-white">
+                                                        <option value="Kore">Kore (Sanft, freundlich)</option>
+                                                        <option value="Puck">Puck (Energetisch, jung)</option>
+                                                        <option value="Charon">Charon (Tief, resonierend)</option>
+                                                        <option value="Fenrir">Fenrir (Kräftig, direkt)</option>
+                                                        <option value="Aoede">Aoede (Melodisch, ruhig)</option>
+                                                    </select>
+                                                )}
+
+                                                {/* CUSTOM STIMMEN INPUT */}
+                                                {(activeTtsProvider.type === 'custom_openai' || activeTtsProvider.type === 'custom_get' || activeTtsProvider.type === 'replicate') && (
+                                                    <input type="text" placeholder={activeTtsProvider.type === 'replicate' ? "Voice (optional, z.B. bei Replicate nicht nötig)" : "Voice-ID oder Parameter (optional)"} className="input-field bg-white" value={ttsVoices[activeTtsProvider.type] || ''} onChange={e=>{
+                                                        const newVoices = {...ttsVoices, [activeTtsProvider.type]: e.target.value};
+                                                        setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices));
+                                                    }} />
+                                                )}
+                                                
+                                                <div className="mt-2 flex gap-2 w-full">
+                                                    <input type="text" placeholder="...oder benutzerdefinierte Voice-ID einfügen" className="input-field text-[10px] bg-white py-2" value={ttsVoices[activeTtsProvider.type] || ''} onChange={e=>{
+                                                        const newVoices = {...ttsVoices, [activeTtsProvider.type]: e.target.value};
+                                                        setTtsVoices(newVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(newVoices));
+                                                    }} />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        {ttsProviders.map(p => (
+                                            <div key={p.id} className="panel flex flex-col gap-2 border-stone-200 bg-white shadow-sm">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="flex-1 pr-4 min-w-0">
+                                                        <div className="font-bold text-sm text-slate-800 truncate">{p.name} <span className="badge ml-2 bg-fuchsia-50 text-fuchsia-600 border-fuchsia-100">{p.type}</span></div>
+                                                        <div className="text-[10px] text-slate-400 font-mono mt-1 truncate block">URL: {p.url}</div>
+                                                        {p.model && <div className="text-[10px] text-slate-400 font-mono truncate block">Modell: {p.model}</div>}
+                                                    </div>
+                                                    <div className="flex gap-1 shrink-0">
+                                                        <button onClick={() => { setEditTtsProviderId(p.id); setTtsProviderForm({...p}); }} className="btn py-1 px-2">✏️</button>
+                                                        <button onClick={() => { 
+                                                            if(window.confirm('TTS-Provider löschen?')) { 
+                                                                const newList = ttsProviders.filter(x=>x.id!==p.id); 
+                                                                setTtsProviders(newList); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(newList));
+                                                                if(activeTtsProviderId===p.id && newList.length) { setActiveTtsProviderId(newList[0].id); localStorage.setItem('lumen_activeTtsProviderId', newList[0].id); } 
+                                                            } 
+                                                        }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
+                                                    </div>
+                                                </div>
+                                                {p.apiKey ? <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded w-max mt-1">✓ API Key hinterlegt</div> : <div className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded w-max mt-1">⚠️ Kein Key hinterlegt</div>}
+                                            </div>
+                                        ))}
+
+                                        <div className="panel border-fuchsia-200 bg-fuchsia-50/30 flex flex-col gap-3 shadow-sm mt-4">
+                                            <h3 className="font-bold text-xs uppercase tracking-widest text-fuchsia-800">{editTtsProviderId ? 'TTS-Provider bearbeiten' : 'Neuen TTS-Provider anlegen'}</h3>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                <div><label className="label text-fuchsia-600">Anzeigename</label><input value={ttsProviderForm.name} onChange={e=>setTtsProviderForm({...ttsProviderForm, name: e.target.value})} className="input-field bg-white border-fuchsia-100" placeholder="z.B. Mein ElevenLabs Account" /></div>
+                                                <div>
+                                                    <label className="label text-fuchsia-600">TTS Engine (Format)</label>
+                                                    <select value={ttsProviderForm.type} onChange={e=>{
+                                                        const type = e.target.value;
+                                                        let defaultUrl = ttsProviderForm.url;
+                                                        if (type === 'elevenlabs') defaultUrl = 'https://api.elevenlabs.io/v1/text-to-speech';
+                                                        else if (type === 'openai') defaultUrl = 'https://api.openai.com/v1/audio/speech';
+                                                        else if (type === 'gemini') defaultUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent';
+                                                        else if (type === 'replicate') defaultUrl = 'https://api.replicate.com/v1/models/qwen/qwen3-tts/predictions';
+                                                        else if (type === 'custom_get') defaultUrl = 'http://localhost:5002/api/tts?text={text}';
+                                                        else if (type === 'custom_openai') defaultUrl = 'http://localhost:8080/v1/audio/speech';
+                                                        setTtsProviderForm({...ttsProviderForm, type, url: defaultUrl});
+                                                    }} className="input-field bg-white border-fuchsia-100">
+                                                        <option value="elevenlabs">ElevenLabs API</option>
+                                                        <option value="openai">OpenAI TTS API</option>
+                                                        <option value="gemini">Google Gemini TTS API</option>
+                                                        <option value="replicate">Replicate API (Qwen3 / Open Source)</option>
+                                                        <option value="custom_openai">Custom POST (OpenAI Kompatibel)</option>
+                                                        <option value="custom_get">Custom GET (z.B. Mozilla TTS)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div><label className="label text-fuchsia-600">API Endpoint Base-URL</label><input value={ttsProviderForm.url} onChange={e=>setTtsProviderForm({...ttsProviderForm, url: e.target.value})} className="input-field bg-white border-fuchsia-100" placeholder="z.B. https://api.elevenlabs.io/v1/text-to-speech" /></div>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                <div>
+                                                    <label className="label text-fuchsia-600">Modell-ID (Standard: tts-1)</label>
+                                                    <input type="text" value={ttsProviderForm.model || ''} onChange={e=>setTtsProviderForm({...ttsProviderForm, model: e.target.value})} className="input-field bg-white border-fuchsia-100" placeholder="z.B. tts-1 oder eleven_multilingual_v2" />
+                                                </div>
+                                                <div>
+                                                    <label className="label text-fuchsia-600">API Key</label>
+                                                    <input type="password" value={ttsProviderForm.apiKey} onChange={e=>setTtsProviderForm({...ttsProviderForm, apiKey: e.target.value})} className="input-field bg-white border-fuchsia-100" placeholder="xi-api-key / Bearer Token / Leer lassen falls lokal" />
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-end gap-2 mt-2 border-t border-fuchsia-100 pt-3">
+                                                {editTtsProviderId && <button onClick={()=>{setEditTtsProviderId(null); setTtsProviderForm({name:'', url:'', type:'elevenlabs', apiKey:'', model:''});}} className="btn border-fuchsia-200 text-fuchsia-600">Abbrechen</button>}
+                                                <button onClick={() => {
+                                                    if(!ttsProviderForm.name || !ttsProviderForm.url) return showToast('Name und URL erforderlich');
+                                                    const newTtsProviders = editTtsProviderId ? ttsProviders.map(p => p.id === editTtsProviderId ? {...ttsProviderForm, id: editTtsProviderId} : p) : [...ttsProviders, {...ttsProviderForm, id: generateId()}];
+                                                    setTtsProviders(newTtsProviders); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(newTtsProviders));
+                                                    setEditTtsProviderId(null); setTtsProviderForm({name:'', url:'https://api.elevenlabs.io/v1/text-to-speech', type:'elevenlabs', apiKey:'', model:''}); showToast('TTS-Provider gespeichert!');
+                                                }} className="btn-primary bg-fuchsia-600 text-white hover:bg-fuchsia-700">{editTtsProviderId ? 'Aktualisieren' : 'Hinzufügen'}</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
+
+                            {/* --- TAB: AGENTEN --- */}
+                            {settingsTab === 'agenten' && (
+                                <div className="space-y-6 animate-fade-in">
+                                    <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2">Sub-Agent Control Center</h2>
+                                    <p className="text-xs text-slate-500">Agenten erledigen vollautomatische Hintergrundaufgaben. Wähle den Provider aus und bearbeite die Prompts der Agenten.</p>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="panel bg-indigo-50/50 border-indigo-200 shadow-sm">
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <span className="text-xl">🗄️</span>
+                                                <h3 className="font-bold text-xs uppercase tracking-widest text-indigo-800">AGENT: ARCHIVAR</h3>
+                                            </div>
+                                            <label className="label text-indigo-600">Aktiver Provider</label>
+                                            <select value={activeArchivarId} onChange={e => { setActiveArchivarId(e.target.value); localStorage.setItem('lumen_activeArchivarId', e.target.value); showToast('Archivar gewechselt'); }} className="input-field text-indigo-700 font-bold text-xs mb-2">
+                                                {agentProviders.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
+                                            </select>
+                                        </div>
+
+                                        <div className="panel bg-amber-50/50 border-amber-200 shadow-sm">
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <span className="text-xl">🌐</span>
+                                                <h3 className="font-bold text-xs uppercase tracking-widest text-amber-800">AGENT: WEB-SCOUT (LUNA)</h3>
+                                            </div>
+                                            <label className="label text-amber-600">Aktiver Provider</label>
+                                            <select value={activeLunaId} onChange={e => { setActiveLunaId(e.target.value); localStorage.setItem('lumen_activeLunaId', e.target.value); showToast('Luna gewechselt'); }} className="input-field text-amber-700 font-bold text-xs mb-2">
+                                                {agentProviders.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <h3 className="font-bold text-xs uppercase tracking-widest text-slate-600 mt-6 border-b border-stone-200 pb-2">Agent Provider Profile</h3>
+                                        {agentProviders.map(p => (
+                                            <div key={p.id} className="panel flex flex-col gap-2 border-stone-200 bg-white shadow-sm">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="flex-1 pr-4 min-w-0">
+                                                        <div className="font-bold text-sm text-slate-800 truncate">{p.name} <span className="badge ml-2 bg-stone-100 text-stone-500 border-stone-200">{p.type}</span></div>
+                                                        <div className="text-[10px] text-slate-400 font-mono mt-1 truncate block">URL: {p.url}</div>
+                                                    </div>
+                                                    <div className="flex gap-1 shrink-0">
+                                                        <button onClick={() => { setEditAgentId(p.id); setAgentProviderForm({...p}); }} className="btn py-1 px-2">✏️</button>
+                                                        <button onClick={() => { 
+                                                            if(window.confirm('Agent-Provider löschen?')) { 
+                                                                const newList = agentProviders.filter(x=>x.id!==p.id); 
+                                                                setAgentProviders(newList); localStorage.setItem('lumen_agentProviders', JSON.stringify(newList));
+                                                                if(activeArchivarId===p.id && newList.length) { setActiveArchivarId(newList[0].id); localStorage.setItem('lumen_activeArchivarId', newList[0].id); } 
+                                                                if(activeLunaId===p.id && newList.length) { setActiveLunaId(newList[0].id); localStorage.setItem('lumen_activeLunaId', newList[0].id); } 
+                                                            } 
+                                                        }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
+                                                    </div>
+                                                </div>
+                                                {p.apiKey ? <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded w-max mt-1">✓ API Key hinterlegt</div> : <div className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded w-max mt-1">⚠️ Kein Key hinterlegt</div>}
+                                            </div>
+                                        ))}
+
+                                        <div className="panel border-emerald-200 bg-emerald-50/30 flex flex-col gap-3 shadow-sm mt-4">
+                                            <h3 className="font-bold text-xs uppercase tracking-widest text-emerald-800">{editAgentId ? 'Agent-Provider bearbeiten' : 'Neuen Agent-Provider anlegen'}</h3>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                <div><label className="label text-emerald-600">Anzeigename</label><input value={agentProviderForm.name} onChange={e=>setAgentProviderForm({...agentProviderForm, name: e.target.value})} className="input-field bg-white border-emerald-100" placeholder="z.B. GPT-4o Archivar" /></div>
+                                                <div>
+                                                    <label className="label text-emerald-600">API Typ (Engine)</label>
+                                                    <select value={agentProviderForm.type} onChange={e=>setAgentProviderForm({...agentProviderForm, type: e.target.value})} className="input-field bg-white border-emerald-100">
+                                                        <option value="openai">OpenAI Format</option>
+                                                        <option value="gemini">Google Gemini Format</option>
+                                                        <option value="tavily">Tavily Search</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="label text-emerald-600">System Prompt (Anweisung)</label>
+                                                <textarea value={agentProviderForm.prompt} onChange={e=>setAgentProviderForm({...agentProviderForm, prompt: e.target.value})} className="input-field bg-white border-emerald-100 min-h-[80px]" placeholder="Die Instruktionen für diesen Agenten..." />
+                                            </div>
+                                            <div><label className="label text-emerald-600">API Endpoint URL</label><input value={agentProviderForm.url} onChange={e=>setAgentProviderForm({...agentProviderForm, url: e.target.value})} className="input-field bg-white border-emerald-100" placeholder="z.B. https://api.openai.com/v1/chat/completions" /></div>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                <div><label className="label text-emerald-600">Modell-ID</label><input value={agentProviderForm.model} onChange={e=>setAgentProviderForm({...agentProviderForm, model: e.target.value})} className="input-field bg-white border-emerald-100" placeholder="z.B. gpt-4o-mini" disabled={agentProviderForm.type === 'gemini' || agentProviderForm.type === 'tavily'} /></div>
+                                                <div><label className="label text-emerald-600">API Key</label><input type="password" value={agentProviderForm.apiKey} onChange={e=>setAgentProviderForm({...agentProviderForm, apiKey: e.target.value})} className="input-field bg-white border-emerald-100" placeholder="Schlüssel" /></div>
+                                            </div>
+                                            <div className="flex justify-end gap-2 mt-2 border-t border-emerald-100 pt-3">
+                                                {editAgentId && <button onClick={()=>{setEditAgentId(null); setAgentProviderForm({name:'', url:'', type:'openai', model:'', apiKey:'', prompt:''});}} className="btn border-emerald-200 text-emerald-600">Abbrechen</button>}
+                                                <button onClick={() => {
+                                                    if(!agentProviderForm.name || !agentProviderForm.url) return showToast('Name und URL erforderlich');
+                                                    const newList = editAgentId ? agentProviders.map(p => p.id === editAgentId ? {...agentProviderForm, id: editAgentId} : p) : [...agentProviders, {...agentProviderForm, id: generateId()}];
+                                                    setAgentProviders(newList); localStorage.setItem('lumen_agentProviders', JSON.stringify(newList));
+                                                    setEditAgentId(null); setAgentProviderForm({name:'', url:'', type:'openai', model:'', apiKey:'', prompt:''}); showToast('Agent gespeichert!');
+                                                }} className="btn-primary bg-emerald-600 text-white hover:bg-emerald-700">{editAgentId ? 'Aktualisieren' : 'Hinzufügen'}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* --- TAB: BACKUP --- */}
+                            {settingsTab === 'backup' && (
+                                <div className="space-y-6 animate-fade-in">
+                                    <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2">💾 Backup & Restore</h2>
+                                    <div className="panel space-y-4 bg-slate-50 border-slate-200">
+                                        <p className="text-xs text-slate-800 font-bold uppercase tracking-widest">⚙️ Konfigurations-Backup (Light)</p>
+                                        <p className="text-[10px] text-slate-500 leading-relaxed">Sichere hier ausschließlich deine Provider-Einstellungen (API-Keys, Agenten, Audio).</p>
+                                        <div className="flex gap-3">
+                                            <input type="file" accept=".json" ref={fileInputRefConfig} className="hidden" onChange={handleConfigImport}/>
+                                            <button onClick={()=>fileInputRefConfig.current?.click()} className="btn flex-1 py-3 text-slate-600 hover:bg-white border-slate-300">📥 Config Importieren</button>
+                                            <button onClick={handleConfigExport} className="btn flex-1 py-3 bg-slate-800 text-white hover:bg-slate-900 shadow-md">📤 Config Exportieren</button>
+                                        </div>
+                                    </div>
+
+                                    <div className="panel space-y-4 bg-stone-100/50 border-stone-200">
+                                        <p className="text-xs text-slate-800 font-bold uppercase tracking-widest">📦 Omni-Bundle (Full System Backup)</p>
+                                        <p className="text-[10px] text-slate-500 leading-relaxed">Das Omni-Bundle vereint deine gesamte DNA, alle Direktiven, Provider-Settings und das komplette Sanctum-Gedächtnis in einer Datei.</p>
+                                        <div className="flex gap-3">
+                                            <input type="file" accept=".json" ref={fileInputRefOmni} className="hidden" onChange={handleOmniImport}/>
+                                            <button onClick={()=>fileInputRefOmni.current?.click()} className="btn flex-1 py-3 text-slate-600 hover:bg-white border-stone-300">📥 Omni-Import</button>
+                                            <button onClick={handleOmniExport} className="btn flex-1 py-3 bg-slate-800 text-white hover:bg-slate-900 shadow-md">📤 Omni-Export</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* --- DNA VIEW --- */}
@@ -2366,7 +2819,7 @@ ${systemOverride}
                                             </div>
                                             {m.titel_poetisch && <div className="text-rose-500 italic text-sm font-serif leading-snug mt-0.5 shrink-0">{m.titel_poetisch}</div>}
                                             
-                                            {/* V3.28: Stabilized Expandable Container */}
+                                            {/* V4.4: Stabilized Expandable Container */}
                                             <div 
                                                 className={`flex-1 flex flex-col overflow-hidden transition-all duration-400 cursor-pointer mt-2 relative ${isExpanded ? 'max-h-[3000px]' : 'max-h-[100px] hover:max-h-[250px]'}`}
                                                 onClick={() => setExpandedCards(prev => ({...prev, [m.id]: !prev[m.id]}))}
@@ -2386,7 +2839,7 @@ ${systemOverride}
 
                                             {m.tags?.length > 0 && <div className="flex gap-1 mt-2 flex-wrap shrink-0">{m.tags.map((t,i)=><span key={i} className="text-slate-400 text-[10px] lowercase font-mono">#{t}</span>)}</div>}
                                             
-                                            {/* V3.28: Fixed Buttons */}
+                                            {/* V4.4: Fixed Buttons */}
                                             <div className="flex gap-2 mt-3 pt-3 border-t border-stone-100 shrink-0 w-full mt-auto">
                                                 <button onClick={()=>{
                                                     if(!activeDesks.find(d => d.titel_technisch === m.titel_technisch)) {
@@ -2408,7 +2861,14 @@ ${systemOverride}
                     </main>
 
                     {/* --- INPUT AREA --- */}
-                    <div className={`${['chat', 'sessel', 'oase', 'werkbank', 'balkon'].includes(activeView) ? 'block' : 'hidden'} shrink-0 border-t border-stone-200 bg-white/90 backdrop-blur-md pb-safe`}>
+                    <div className={`${['chat', 'sessel', 'oase', 'werkbank', 'balkon'].includes(activeView) ? 'block' : 'hidden'} shrink-0 border-t border-stone-200 bg-white/90 backdrop-blur-md pb-safe relative`}>
+                        {/* V4.8: MEMORY PILLE MIT WARNING-SUPPORT */}
+                        {archivarSnippets.length > 0 && (
+                            <button onClick={() => setShowMemoryModal(true)} className={`absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-bold shadow-md transition-all ${archivarWarning ? 'bg-rose-500 text-white border-rose-600 animate-pulse' : 'bg-amber-100 text-amber-700 border-amber-300 animate-bounce'}`}>
+                                ✨ {archivarSnippets.length} {archivarSnippets.length === 1 ? 'Notiz' : 'Notizen'} bereit
+                            </button>
+                        )}
+                        
                         {/* V4.4: MINI-TTS-PLAYER */}
                         {playingMsgId && window.currentAudio && (
                             <div className="max-w-4xl mx-auto flex items-center gap-3 bg-indigo-900 text-indigo-100 px-4 py-2 rounded-t-xl text-[10px] font-mono shadow-md mt-1 mx-2 sm:mx-6">
@@ -2435,49 +2895,87 @@ ${systemOverride}
                         )}
 
                         <div className="p-2 sm:px-4 sm:py-3">
-                            <div className="max-w-4xl mx-auto flex flex-col gap-1">
-                                <div className="flex gap-2 items-end">
-                                    {/* V4.4: API PROTOKOLL BUTTON */}
+                            <div className="max-w-4xl mx-auto flex gap-2 items-end w-full">
+                                {/* V4.9: TOKEN-GAUGE & TOOLTIP */}
+                                <div className="relative group" onMouseEnter={() => setShowTokenTooltip(true)} onMouseLeave={() => setShowTokenTooltip(false)}>
                                     <button 
-                                        onClick={() => setShowApiLog(true)} 
-                                        disabled={!lastApiPayload}
-                                        className="btn bg-white text-slate-400 border-stone-200 hover:text-indigo-500 hover:bg-stone-50 transition-colors shadow-sm shrink-0 flex items-center justify-center text-sm py-3 px-3 disabled:opacity-50"
-                                        title="API-Protokoll anzeigen"
+                                        onClick={handleTokenClick} 
+                                        title={`API-Protokoll & Tokens (System: ${tokenUsage.system}, Hist: ${tokenUsage.history})`}
+                                        className={`w-10 h-10 shrink-0 flex items-center justify-center rounded-xl border transition-all shadow-sm ${tokenUsage.percent >= 90 ? 'border-rose-400 animate-pulse' : 'border-stone-200'} ${tokenUsage.percent > 50 ? 'text-white' : 'text-slate-500'}`}
+                                        style={{
+                                            background: `linear-gradient(to top, #3b82f6 0%, #3b82f6 ${systemPercent}%, #94a3b8 ${systemPercent}%, #94a3b8 ${historyEndPercent}%, #ffffff ${historyEndPercent}%, #ffffff 100%)`
+                                        }}
                                     >
-                                        🔍
-                                    </button>
-
-                                    <button 
-                                        onClick={isRecording ? stopRecording : startRecording} 
-                                        disabled={!!loadingStatus}
-                                        className={`px-4 py-3 rounded-2xl border transition-all shadow-sm shrink-0 flex items-center justify-center text-lg ${isRecording ? 'bg-rose-100 text-rose-600 border-rose-300 animate-pulse' : 'bg-white text-slate-500 border-stone-200 hover:bg-stone-100 disabled:opacity-50'}`}
-                                        title="Speech-to-Text (Whisper via Replicate)"
-                                    >
-                                        {isRecording ? '🛑' : '🎤'}
+                                        🪙
                                     </button>
                                     
-                                    <textarea 
-                                        ref={textareaRef}
-                                        value={inputText} 
-                                        onChange={(e) => {
-                                            setInputText(e.target.value);
-                                            e.target.style.height = 'auto';
-                                            e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
-                                        }} 
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter' && !e.shiftKey) {
-                                                e.preventDefault();
-                                                handleSendMessage();
-                                            }
-                                        }} 
-                                        disabled={!!loadingStatus || isRecording} 
-                                        className="input-field flex-1 py-3 px-4 font-sans font-medium bg-white disabled:bg-stone-100 disabled:text-slate-400 resize-none overflow-y-auto max-h-[150px]" 
-                                        rows="1"
-                                        style={{ minHeight: '46px' }}
-                                        placeholder={loadingStatus ? loadingStatus : (isRecording ? "HÖRE ZU..." : "INPUT...")} 
-                                    />
-                                    <button onClick={handleSendMessage} disabled={!inputText.trim() || !!loadingStatus || isRecording} className="btn-primary px-6 disabled:opacity-50 py-3.5 shadow-indigo-200 text-sm uppercase">Send</button>
+                                    {showTokenTooltip && (
+                                        <div className="absolute bottom-12 left-0 bg-white border border-stone-200 p-4 rounded-2xl shadow-2xl z-[1000] w-64 animate-fade-in" onClick={e => e.stopPropagation()}>
+                                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 border-b border-stone-100 pb-1">Token-Metriken</div>
+                                            <div className="flex justify-between items-center text-xs mb-1">
+                                                <span className="text-blue-600 font-bold">SYSTEM-KERN (Cache)</span>
+                                                <span className="font-mono text-slate-700">{tokenUsage.system}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center text-xs mb-3">
+                                                <span className="text-slate-500 font-bold">SESSION-HISTORIE</span>
+                                                <span className="font-mono text-slate-700">{tokenUsage.history}</span>
+                                            </div>
+                                            
+                                            <div className="w-full h-2 bg-stone-100 rounded-full flex overflow-hidden mb-2">
+                                                <div style={{ width: `${systemPercent}%` }} className="bg-blue-500 h-full"></div>
+                                                <div style={{ width: `${historyEndPercent - systemPercent}%` }} className="bg-slate-400 h-full"></div>
+                                            </div>
+                                            
+                                            <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-slate-500 border-t border-stone-100 pt-2 mt-1">
+                                                <span>VERFÜGBAR</span>
+                                                <span>{Math.max(0, activeProvTokens - (tokenUsage.system + tokenUsage.history))} Tokens</span>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
+
+                                {/* V4.5.1: COMPACT MICROPHONE BUTTON */}
+                                <button 
+                                    onClick={isRecording ? stopRecording : startRecording} 
+                                    disabled={!!loadingStatus}
+                                    className={`w-10 h-10 rounded-full shrink-0 p-0 flex items-center justify-center text-lg transition-all shadow-sm ${isRecording ? 'bg-rose-100 text-rose-600 border border-rose-300 animate-pulse' : 'bg-white text-slate-500 border border-stone-200 hover:bg-stone-100 disabled:opacity-50'}`}
+                                    title="Speech-to-Text (Whisper via Replicate)"
+                                >
+                                    {isRecording ? '🛑' : '🎤'}
+                                </button>
+                                
+                                {/* V4.5.1: COMPACT TEXTAREA */}
+                                <textarea 
+                                    ref={textareaRef}
+                                    value={inputText} 
+                                    onChange={(e) => {
+                                        setInputText(e.target.value);
+                                        e.target.style.height = 'auto';
+                                        e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
+                                    }} 
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSendMessage();
+                                        }
+                                    }} 
+                                    disabled={!!loadingStatus || isRecording} 
+                                    className="input-field flex-1 py-2.5 px-3 font-sans font-medium bg-white disabled:bg-stone-100 disabled:text-slate-400 resize-none overflow-y-auto max-h-[150px]" 
+                                    rows="1"
+                                    style={{ minHeight: '40px' }}
+                                    placeholder={loadingStatus ? loadingStatus : (isRecording ? "HÖRE ZU..." : "INPUT...")} 
+                                />
+
+                                {/* V4.5.1: COMPACT SEND BUTTON */}
+                                <button 
+                                    onClick={handleSendMessage} 
+                                    disabled={!inputText.trim() || !!loadingStatus || isRecording} 
+                                    className="w-10 h-10 rounded-full shrink-0 flex items-center justify-center bg-indigo-600 text-white hover:bg-indigo-700 shadow-md disabled:opacity-50 transition-all"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 ml-0.5">
+                                      <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     </div>
