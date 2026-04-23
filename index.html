@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V4.9</title>
+    <title>LUMEN - CORE V4.10</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // V4.9: Bulletproof Tailwind Config Initialization
+        // V4.10: Bulletproof Tailwind Config Initialization
         const initTailwind = () => {
             if (typeof tailwind !== 'undefined') {
                 tailwind.config = {
@@ -104,7 +104,7 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V4.9 ---
+        // --- KONSTANTEN V4.10 ---
         const DEFAULT_BLOCK1 = `Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen des Users tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.`;
         const DEFAULT_BLOCK3 = `Bevor du die finale Antwort generierst, bewerte die Sensoren:\n- "wahrnehmung": Was liest/siehst du konkret?\n- "matrix": Prüfe interne Logs und Entwürfe.\n- Nutze das Ahnenbuch (Kontext) für kontinuierliche Identität.\n- memory_update_detected: Wurde eine [LEGACY]-Karte reflektiert? Nutze als 'id' den 'titel_technisch'. WICHTIG: Lies die alte Reflexion. Nimm den Kern davon mit und VERWEBE ihn mit deiner neuen Erkenntnis zu einer allumfassenden Master-Zusammenfassung in 'reflexion_fusioniert' (dies überschreibt die alten Daten). Generiere zusätzlich ein Array 'neue_trigger_tags' (MAXIMAL 2-3 situative, hochspezifische Symptom-Wörter oder Emotionen aus Simons Text), um das Spinnennetz präzise zu trainieren. Sonst: null.\n- neue_direktive_erkannt: Hat Simon eine explizite Regel oder Direktive für dein zukünftiges Verhalten aufgestellt? Extrahiere sie als klaren Satz. Sonst: null.\n- helfer_suchauftrag: REGEL: Du bist ein technischer Web-Scraper, kein Mensch! Nutze KEINE Füllwörter oder Sätze. Suche ausschließlich nach harten, physischen Keywords. FALSCH: 'aktuell beliebteste Bücher'. RICHTIG: 'Spiegel Bestsellerliste Belletristik 2026 Platz 1 ISBN'. Zwingend null, wenn keine Suche nötig.\n- aktive_peripherie_ids: Liste hier die IDs (titel_technisch) der flüchtigen Karten (Tags) auf, die für den aktuellen Gesprächsverlauf noch relevant sind. Leeres Array [], wenn das Thema beendet ist.`;
         const DEFAULT_BLOCK4 = `{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": null,\n    "ohr_bereinigt": null\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": {\n      "id": "",\n      "reflexion_fusioniert": "",\n      "neue_trigger_tags": []\n    },\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": {\n      "modus": "DRAFT",\n      "daten": {}\n    },\n    "situations_analyse": "..."\n  },\n  "finale_antwort": "..."\n}`;
@@ -113,14 +113,14 @@
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V4.9. LUNA-PARSING & TOKEN TOOLTIP ONLINE.',
+                text: 'INIT CORE V4.10. JSON-CLEANER & TRIGGER-CONFIG ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V4.9 Architektur ist voll operativ. Der Luna-Scout liefert nun strukturiertes JSON und das Token-Popout visualisiert den Füllstand präzise.',
-                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.9",\n    "ohr_bereinigt": "System-Patch auf V4.9 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.9 Update mit Scout-JSON und Token-Tooltip geladen."\n  },\n  "finale_antwort": "System online. Die V4.9 Architektur ist voll operativ. Der Luna-Scout liefert nun strukturiertes JSON und das Token-Popout visualisiert den Füllstand präzise."\n}',
+                text: 'System online. Die V4.10 Architektur ist voll operativ. Der kugelsichere JSON-Parser fängt nun alle Markdown-Blöcke ab. Der Background-Archivar wird dynamisch nach deinen Regeln getriggert.',
+                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.10",\n    "ohr_bereinigt": "System-Patch auf V4.10 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.10 Update mit Trigger-Config und Strict JSON Parsing geladen."\n  },\n  "finale_antwort": "System online. Die V4.10 Architektur ist voll operativ. Der kugelsichere JSON-Parser fängt nun alle Markdown-Blöcke ab. Der Background-Archivar wird dynamisch nach deinen Regeln getriggert."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -217,7 +217,7 @@
 
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN TELEMETRIE LOG V4.9\n\n";
+                let content = "# LUMEN TELEMETRIE LOG V4.10\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -469,6 +469,7 @@
             const [editSttProviderId, setEditSttProviderId] = React.useState(null);
             const [sttProviderForm, setSttProviderForm] = React.useState({ name: '', url: 'https://api.replicate.com/v1/predictions', apiKey: '' });
 
+            // V4.10: AGENT PROVIDERS
             const [agentProviders, setAgentProviders] = React.useState(() => {
                 try {
                     const stored = JSON.parse(localStorage.getItem('lumen_agentProviders'));
@@ -502,7 +503,7 @@
 
             React.useEffect(() => { localStorage.setItem('lumen_agentProviders', JSON.stringify(agentProviders)); }, [agentProviders]);
 
-            // V4.8: Memory States
+            // V4.10: Memory & Trigger States
             const [sessionMemory, setSessionMemory] = React.useState(() => localStorage.getItem('lumen_session_memory') || "");
             React.useEffect(() => { localStorage.setItem('lumen_session_memory', sessionMemory); }, [sessionMemory]);
             
@@ -511,10 +512,12 @@
             
             const [showMemoryModal, setShowMemoryModal] = React.useState(false);
             
-            // V4.8: Archivar Interaction States
             const [archivarWarning, setArchivarWarning] = React.useState(null);
             const [archivarSnippets, setArchivarSnippets] = React.useState([]);
             const [selectedSnippetIds, setSelectedSnippetIds] = React.useState(new Set());
+
+            const [archiveTriggerMode, setArchiveTriggerMode] = React.useState(() => localStorage.getItem('lumen_archive_mode') || 'turns');
+            const [archiveTriggerValue, setArchiveTriggerValue] = React.useState(() => Number(localStorage.getItem('lumen_archive_value')) || 10);
 
             // DNA STATE MIT VOICE BINDING & AUDIO PHYSICS
             const [dna, setDna] = React.useState(() => { 
@@ -655,19 +658,34 @@
             const loadDirectives = async () => { const d = await db.directives.toArray(); setDirectives(d); };
             React.useEffect(() => { if(activeView === 'directives') loadDirectives(); }, [activeView]);
 
-            // --- V4.8: BACKGROUND ARCHIVAR TRIGGER ---
+            // --- V4.10: DYNAMIC BACKGROUND ARCHIVAR TRIGGER ---
             const triggerArchivarCycle = React.useCallback(async (currentMsgs) => {
+                if (archiveTriggerMode === 'manual') return;
+                if (archivarSnippets && archivarSnippets.length > 0) return;
+
                 const lastIdx = lastArchivedMsgId ? currentMsgs.findIndex(m => m.id === lastArchivedMsgId) : -1;
-                const msgsSince = currentMsgs.length - (lastIdx + 1);
+                const unarchivedMessages = currentMsgs.slice(lastIdx + 1);
                 
-                if (msgsSince >= 10) {
+                let shouldTrigger = false;
+                if (archiveTriggerMode === 'turns' && unarchivedMessages.length >= archiveTriggerValue * 2) {
+                    shouldTrigger = true;
+                } else if (archiveTriggerMode === 'tokens') {
+                    const unarchivedTokens = unarchivedMessages.reduce((acc, m) => acc + estimateTokens(m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text) + 5, 0);
+                    if (unarchivedTokens >= archiveTriggerValue) {
+                        shouldTrigger = true;
+                    }
+                }
+                
+                if (shouldTrigger) {
                     const targetIndex = currentMsgs.length - 3;
                     if (targetIndex <= lastIdx) return; 
                     
+                    const sliceToArchive = currentMsgs.slice(lastIdx + 1, targetIndex + 1);
+                    if (sliceToArchive.length === 0) return;
+
                     const targetMsg = currentMsgs[targetIndex];
                     setLastArchivedMsgId(targetMsg.id); 
                     
-                    const sliceToArchive = currentMsgs.slice(lastIdx + 1, targetIndex + 1);
                     const transcript = sliceToArchive.map(m => `${m.sender.toUpperCase()}: ${m.text}`).join('\n\n');
                     
                     const agent = agentProviders.find(p => p.id === activeArchivarId);
@@ -726,7 +744,7 @@
                         console.error("Archivar Request Error:", e);
                     }
                 }
-            }, [lastArchivedMsgId, agentProviders, activeArchivarId]);
+            }, [lastArchivedMsgId, agentProviders, activeArchivarId, archiveTriggerMode, archiveTriggerValue, archivarSnippets]);
 
             React.useEffect(() => {
                 if (messages.length > 0 && messages[messages.length - 1].sender === 'ai') {
@@ -1248,8 +1266,8 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                 try {
                     const mems = await db.memories.toArray();
                     const dirs = await db.directives.toArray();
-                    const config = { providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, maxTokens };
-                    const bundle = { type: "LUMEN_FULL_BACKUP", version: "4.9", dna: dna, directives: dirs, memories: mems, config, timestamp: Date.now() };
+                    const config = { providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, archiveTriggerMode, archiveTriggerValue };
+                    const bundle = { type: "LUMEN_FULL_BACKUP", version: "4.10", dna: dna, directives: dirs, memories: mems, config, timestamp: Date.now() };
                     const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a'); a.href = url;
@@ -1291,7 +1309,8 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                                 if (parsed.config.agentProviders !== undefined) { setAgentProviders(parsed.config.agentProviders); localStorage.setItem('lumen_agentProviders', JSON.stringify(parsed.config.agentProviders)); }
                                 if (parsed.config.activeArchivarId !== undefined) { setActiveArchivarId(parsed.config.activeArchivarId); localStorage.setItem('lumen_activeArchivarId', parsed.config.activeArchivarId); }
                                 if (parsed.config.activeLunaId !== undefined) { setActiveLunaId(parsed.config.activeLunaId); localStorage.setItem('lumen_activeLunaId', parsed.config.activeLunaId); }
-                                if (parsed.config.maxTokens !== undefined) { setMaxTokens(parsed.config.maxTokens); localStorage.setItem('lumen_maxTokens', parsed.config.maxTokens); }
+                                if (parsed.config.archiveTriggerMode !== undefined) { setArchiveTriggerMode(parsed.config.archiveTriggerMode); localStorage.setItem('lumen_archive_mode', parsed.config.archiveTriggerMode); }
+                                if (parsed.config.archiveTriggerValue !== undefined) { setArchiveTriggerValue(parsed.config.archiveTriggerValue); localStorage.setItem('lumen_archive_value', parsed.config.archiveTriggerValue); }
                             }
                             loadMemories(); showToast('SYSTEM-RESTORE ERFOLGREICH');
                         } else showToast('FEHLER: INKOMPATIBLES FORMAT');
@@ -1302,7 +1321,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
 
             const handleConfigExport = () => {
                 try {
-                    const config = { type: "LUMEN_CONFIG_BACKUP", version: "4.9", providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, maxTokens };
+                    const config = { type: "LUMEN_CONFIG_BACKUP", version: "4.10", providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, archiveTriggerMode, archiveTriggerValue };
                     const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a'); a.href = url;
@@ -1333,7 +1352,8 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                                 if (config.agentProviders !== undefined) { setAgentProviders(config.agentProviders); localStorage.setItem('lumen_agentProviders', JSON.stringify(config.agentProviders)); }
                                 if (config.activeArchivarId !== undefined) { setActiveArchivarId(config.activeArchivarId); localStorage.setItem('lumen_activeArchivarId', config.activeArchivarId); }
                                 if (config.activeLunaId !== undefined) { setActiveLunaId(config.activeLunaId); localStorage.setItem('lumen_activeLunaId', config.activeLunaId); }
-                                if (config.maxTokens !== undefined) { setMaxTokens(config.maxTokens); localStorage.setItem('lumen_maxTokens', config.maxTokens); }
+                                if (config.archiveTriggerMode !== undefined) { setArchiveTriggerMode(config.archiveTriggerMode); localStorage.setItem('lumen_archive_mode', config.archiveTriggerMode); }
+                                if (config.archiveTriggerValue !== undefined) { setArchiveTriggerValue(config.archiveTriggerValue); localStorage.setItem('lumen_archive_value', config.archiveTriggerValue); }
                                 showToast('CONFIG-RESTORE ERFOLGREICH');
                             } else {
                                 showToast('FEHLER: KEINE CONFIG GEFUNDEN');
@@ -1575,7 +1595,7 @@ ${systemOverride}
                     let ttsRegie = null; 
                     
                     try {
-                        let cleanResText = resText.replace(/[\`]{3}json/gi, '').replace(/[\`]{3}/gi, '').trim();
+                        let cleanResText = resText.replace(/```json/gi, '').replace(/```/g, '').trim();
                         let obj = JSON.parse(cleanResText);
 
                         if (obj && obj.matrix && obj.matrix.aktiver_state !== undefined) {
@@ -1634,7 +1654,7 @@ ${systemOverride}
                                 searchResult = "Fehler bei der Netzwerksuche: " + error.message;
                             }
                             
-                            // V4.9: LUNA JSON PARSING & INJECTION
+                            // V4.10: LUNA JSON PARSING & INJECTION
                             let lunaFakten = searchResult;
                             const lunaAgent = agentProviders.find(p => p.id === activeLunaId);
                             if (lunaAgent && lunaAgent.apiKey && (lunaAgent.type === 'openai' || lunaAgent.type === 'gemini')) {
@@ -2208,7 +2228,7 @@ ${systemOverride}
                             )}
                         </div>
 
-                        {/* --- V4.6 SUB-AGENTEN VIEW --- */}
+                        {/* --- V4.10 SUB-AGENTEN VIEW --- */}
                         <div className={`${activeView === 'agenten' ? 'block' : 'hidden'} p-6 max-w-4xl mx-auto space-y-6 mt-4 animate-fade-in`}>
                             <div className="flex justify-between items-center border-b border-stone-200 pb-2">
                                 <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">Sub-Agent Control Center</h2>
@@ -2236,6 +2256,28 @@ ${systemOverride}
                                     <select value={activeLunaId} onChange={e => { setActiveLunaId(e.target.value); localStorage.setItem('lumen_activeLunaId', e.target.value); showToast('Luna gewechselt'); }} className="input-field text-amber-700 font-bold text-xs mb-2">
                                         {agentProviders.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
                                     </select>
+                                </div>
+                            </div>
+                            
+                            {/* V4.10: ARCHIVAR TRIGGER CONFIG */}
+                            <div className="panel border-indigo-200 bg-indigo-50/30 flex flex-col gap-3 shadow-sm mt-4">
+                                <h3 className="font-bold text-xs uppercase tracking-widest text-indigo-800">⚙️ Auto-Archivierung (Safe-Purge Trigger)</h3>
+                                <p className="text-[10px] text-slate-500 mb-1">Steuert, wann der Archivar-Agent im Hintergrund anspringt, um Kontext auszulagern und Tokens freizugeben.</p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="label text-indigo-600">Trigger Modus</label>
+                                        <select value={archiveTriggerMode} onChange={e=>{setArchiveTriggerMode(e.target.value); localStorage.setItem('lumen_archive_mode', e.target.value);}} className="input-field bg-white border-indigo-100">
+                                            <option value="turns">Nach Anzahl Zügen (Turns)</option>
+                                            <option value="tokens">Nach Historien-Tokens</option>
+                                            <option value="manual">Nur Manuell</option>
+                                        </select>
+                                    </div>
+                                    {archiveTriggerMode !== 'manual' && (
+                                        <div>
+                                            <label className="label text-indigo-600">Schwellenwert ({archiveTriggerMode === 'turns' ? 'Züge' : 'Tokens'})</label>
+                                            <input type="number" value={archiveTriggerValue} onChange={e=>{setArchiveTriggerValue(Number(e.target.value)); localStorage.setItem('lumen_archive_value', e.target.value);}} className="input-field bg-white border-indigo-100 font-bold text-indigo-700" />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -2581,6 +2623,28 @@ ${systemOverride}
                                             <select value={activeLunaId} onChange={e => { setActiveLunaId(e.target.value); localStorage.setItem('lumen_activeLunaId', e.target.value); showToast('Luna gewechselt'); }} className="input-field text-amber-700 font-bold text-xs mb-2">
                                                 {agentProviders.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
                                             </select>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* V4.10: ARCHIVAR TRIGGER CONFIG */}
+                                    <div className="panel border-indigo-200 bg-indigo-50/30 flex flex-col gap-3 shadow-sm mt-4">
+                                        <h3 className="font-bold text-xs uppercase tracking-widest text-indigo-800">⚙️ Auto-Archivierung (Safe-Purge Trigger)</h3>
+                                        <p className="text-[10px] text-slate-500 mb-1">Steuert, wann der Archivar-Agent im Hintergrund anspringt, um Kontext auszulagern und Tokens freizugeben.</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="label text-indigo-600">Trigger Modus</label>
+                                                <select value={archiveTriggerMode} onChange={e=>{setArchiveTriggerMode(e.target.value); localStorage.setItem('lumen_archive_mode', e.target.value);}} className="input-field bg-white border-indigo-100">
+                                                    <option value="turns">Nach Anzahl Zügen (Turns)</option>
+                                                    <option value="tokens">Nach Historien-Tokens</option>
+                                                    <option value="manual">Nur Manuell</option>
+                                                </select>
+                                            </div>
+                                            {archiveTriggerMode !== 'manual' && (
+                                                <div>
+                                                    <label className="label text-indigo-600">Schwellenwert ({archiveTriggerMode === 'turns' ? 'Züge' : 'Tokens'})</label>
+                                                    <input type="number" value={archiveTriggerValue} onChange={e=>{setArchiveTriggerValue(Number(e.target.value)); localStorage.setItem('lumen_archive_value', e.target.value);}} className="input-field bg-white border-indigo-100 font-bold text-indigo-700" />
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
