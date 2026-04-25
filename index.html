@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V4.11</title>
+    <title>LUMEN - CORE V4.12</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // V4.11: Bulletproof Tailwind Config Initialization
+        // V4.12: Bulletproof Tailwind Config Initialization
         const initTailwind = () => {
             if (typeof tailwind !== 'undefined') {
                 tailwind.config = {
@@ -94,7 +94,7 @@
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         body { background-color: #fafaf9; color: #334155; -webkit-tap-highlight-color: transparent; }
 
-        /* V4.11 Markdown Custom CSS */
+        /* V4.12 Markdown Custom CSS */
         .markdown-content p { margin-bottom: 0.75em; }
         .markdown-content p:last-child { margin-bottom: 0; }
         .markdown-content ul { list-style-type: disc; margin-left: 1.5em; margin-bottom: 0.75em; }
@@ -125,7 +125,7 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V4.11 ---
+        // --- KONSTANTEN V4.12 ---
         const DEFAULT_BLOCK1 = `Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen des Users tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.`;
         const DEFAULT_BLOCK3 = `Bevor du die finale Antwort generierst, bewerte die Sensoren:\n- "wahrnehmung": Was liest/siehst du konkret?\n- "matrix": Prüfe interne Logs und Entwürfe.\n- Nutze das Ahnenbuch (Kontext) für kontinuierliche Identität.\n- memory_update_detected: Wurde eine [LEGACY]-Karte reflektiert? Nutze als 'id' den 'titel_technisch'. WICHTIG: Lies die alte Reflexion. Nimm den Kern davon mit und VERWEBE ihn mit deiner neuen Erkenntnis zu einer allumfassenden Master-Zusammenfassung in 'reflexion_fusioniert' (dies überschreibt die alten Daten). Generiere zusätzlich ein Array 'neue_trigger_tags' (MAXIMAL 2-3 situative, hochspezifische Symptom-Wörter oder Emotionen aus Simons Text), um das Spinnennetz präzise zu trainieren. Sonst: null.\n- neue_direktive_erkannt: Hat Simon eine explizite Regel oder Direktive für dein zukünftiges Verhalten aufgestellt? Extrahiere sie als klaren Satz. Sonst: null.\n- helfer_suchauftrag: REGEL: Du bist ein technischer Web-Scraper, kein Mensch! Nutze KEINE Füllwörter oder Sätze. Suche ausschließlich nach harten, physischen Keywords. FALSCH: 'aktuell beliebteste Bücher'. RICHTIG: 'Spiegel Bestsellerliste Belletristik 2026 Platz 1 ISBN'. Zwingend null, wenn keine Suche nötig.\n- aktive_peripherie_ids: Liste hier die IDs (titel_technisch) der flüchtigen Karten (Tags) auf, die für den aktuellen Gesprächsverlauf noch relevant sind. Leeres Array [], wenn das Thema beendet ist.`;
         const DEFAULT_BLOCK4 = `{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": null,\n    "ohr_bereinigt": null\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": {\n      "id": "",\n      "reflexion_fusioniert": "",\n      "neue_trigger_tags": []\n    },\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": {\n      "modus": "DRAFT",\n      "daten": {}\n    },\n    "situations_analyse": "..."\n  },\n  "finale_antwort": "..."\n}`;
@@ -134,14 +134,14 @@
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V4.11. PREFIX-REFACTORING & MARKDOWN SUPPORT ONLINE.',
+                text: 'INIT CORE V4.12. TIME-INJECTION & CSS-FIX ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V4.11 Architektur ist voll operativ. Das *Prefix-Refactoring* wurde erfolgreich durchgeführt: Die User-Eingabe bleibt nun absolut steril. Markdown und Rich-Text Formatierungen sind ab sofort in **allen Chat-Bubbles** verfügbar.',
-                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.11",\n    "ohr_bereinigt": "System-Patch auf V4.11 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.11 Update mit Markdown und Prompt Architecture geladen."\n  },\n  "finale_antwort": "System online. Die V4.11 Architektur ist voll operativ. Das *Prefix-Refactoring* wurde erfolgreich durchgeführt: Die User-Eingabe bleibt nun absolut steril. Markdown und Rich-Text Formatierungen sind ab sofort in **allen Chat-Bubbles** verfügbar."\n}',
+                text: 'System online. Die V4.12 Architektur ist voll operativ. Der epistemische Zeit-Check und das strikte Cockpit-Protokoll wurden erfolgreich in den Master-Prompt integriert. Markdown Zeilenumbrüche rendern nun sauber.',
+                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.12",\n    "ohr_bereinigt": "System-Patch auf V4.12 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.12 Update mit Cockpit-Protokoll und Markdown-Fix geladen."\n  },\n  "finale_antwort": "System online. Die V4.12 Architektur ist voll operativ. Der epistemische Zeit-Check und das strikte Cockpit-Protokoll wurden erfolgreich in den Master-Prompt integriert. Markdown Zeilenumbrüche rendern nun sauber."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -150,9 +150,10 @@
         const generateId = () => Math.random().toString(36).substr(2, 9);
         const estimateTokens = (text) => text ? Math.ceil(text.length / 3.3) : 0;
 
+        // V4.12: Preserving newlines by matching explicit spaces, not \s
         const cleanVisibleText = (text) => {
             if (!text) return "";
-            return text.replace(/\[.*?\]/g, '').replace(/\s{2,}/g, ' ').trim();
+            return text.replace(/\[.*?\]/g, '').replace(/ +/g, ' ').trim();
         };
 
         const findRelevantMemories = (userInput, allMemories) => {
@@ -238,7 +239,7 @@
 
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN TELEMETRIE LOG V4.11\n\n";
+                let content = "# LUMEN TELEMETRIE LOG V4.12\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -358,20 +359,15 @@
                 </div>
             );
             
-            // V4.11: Luna Scout messages are no longer rendered in the UI directly.
-            // They remain in `messages` state but are excluded from rendering (or skipped).
-            // Wait, the instructions said: "darf aber NICHT mehr als sichtbare Chat-Bubble im messages-Array für den User erscheinen."
-            // This is handled in `handleSendMessage` by not adding scoutMsg to `messages` state at all.
-            // If any old scoutMsg is in state, we hide it.
+            // V4.11: Luna Scout Silence
             if (isSystemScout) return null;
 
-            // V4.11: Markdown Parsing Logic
+            // V4.12: Markdown Parsing Logic
             const cleanedText = cleanVisibleText(message.text);
             let finalMarkup = cleanedText;
             if (typeof marked !== 'undefined') {
                 try {
                     const rawMarkup = marked.parse(cleanedText);
-                    // Replace ==text== with <mark> highlighting
                     finalMarkup = rawMarkup.replace(/==(.*?)==/g, '<mark class="bg-indigo-100 text-indigo-800 px-1 rounded">$1</mark>');
                 } catch (e) {
                     console.error("Markdown parsing error", e);
@@ -404,8 +400,8 @@
                             </button>
                         </div>
                         <div className={`p-5 w-full ${isUser ? 'bg-white text-slate-700 border border-stone-100 shadow-sm rounded-3xl rounded-tr-sm' : 'bg-indigo-50 text-indigo-900 border border-indigo-100 shadow-sm rounded-3xl rounded-tl-sm'}`}>
-                            {/* V4.11: Render Markdown Content */}
-                            <div className="markdown-content text-[15px] font-sans leading-relaxed" dangerouslySetInnerHTML={{ __html: finalMarkup }} />
+                            {/* V4.12: Render Markdown Content with whitespace-pre-wrap */}
+                            <div className="markdown-content text-[15px] font-sans leading-relaxed whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: finalMarkup }} />
                             
                             {!isUser && message.scratchpad && showScratchpad && (
                                 <div className="mt-4 pt-3 border-t border-indigo-200/50 animate-fade-in">
@@ -577,14 +573,12 @@
 
             // V4.5.1 Token Tracker States
             const [tokenUsage, setTokenUsage] = React.useState({ system: 0, history: 0, percent: 0 });
-            // V4.9 Token Tooltip State
             const [showTokenTooltip, setShowTokenTooltip] = React.useState(false);
 
             const [telemetry, setTelemetry] = React.useState({ concern: 0, bs_meter: 0, mask_drop: false });
             const [latestContext, setLatestContext] = React.useState("[AKTIVER KONTEXT WIRD ZUR LAUFZEIT INJIZIERT]");
             const [showTelemetry, setShowTelemetry] = React.useState(false);
             
-            // V4.4 API Protokoll Modal & State
             const [lastApiPayload, setLastApiPayload] = React.useState(null);
             const [showApiLog, setShowApiLog] = React.useState(false);
             
@@ -622,17 +616,22 @@
                 localStorage.setItem('lumen_chat', JSON.stringify(messages)); 
             }, [messages]);
 
-            // V4.7: Token Calculation Engine
+            // V4.12: Token Calculation Engine (System-Header included)
             React.useEffect(() => {
                 const activeProv = providers.find(p => p.id === activeProviderId);
                 const currentMaxTokens = activeProv?.maxTokens || 8000;
+                
+                const now = new Date();
+                const locationPrefix = `\n### SYSTEM-TELEMETRIE (HARTER KONTEXT) ###\n[STANDORT: Zone ${currentMairaZone}]\n[ZEITSTEMPEL: ${now.toLocaleDateString('de-DE')} | ${now.toLocaleTimeString('de-DE')}]\n[SESSION-NOTIZEN: ${sessionMemory || 'Keine'}]\n##########################################\n`;
+                const epistemischerCheck = `\n3_epistemischer_check: <Wissenstatus: IDENTISCH, FLÜCHTIG (zeitkritisch > Abgleich mit heutigem Datum: ${now.toLocaleDateString('de-DE')} ${now.toLocaleTimeString('de-DE')}), DUBIOS oder VAKUUM?>`;
 
-                const systemText = dna.block1_identity + "\n\n" + (dna.audio_physics || "") + "\n\n" + dna.block3_sensors;
+                const systemText = locationPrefix + "\n" + dna.block1_identity + epistemischerCheck + "\n\n" + (dna.audio_physics || "") + "\n\n" + dna.block3_sensors;
+                
                 const systemTokens = estimateTokens(systemText);
                 const historyTokens = messages.reduce((acc, m) => acc + estimateTokens(m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text) + 5, 0);
                 const percent = Math.min(100, ((systemTokens + historyTokens) / currentMaxTokens) * 100);
                 setTokenUsage({ system: systemTokens, history: historyTokens, percent });
-            }, [messages, dna, activeProviderId, providers]);
+            }, [messages, dna, activeProviderId, providers, currentMairaZone, sessionMemory]);
 
             const [zenField, setZenField] = React.useState(null); 
             
@@ -830,7 +829,6 @@
                 });
             };
 
-            // V4.9 Token Hover Logic Mobile Fallback
             const handleTokenClick = (e) => {
                 if ('ontouchstart' in window && !showTokenTooltip) {
                     e.preventDefault();
@@ -1298,7 +1296,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                     const mems = await db.memories.toArray();
                     const dirs = await db.directives.toArray();
                     const config = { providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, archiveTriggerMode, archiveTriggerValue };
-                    const bundle = { type: "LUMEN_FULL_BACKUP", version: "4.11", dna: dna, directives: dirs, memories: mems, config, timestamp: Date.now() };
+                    const bundle = { type: "LUMEN_FULL_BACKUP", version: "4.12", dna: dna, directives: dirs, memories: mems, config, timestamp: Date.now() };
                     const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a'); a.href = url;
@@ -1340,8 +1338,8 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                                 if (parsed.config.agentProviders !== undefined) { setAgentProviders(parsed.config.agentProviders); localStorage.setItem('lumen_agentProviders', JSON.stringify(parsed.config.agentProviders)); }
                                 if (parsed.config.activeArchivarId !== undefined) { setActiveArchivarId(parsed.config.activeArchivarId); localStorage.setItem('lumen_activeArchivarId', parsed.config.activeArchivarId); }
                                 if (parsed.config.activeLunaId !== undefined) { setActiveLunaId(parsed.config.activeLunaId); localStorage.setItem('lumen_activeLunaId', parsed.config.activeLunaId); }
-                                if (config.archiveTriggerMode !== undefined) { setArchiveTriggerMode(config.archiveTriggerMode); localStorage.setItem('lumen_archive_mode', config.archiveTriggerMode); }
-                                if (config.archiveTriggerValue !== undefined) { setArchiveTriggerValue(config.archiveTriggerValue); localStorage.setItem('lumen_archive_value', config.archiveTriggerValue); }
+                                if (parsed.config.archiveTriggerMode !== undefined) { setArchiveTriggerMode(parsed.config.archiveTriggerMode); localStorage.setItem('lumen_archive_mode', parsed.config.archiveTriggerMode); }
+                                if (parsed.config.archiveTriggerValue !== undefined) { setArchiveTriggerValue(parsed.config.archiveTriggerValue); localStorage.setItem('lumen_archive_value', parsed.config.archiveTriggerValue); }
                             }
                             loadMemories(); showToast('SYSTEM-RESTORE ERFOLGREICH');
                         } else showToast('FEHLER: INKOMPATIBLES FORMAT');
@@ -1352,7 +1350,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
 
             const handleConfigExport = () => {
                 try {
-                    const config = { type: "LUMEN_CONFIG_BACKUP", version: "4.11", providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, archiveTriggerMode, archiveTriggerValue };
+                    const config = { type: "LUMEN_CONFIG_BACKUP", version: "4.12", providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, archiveTriggerMode, archiveTriggerValue };
                     const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a'); a.href = url;
@@ -1418,7 +1416,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                 const key = activeProvider.apiKey;
                 const apiUrl = activeProvider.url;
 
-                // V4.11 Prefix Refactoring: The user msg in UI is just the clean text
+                // V4.12: The user msg in UI is just the clean text
                 const userMsgId = generateId();
                 setMessages(prev => [...prev.filter(m=>m.sender!=='system-error'), {id: userMsgId, sender:'user', text, timestamp: new Date().toISOString()}]);
                 
@@ -1537,9 +1535,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                     }
 
                     const now = new Date();
-                    const timeOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-                    const timeString = "[SYSTEM-UHRZEIT]\nAktuelle Zeit in Simons Welt: " + now.toLocaleDateString('de-DE', timeOptions) + " Uhr.\n\n";
-
+                    
                     // --- DESK CONTEXT INJECTION ---
                     let deskContext = "";
                     if (activeDesks.length > 0 || currentVolatiles.length > 0 || relMemsLegacy.length > 0) {
@@ -1573,10 +1569,20 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                         }
                     }
 
-                    const dynamicContext = `${timeString}${directiveString}${deskContext}`.trim() || "Kein aktiver Kontext geladen.";
+                    const dynamicContext = `${directiveString}${deskContext}`.trim() || "Kein aktiver Kontext geladen.";
                     setLatestContext(dynamicContext);
                     
-                    let kernelBlock = dna.block1_identity; 
+                    // V4.12: Zeit-Injektion und hartes Cockpit-Protokoll
+                    const locationPrefix = `
+### SYSTEM-TELEMETRIE (HARTER KONTEXT) ###
+[STANDORT: Zone ${currentMairaZone}]
+[ZEITSTEMPEL: ${now.toLocaleDateString('de-DE')} | ${now.toLocaleTimeString('de-DE')}]
+[SESSION-NOTIZEN: ${sessionMemory || 'Keine'}]
+##########################################
+`;
+                    const epistemischerCheck = `\n3_epistemischer_check: <Wissenstatus: IDENTISCH, FLÜCHTIG (zeitkritisch > Abgleich mit heutigem Datum: ${now.toLocaleDateString('de-DE')} ${now.toLocaleTimeString('de-DE')}), DUBIOS oder VAKUUM?>`;
+
+                    let kernelBlock = dna.block1_identity + epistemischerCheck; 
                     if (autoTtsRegie && dna.audio_physics) {
                         kernelBlock += "\n\n" + dna.audio_physics;
                     }
@@ -1593,13 +1599,9 @@ Du darfst NIEMALS mit normalem Text beginnen. Deine allererste Ausgabe MUSS das 
 Alles, was deine Persona sagt oder fühlt, findet AUSSCHLIESSLICH als String innerhalb des Schlüssels 'finale_antwort' statt. Jedes Wort außerhalb der JSON-Klammern führt zum Absturz.
 Du beginnst sofort mit dem Objekt "wahrnehmung".`;
 
-                    // V4.11 Prefix Refactoring: Prepend location and session to masterSystemPrompt
-                    const locationPrefix = `[SYSTEM-STATUS: Standort Zone ${currentMairaZone}]`;
-                    const sessionPrefix = (sessionMemory && sessionMemory.trim() !== "") ? `[AKTUELLE SESSION-NOTIZEN: ${sessionMemory}]` : "";
-
+                    // V4.12: Prefix goes securely into System Prompt
                     const masterSystemPrompt = `
 ${locationPrefix}
-${sessionPrefix}
 
 [AKTIVER KONTEXT]
 ${dynamicContext}
@@ -1614,7 +1616,7 @@ ${systemOverride}
 `.trim();
 
                     const hist = messages.filter(m=>m.sender==='user'||m.sender==='ai'||m.sender==='system');
-                    const payloadUserCall = text; // V4.11 Just the text now
+                    const payloadUserCall = text; 
                     
                     setLastApiPayload({
                         kernel: dna.block1_identity,
@@ -1623,7 +1625,7 @@ ${systemOverride}
                         persona: dna.block3_sensors,
                         override: systemOverride,
                         user: payloadUserCall,
-                        system_context: `${locationPrefix}\n${sessionPrefix}\n[AKTIVER KONTEXT]\n${dynamicContext}`
+                        system_context: `${locationPrefix}\n[AKTIVER KONTEXT]\n${dynamicContext}\n${epistemischerCheck}`
                     });
 
                     let resText = await fetchTextFromAPI(masterSystemPrompt, payloadUserCall, hist);
@@ -1726,15 +1728,13 @@ ${systemOverride}
                                 }
                             }
 
-                            // V4.11 Luna-Scout Silence: Don't render in UI, but keep in history
                             const scoutMsg = { 
                                 id: generateId(), 
                                 sender: 'system', 
                                 text: `[SYSTEM-SCOUT MELDET]:\n${lunaFakten}`, 
                                 timestamp: new Date().toISOString() 
                             };
-                            // We DO NOT call setMessages(prev => [...prev, scoutMsg]);
-
+                            
                             setHelferArchiv({
                                 suchauftrag: obj.matrix.helfer_suchauftrag,
                                 rohdaten: searchResult,
@@ -1744,10 +1744,25 @@ ${systemOverride}
                             setLoadingStatus("MAIRA VERARBEITET FAKTEN...");
                             const helferDaten = `\n\n[SYSTEM-SCOUT MELDET]:\n${lunaFakten}\n[SYSTEM-REGIEANWEISUNG: Luna ist soeben erfolgreich aus der Außenwelt zurückgekehrt und hat dir diesen Bericht auf den Schreibtisch gelegt. Teile Simon diese Erkenntnisse nun fließend und natürlich mit. Erwähne Luna kurz lobend. Setze 'helfer_suchauftrag' zwingend auf null!]`;
                             
-                            const interceptorSystemPrompt = masterSystemPrompt + "\n\n" + helferDaten;
-                            const interceptorPayload = text; // Just user text again
+                            const interceptorDynamicContext = dynamicContext + helferDaten;
+                            const interceptorSystemPrompt = `
+${locationPrefix}
+
+[AKTIVER KONTEXT]
+${interceptorDynamicContext}
+
+${kernelBlock}
+
+${cognitiveFirewall}
+
+${dna.block3_sensors}
+
+${systemOverride}
+`.trim();
+
+                            const interceptorPayload = text;
                             
-                            setLastApiPayload(prev => ({...prev, user: interceptorPayload}));
+                            setLastApiPayload(prev => ({...prev, user: interceptorPayload, system_context: `${locationPrefix}\n[AKTIVER KONTEXT]\n${interceptorDynamicContext}\n${epistemischerCheck}` }));
                             
                             const updatedHist = [...hist, intentMsg, scoutMsg];
 
