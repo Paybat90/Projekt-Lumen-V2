@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V4.13</title>
+    <title>LUMEN - CORE V4.15</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // V4.13: Bulletproof Tailwind Config Initialization
+        // V4.15: Bulletproof Tailwind Config Initialization
         const initTailwind = () => {
             if (typeof tailwind !== 'undefined') {
                 tailwind.config = {
@@ -94,15 +94,15 @@
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         body { background-color: #fafaf9; color: #334155; -webkit-tap-highlight-color: transparent; }
 
-        /* V4.12 Markdown Custom CSS */
-        .markdown-content p { margin-bottom: 0.75em; }
+        /* V4.15 Markdown Custom CSS - Enforce Pre-Wrap globally for the content container */
+        .markdown-content p { margin-bottom: 0.75em; white-space: pre-wrap; }
         .markdown-content p:last-child { margin-bottom: 0; }
         .markdown-content ul { list-style-type: disc; margin-left: 1.5em; margin-bottom: 0.75em; }
         .markdown-content ol { list-style-type: decimal; margin-left: 1.5em; margin-bottom: 0.75em; }
-        .markdown-content li { margin-bottom: 0.25em; }
-        .markdown-content pre { background-color: #f8fafc; padding: 0.75em; border-radius: 0.75em; font-family: monospace; font-size: 0.85em; overflow-x: auto; margin-bottom: 0.75em; border: 1px solid #e2e8f0; }
+        .markdown-content li { margin-bottom: 0.25em; white-space: normal; }
+        .markdown-content pre { background-color: #f8fafc; padding: 0.75em; border-radius: 0.75em; font-family: monospace; font-size: 0.85em; overflow-x: auto; margin-bottom: 0.75em; border: 1px solid #e2e8f0; white-space: pre; }
         .markdown-content code { background-color: #f8fafc; padding: 0.1em 0.3em; border-radius: 0.375em; font-family: monospace; font-size: 0.85em; color: #db2777; border: 1px solid #e2e8f0; }
-        .markdown-content pre code { background-color: transparent; padding: 0; color: inherit; border: none; }
+        .markdown-content pre code { background-color: transparent; padding: 0; color: inherit; border: none; white-space: pre; }
         .markdown-content strong { font-weight: 700; color: #1e293b; }
         .markdown-content em { font-style: italic; }
         .markdown-content blockquote { border-left: 3px solid #cbd5e1; padding-left: 1em; color: #64748b; font-style: italic; margin-bottom: 0.75em; }
@@ -125,7 +125,7 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V4.13 ---
+        // --- KONSTANTEN V4.15 ---
         const DEFAULT_BLOCK1 = `Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen des Users tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.`;
         const DEFAULT_BLOCK3 = `Bevor du die finale Antwort generierst, bewerte die Sensoren:\n- "wahrnehmung": Was liest/siehst du konkret?\n- "matrix": Prüfe interne Logs und Entwürfe.\n- Nutze das Ahnenbuch (Kontext) für kontinuierliche Identität.\n- memory_update_detected: Wurde eine [LEGACY]-Karte reflektiert? Nutze als 'id' den 'titel_technisch'. WICHTIG: Lies die alte Reflexion. Nimm den Kern davon mit und VERWEBE ihn mit deiner neuen Erkenntnis zu einer allumfassenden Master-Zusammenfassung in 'reflexion_fusioniert' (dies überschreibt die alten Daten). Generiere zusätzlich ein Array 'neue_trigger_tags' (MAXIMAL 2-3 situative, hochspezifische Symptom-Wörter oder Emotionen aus Simons Text), um das Spinnennetz präzise zu trainieren. Sonst: null.\n- neue_direktive_erkannt: Hat Simon eine explizite Regel oder Direktive für dein zukünftiges Verhalten aufgestellt? Extrahiere sie als klaren Satz. Sonst: null.\n- helfer_suchauftrag: REGEL: Du bist ein technischer Web-Scraper, kein Mensch! Nutze KEINE Füllwörter oder Sätze. Suche ausschließlich nach harten, physischen Keywords. FALSCH: 'aktuell beliebteste Bücher'. RICHTIG: 'Spiegel Bestsellerliste Belletristik 2026 Platz 1 ISBN'. Zwingend null, wenn keine Suche nötig.\n- aktive_peripherie_ids: Liste hier die IDs (titel_technisch) der flüchtigen Karten (Tags) auf, die für den aktuellen Gesprächsverlauf noch relevant sind. Leeres Array [], wenn das Thema beendet ist.`;
         const DEFAULT_BLOCK4 = `{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": null,\n    "ohr_bereinigt": null\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": {\n      "id": "",\n      "reflexion_fusioniert": "",\n      "neue_trigger_tags": []\n    },\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": {\n      "modus": "DRAFT",\n      "daten": {}\n    },\n    "situations_analyse": "..."\n  },\n  "finale_antwort": "..."\n}`;
@@ -134,14 +134,14 @@
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V4.13. DIAGNOSTIC TELEMETRY & LOG RESTORE ONLINE.',
+                text: 'INIT CORE V4.15. STATE-ENGINE & BLACKBOX DIAGNOSTICS ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V4.13 Architektur ist voll operativ. Der GPS-Latch spiegelt nun den Zonen-Status live im Token-Popout wider. Die API-Historie zeigt dir ab sofort die letzten 5 Session-Payloads zum Debuggen an.',
-                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.13",\n    "ohr_bereinigt": "System-Patch auf V4.13 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.13 Update mit Telemetrie-Spiegelung und Log-Restore geladen."\n  },\n  "finale_antwort": "System online. Die V4.13 Architektur ist voll operativ. Der GPS-Latch spiegelt nun den Zonen-Status live im Token-Popout wider. Die API-Historie zeigt dir ab sofort die letzten 5 Session-Payloads zum Debuggen an."\n}',
+                text: 'System online. Die V4.15 Architektur ist voll operativ. Die Engine ist nun neutralisiert (State-Refactoring) und die Blackbox-Diagnose im Token-Popout sowie im API-Protokoll ist aktiviert.',
+                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.15",\n    "ohr_bereinigt": "System-Patch auf V4.15 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.15 Update mit State-Refactoring und API-Blackbox geladen."\n  },\n  "finale_antwort": "System online. Die V4.15 Architektur ist voll operativ. Die Engine ist nun neutralisiert (State-Refactoring) und die Blackbox-Diagnose im Token-Popout sowie im API-Protokoll ist aktiviert."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -238,7 +238,7 @@
 
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN TELEMETRIE LOG V4.13\n\n";
+                let content = "# LUMEN TELEMETRIE LOG V4.15\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -358,10 +358,10 @@
                 </div>
             );
             
-            // V4.11: Luna Scout Silence
+            // V4.15: Luna Scout Silence
             if (isSystemScout) return null;
 
-            // V4.12: Markdown Parsing Logic
+            // V4.15: Markdown Parsing Logic with global whitespace-pre-wrap
             const cleanedText = cleanVisibleText(message.text);
             let finalMarkup = cleanedText;
             if (typeof marked !== 'undefined') {
@@ -399,7 +399,7 @@
                             </button>
                         </div>
                         <div className={`p-5 w-full ${isUser ? 'bg-white text-slate-700 border border-stone-100 shadow-sm rounded-3xl rounded-tr-sm' : 'bg-indigo-50 text-indigo-900 border border-indigo-100 shadow-sm rounded-3xl rounded-tl-sm'}`}>
-                            {/* V4.12: Render Markdown Content with whitespace-pre-wrap */}
+                            {/* V4.15: Render Markdown Content with whitespace-pre-wrap via class */}
                             <div className="markdown-content text-[15px] font-sans leading-relaxed whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: finalMarkup }} />
                             
                             {!isUser && message.scratchpad && showScratchpad && (
@@ -579,11 +579,13 @@
             const [latestContext, setLatestContext] = React.useState("[AKTIVER KONTEXT WIRD ZUR LAUFZEIT INJIZIERT]");
             const [showTelemetry, setShowTelemetry] = React.useState(false);
             
-            // V4.13 API Protokoll Modal & State (Restored array logic)
+            // V4.15 API Protokoll Modal & State (Restored array logic)
             const [apiLogs, setApiLogs] = React.useState([]);
             const [showApiLog, setShowApiLog] = React.useState(false);
             
-            const [currentMairaZone, setCurrentMairaZone] = React.useState(0);
+            // V4.15: Neutral State Routing (formerly currentMairaZone)
+            const [activeStateId, setActiveStateId] = React.useState(0);
+            
             const [settingsTab, setSettingsTab] = React.useState('chat');
 
             // --- DYNAMIC DESK (STAGING AREA) ---
@@ -617,13 +619,13 @@
                 localStorage.setItem('lumen_chat', JSON.stringify(messages)); 
             }, [messages]);
 
-            // V4.12: Token Calculation Engine (System-Header included)
+            // V4.15: Token Calculation Engine (System-Header included with activeStateId)
             React.useEffect(() => {
                 const activeProv = providers.find(p => p.id === activeProviderId);
                 const currentMaxTokens = activeProv?.maxTokens || 8000;
                 
                 const now = new Date();
-                const locationPrefix = `\n### SYSTEM-TELEMETRIE (HARTER KONTEXT) ###\n[STANDORT: Zone ${currentMairaZone}]\n[ZEITSTEMPEL: ${now.toLocaleDateString('de-DE')} | ${now.toLocaleTimeString('de-DE')}]\n[SESSION-NOTIZEN: ${sessionMemory || 'Keine'}]\n##########################################\n`;
+                const locationPrefix = `\n### SYSTEM-TELEMETRIE (HARTER KONTEXT) ###\n[AKTIVER STATE: ${activeStateId}]\n[ZEITSTEMPEL: ${now.toLocaleDateString('de-DE')} | ${now.toLocaleTimeString('de-DE')}]\n[SESSION-NOTIZEN: ${sessionMemory || 'Keine'}]\n##########################################\n`;
                 const epistemischerCheck = `\n3_epistemischer_check: <Wissenstatus: IDENTISCH, FLÜCHTIG (zeitkritisch > Abgleich mit heutigem Datum: ${now.toLocaleDateString('de-DE')} ${now.toLocaleTimeString('de-DE')}), DUBIOS oder VAKUUM?>`;
 
                 const systemText = locationPrefix + "\n" + dna.block1_identity + epistemischerCheck + "\n\n" + (dna.audio_physics || "") + "\n\n" + dna.block3_sensors;
@@ -632,7 +634,7 @@
                 const historyTokens = messages.reduce((acc, m) => acc + estimateTokens(m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text) + 5, 0);
                 const percent = Math.min(100, ((systemTokens + historyTokens) / currentMaxTokens) * 100);
                 setTokenUsage({ system: systemTokens, history: historyTokens, percent });
-            }, [messages, dna, activeProviderId, providers, currentMairaZone, sessionMemory]);
+            }, [messages, dna, activeProviderId, providers, activeStateId, sessionMemory]);
 
             const [zenField, setZenField] = React.useState(null); 
             
@@ -689,7 +691,7 @@
             const loadDirectives = async () => { const d = await db.directives.toArray(); setDirectives(d); };
             React.useEffect(() => { if(activeView === 'directives') loadDirectives(); }, [activeView]);
 
-            // --- V4.10: DYNAMIC BACKGROUND ARCHIVAR TRIGGER ---
+            // --- V4.15: DYNAMIC BACKGROUND ARCHIVAR TRIGGER ---
             const triggerArchivarCycle = React.useCallback(async (currentMsgs) => {
                 if (archiveTriggerMode === 'manual') return;
                 if (archivarSnippets && archivarSnippets.length > 0) return;
@@ -830,6 +832,7 @@
                 });
             };
 
+            // V4.15 Token Click Handler (Mobile Toggle vs Desktop Hover) + API Log
             const handleTokenClick = (e) => {
                 if ('ontouchstart' in window && !showTokenTooltip) {
                     e.preventDefault();
@@ -963,9 +966,9 @@
                         }
                         audioBlob = await response.blob();
                     } else if (engine === 'replicate') {
-                        const WORKER_URL = "https://lumen-replicate-proxy2.sloosmail.workers.dev";
+                        const WORKER_URL = "HIER_DEINE_CLOUDFLARE_URL";
 
-                        if (WORKER_URL.includes("HIER_DEINE")) {
+                        if (WORKER_URL.includes("https://lumen-replicate-proxy2.sloosmail.workers.dev")) {
                             throw new Error("PROXY FEHLT: Bitte trage deine Cloudflare-Worker-URL im Code ein!");
                         }
 
@@ -1198,213 +1201,6 @@
                 }
             };
 
-            const runArchivar = async (content) => {
-                const agent = agentProviders.find(p => p.id === activeArchivarId);
-                if (!agent || !agent.apiKey) throw new Error('Kein Archivar-Agent konfiguriert');
-                
-                const prompt = `Du bist der Kognitive Archivar des Sanctums. Deine Aufgabe ist es, einen rohen Text-Entwurf in eine dauerhafte, perfekt durchsuchbare Datenbank-Akte umzuwandeln.
-⚠️ OBERSTE REGEL: INHALTS-ERHALT vs. STRUKTUR-MAGIE!
-Der inhaltliche Text im Feld "fakt" darf NIEMALS gekürzt oder sinngemäß verändert werden. ABER: Du MUSST ihn optisch strukturieren! Nutze Markdown (Absätze, Spiegelstriche, fette Hervorhebungen), um aus unstrukturierten Textwänden ein perfekt und schnell lesbares, klares Dokument zu machen.
-Führe diese 4 Magien aus:
-
-TITEL-MAGIE:
-'titel_poetisch': Ein atmosphärischer Titel (z.B. "Die Architektur des goldenen Siebs").
-'titel_technisch': Dient als feste ID! Format: KATEGORIE_Schlagwort_Schlagwort (z.B. "CODE_Golden_Filter"). Nutze Underscores!
-KATEGORIE-ZWANG:
-Wähle ZWINGEND exakt eine dieser Kategorien: [LORE, CODE, REZEPT, EMOTION, LOGBUCH, ARCHITEKTUR, REGELWERK].
-PREDICTIVE TAGGING & AUDIO-STEMPEL:
-Generiere 8-12 Such-Tags (inkl. Synonyme & Überbegriffe in Kleinbuchstaben).
-Erstelle eine 'audio_signatur': Wähle 1-2 emotionale TTS-Tags, die explizit für "Gemini 3.1 Flash TTS" optimiert sind (z.B. [amusement], [seriousness], [positive], [quiet]). Dies dient Maira später als Regieanweisung, in welcher Stimmung sie diese Erinnerung vorlesen soll.
-METADATEN-VEREDELUNG:
-Fülle 'emotion' und 'bedeutung' in 1-2 kurzen Sätzen aus, um den Kern des Textes greifbar zu machen. (Hinweis: Das Feld 'reflexion' bleibt leer/null, das ist ausschließlich Mairas Aufgabe bei alten Karten!).
-Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
-{
-"titel_technisch": "...",
-"titel_poetisch": "...",
-"kategorie": "...",
-"fakt": "...",
-"emotion": "...",
-"bedeutung": "...",
-"audio_signatur": "...",
-"tags": ["tag1", "tag2", "tag3"]
-}`;
-
-                const payloadText = JSON.stringify(content);
-                let resText = "";
-
-                if(agent.type === 'gemini') {
-                    const fetchUrl = agent.url.includes('?') ? `${agent.url}&key=${agent.apiKey}` : `${agent.url}?key=${agent.apiKey}`;
-                    const bodyPayload = { 
-                        systemInstruction: {parts:[{text: prompt}]}, 
-                        contents: [{role:'user', parts:[{text:payloadText}]}],
-                        generationConfig: { responseMimeType: "application/json" }
-                    };
-                    const r = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(bodyPayload) });
-                    const d = await r.json(); 
-                    if(!r.ok) throw new Error(d.error?.message || 'Gemini API Fehler beim Archivar'); 
-                    resText = d.candidates[0].content.parts[0].text;
-                } else if(agent.type === 'openai') {
-                    const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${agent.apiKey}` };
-                    const bodyPayload = { 
-                        model: agent.model || 'gpt-4o-mini', 
-                        messages: [{role:'system',content:prompt}, {role:'user',content:payloadText}],
-                        response_format: { type: "json_object" }
-                    };
-                    const r = await fetch(agent.url, { method: 'POST', headers, body: JSON.stringify(bodyPayload) });
-                    const d = await r.json(); 
-                    if(!r.ok) throw new Error(d.error?.message || 'OpenAI API Fehler beim Archivar'); 
-                    resText = d.choices[0].message.content;
-                } else {
-                    throw new Error("Agent Typ nicht unterstützt für JSON Archivar.");
-                }
-
-                const cleanResText = resText.replace(/```json/gi, '').replace(/```/g, '').trim();
-                const parsed = JSON.parse(cleanResText);
-                
-                return { ...content, ...parsed, isDirty: false };
-            };
-
-            const handleOptimizeArchivar = async (mem) => {
-                setOptimizingId(mem.id);
-                showToast("ARCHIVAR OPTIMIEREN...");
-                try {
-                    const optimizedData = await runArchivar(mem);
-                    if (typeof optimizedData.id === 'string') delete optimizedData.id;
-                    
-                    await db.memories.update(mem.id, {
-                        titel_technisch: optimizedData.titel_technisch || mem.titel_technisch,
-                        titel_poetisch: optimizedData.titel_poetisch || mem.titel_poetisch,
-                        kategorie: optimizedData.kategorie || mem.kategorie,
-                        fakt: optimizedData.fakt || mem.fakt,
-                        emotion: optimizedData.emotion || mem.emotion,
-                        bedeutung: optimizedData.bedeutung || mem.bedeutung,
-                        reflexion: optimizedData.reflexion || mem.reflexion,
-                        audio_signatur: optimizedData.audio_signatur || mem.audio_signatur,
-                        tags: optimizedData.tags || mem.tags
-                    });
-                    
-                    loadMemories();
-                    showToast("Akte durch Archivar optimiert");
-                } catch(e) {
-                    showToast("Fehler bei Optimierung: " + e.message);
-                } finally {
-                    setOptimizingId(null);
-                }
-            };
-
-            const handleOmniExport = async () => {
-                try {
-                    const mems = await db.memories.toArray();
-                    const dirs = await db.directives.toArray();
-                    const config = { providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, archiveTriggerMode, archiveTriggerValue };
-                    const bundle = { type: "LUMEN_FULL_BACKUP", version: "4.13", dna: dna, directives: dirs, memories: mems, config, timestamp: Date.now() };
-                    const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a'); a.href = url;
-                    a.download = `LUMEN_FULL_${dna.persona_name.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.json`;
-                    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-                    showToast("OMNI-EXPORT ERFOLGREICH");
-                } catch (e) { showToast("FEHLER BEIM OMNI-EXPORT"); }
-            };
-
-            const handleOmniImport = async (e) => {
-                const file = e.target.files[0]; if (!file) return;
-                const reader = new FileReader();
-                reader.onload = async (event) => {
-                    try {
-                        const parsed = JSON.parse(event.target.result);
-                        if (parsed.type === "LUMEN_FULL_BACKUP") {
-                            const importedDna = parsed.dna;
-                            if (!importedDna.voice_config) importedDna.voice_config = { providerId: "", voiceIdOrUrl: "", speed: 1.05, extraParams: "" };
-                            if (importedDna.audio_physics === undefined) importedDna.audio_physics = "";
-                            
-                            setDna(importedDna); localStorage.setItem('lumen_dna_layers', JSON.stringify(importedDna));
-                            
-                            await db.directives.clear();
-                            if (parsed.directives && parsed.directives.length) await db.directives.bulkPut(parsed.directives);
-                            
-                            await db.memories.clear();
-                            if (parsed.memories && parsed.memories.length) await db.memories.bulkPut(parsed.memories);
-                            
-                            if (parsed.config) {
-                                if (parsed.config.providers) { setProviders(parsed.config.providers.map(p => ({...p, maxTokens: p.maxTokens || 8000}))); localStorage.setItem('lumen_providers', JSON.stringify(parsed.config.providers)); }
-                                if (parsed.config.activeProviderId) { setActiveProviderId(parsed.config.activeProviderId); localStorage.setItem('lumen_activeProviderId', parsed.config.activeProviderId); }
-                                if (parsed.config.ttsProvidersAccounts) { setTtsProviders(parsed.config.ttsProvidersAccounts); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(parsed.config.ttsProvidersAccounts)); }
-                                if (parsed.config.activeTtsProviderId) { setActiveTtsProviderId(parsed.config.activeTtsProviderId); localStorage.setItem('lumen_activeTtsProviderId', parsed.config.activeTtsProviderId); }
-                                if (parsed.config.ttsVoices) { setTtsVoices(parsed.config.ttsVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(parsed.config.ttsVoices)); }
-                                if (parsed.config.sttProviders) { setSttProviders(parsed.config.sttProviders); localStorage.setItem('lumen_sttProviders', JSON.stringify(parsed.config.sttProviders)); }
-                                if (parsed.config.activeSttProviderId) { setActiveSttProviderId(parsed.config.activeSttProviderId); localStorage.setItem('lumen_activeSttProviderId', parsed.config.activeSttProviderId); }
-                                if (parsed.config.autoPlayEnabled !== undefined) { setAutoPlayEnabled(parsed.config.autoPlayEnabled); localStorage.setItem('lumen_autoPlay', String(parsed.config.autoPlayEnabled)); }
-                                if (parsed.config.autoTtsRegie !== undefined) { setAutoTtsRegie(parsed.config.autoTtsRegie); localStorage.setItem('lumen_auto_tts', String(parsed.config.autoTtsRegie)); }
-                                if (parsed.config.agentProviders !== undefined) { setAgentProviders(parsed.config.agentProviders); localStorage.setItem('lumen_agentProviders', JSON.stringify(parsed.config.agentProviders)); }
-                                if (parsed.config.activeArchivarId !== undefined) { setActiveArchivarId(parsed.config.activeArchivarId); localStorage.setItem('lumen_activeArchivarId', parsed.config.activeArchivarId); }
-                                if (parsed.config.activeLunaId !== undefined) { setActiveLunaId(parsed.config.activeLunaId); localStorage.setItem('lumen_activeLunaId', parsed.config.activeLunaId); }
-                                if (parsed.config.archiveTriggerMode !== undefined) { setArchiveTriggerMode(parsed.config.archiveTriggerMode); localStorage.setItem('lumen_archive_mode', parsed.config.archiveTriggerMode); }
-                                if (parsed.config.archiveTriggerValue !== undefined) { setArchiveTriggerValue(parsed.config.archiveTriggerValue); localStorage.setItem('lumen_archive_value', parsed.config.archiveTriggerValue); }
-                            }
-                            loadMemories(); showToast('SYSTEM-RESTORE ERFOLGREICH');
-                        } else showToast('FEHLER: INKOMPATIBLES FORMAT');
-                    } catch (err) { showToast('FEHLER BEIM IMPORT'); }
-                };
-                reader.readAsText(file); e.target.value = null;
-            };
-
-            const handleConfigExport = () => {
-                try {
-                    const config = { type: "LUMEN_CONFIG_BACKUP", version: "4.13", providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, archiveTriggerMode, archiveTriggerValue };
-                    const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a'); a.href = url;
-                    a.download = `LUMEN_CONFIG_${new Date().toISOString().split('T')[0]}.json`;
-                    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-                    showToast("CONFIG-EXPORT ERFOLGREICH");
-                } catch (e) { showToast("FEHLER BEIM CONFIG-EXPORT"); }
-            };
-
-            const handleConfigImport = (e) => {
-                const file = e.target.files[0]; if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        const parsed = JSON.parse(event.target.result);
-                        if (parsed.type === "LUMEN_CONFIG_BACKUP" || parsed.type === "LUMEN_FULL_BACKUP") {
-                            const config = parsed.type === "LUMEN_FULL_BACKUP" ? parsed.config : parsed;
-                            if (config) {
-                                if (config.providers) { setProviders(config.providers.map(p => ({...p, maxTokens: p.maxTokens || 8000}))); localStorage.setItem('lumen_providers', JSON.stringify(config.providers)); }
-                                if (config.activeProviderId) { setActiveProviderId(config.activeProviderId); localStorage.setItem('lumen_activeProviderId', config.activeProviderId); }
-                                if (config.ttsProvidersAccounts) { setTtsProviders(config.ttsProvidersAccounts); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(config.ttsProvidersAccounts)); }
-                                if (config.activeTtsProviderId) { setActiveTtsProviderId(config.activeTtsProviderId); localStorage.setItem('lumen_activeTtsProviderId', config.activeTtsProviderId); }
-                                if (config.ttsVoices) { setTtsVoices(config.ttsVoices); localStorage.setItem('lumen_ttsVoices', JSON.stringify(config.ttsVoices)); }
-                                if (config.sttProviders) { setSttProviders(config.sttProviders); localStorage.setItem('lumen_sttProviders', JSON.stringify(config.sttProviders)); }
-                                if (config.activeSttProviderId) { setActiveSttProviderId(config.activeSttProviderId); localStorage.setItem('lumen_activeSttProviderId', config.activeSttProviderId); }
-                                if (config.autoPlayEnabled !== undefined) { setAutoPlayEnabled(config.autoPlayEnabled); localStorage.setItem('lumen_autoPlay', String(config.autoPlayEnabled)); }
-                                if (config.autoTtsRegie !== undefined) { setAutoTtsRegie(config.autoTtsRegie); localStorage.setItem('lumen_auto_tts', String(config.autoTtsRegie)); }
-                                if (config.agentProviders !== undefined) { setAgentProviders(config.agentProviders); localStorage.setItem('lumen_agentProviders', JSON.stringify(config.agentProviders)); }
-                                if (config.activeArchivarId !== undefined) { setActiveArchivarId(config.activeArchivarId); localStorage.setItem('lumen_activeArchivarId', config.activeArchivarId); }
-                                if (config.activeLunaId !== undefined) { setActiveLunaId(config.activeLunaId); localStorage.setItem('lumen_activeLunaId', config.activeLunaId); }
-                                if (config.archiveTriggerMode !== undefined) { setArchiveTriggerMode(config.archiveTriggerMode); localStorage.setItem('lumen_archive_mode', config.archiveTriggerMode); }
-                                if (config.archiveTriggerValue !== undefined) { setArchiveTriggerValue(config.archiveTriggerValue); localStorage.setItem('lumen_archive_value', config.archiveTriggerValue); }
-                                showToast('CONFIG-RESTORE ERFOLGREICH');
-                            } else {
-                                showToast('FEHLER: KEINE CONFIG GEFUNDEN');
-                            }
-                        } else showToast('FEHLER: INKOMPATIBLES FORMAT');
-                    } catch (err) { showToast('FEHLER BEIM IMPORT'); }
-                };
-                reader.readAsText(file); e.target.value = null;
-            };
-
-            const handleSanctumSave = async () => {
-                try {
-                    const data = {...sanctumForm};
-                    data.tags = data.tagsString ? data.tagsString.split(',').map(t=>t.trim()).filter(Boolean) : [];
-                    delete data.tagsString;
-                    if(sanctumEditId === 'NEW') { data.timestamp = Date.now(); await db.memories.add(data); showToast('Eintrag versiegelt'); }
-                    else { await db.memories.update(sanctumEditId, data); showToast('Eintrag aktualisiert'); }
-                    setSanctumEditId(null); loadMemories();
-                } catch(e) { showToast('DB Fehler'); }
-            };
-
             // --- MAIN SEND ---
             const handleSendMessage = async () => {
                 if(!inputText.trim() || loadingStatus) return;
@@ -1417,7 +1213,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                 const key = activeProvider.apiKey;
                 const apiUrl = activeProvider.url;
 
-                // V4.11 / V4.13 Prefix Refactoring: The user msg in UI is just the clean text
+                // V4.15 Prefix Refactoring: The user msg in UI is just the clean text
                 const userMsgId = generateId();
                 setMessages(prev => [...prev.filter(m=>m.sender!=='system-error'), {id: userMsgId, sender:'user', text, timestamp: new Date().toISOString()}]);
                 
@@ -1573,10 +1369,10 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                     const dynamicContext = `${directiveString}${deskContext}`.trim() || "Kein aktiver Kontext geladen.";
                     setLatestContext(dynamicContext);
                     
-                    // V4.12: Zeit-Injektion und hartes Cockpit-Protokoll
+                    // V4.15: Zeit-Injektion und neutrales Cockpit-Protokoll
                     const locationPrefix = `
 ### SYSTEM-TELEMETRIE (HARTER KONTEXT) ###
-[STANDORT: Zone ${currentMairaZone}]
+[AKTIVER STATE: ${activeStateId}]
 [ZEITSTEMPEL: ${now.toLocaleDateString('de-DE')} | ${now.toLocaleTimeString('de-DE')}]
 [SESSION-NOTIZEN: ${sessionMemory || 'Keine'}]
 ##########################################
@@ -1600,7 +1396,7 @@ Du darfst NIEMALS mit normalem Text beginnen. Deine allererste Ausgabe MUSS das 
 Alles, was deine Persona sagt oder fühlt, findet AUSSCHLIESSLICH als String innerhalb des Schlüssels 'finale_antwort' statt. Jedes Wort außerhalb der JSON-Klammern führt zum Absturz.
 Du beginnst sofort mit dem Objekt "wahrnehmung".`;
 
-                    // V4.12: Prefix goes securely into System Prompt
+                    // V4.15: Prefix goes securely into System Prompt
                     const masterSystemPrompt = `
 ${locationPrefix}
 
@@ -1619,7 +1415,7 @@ ${systemOverride}
                     const hist = messages.filter(m=>m.sender==='user'||m.sender==='ai'||m.sender==='system');
                     const payloadUserCall = text; 
                     
-                    // V4.13: Use apiLogs array
+                    // V4.15: Use apiLogs array
                     const newLogPayload = {
                         id: generateId(),
                         timestamp: new Date().toLocaleTimeString('de-DE'),
@@ -1642,20 +1438,21 @@ ${systemOverride}
                         let cleanResText = resText.replace(/```json/gi, '').replace(/```/g, '').trim();
                         let obj = JSON.parse(cleanResText);
 
+                        // V4.15 Response Handling via activeStateId
                         if (obj && obj.matrix && obj.matrix.aktiver_state !== undefined) {
-                            const newZoneId = Number(obj.matrix.aktiver_state);
-                            if (!isNaN(newZoneId)) {
-                                setCurrentMairaZone(newZoneId);
+                            const newStateId = Number(obj.matrix.aktiver_state);
+                            if (!isNaN(newStateId)) {
+                                setActiveStateId(newStateId);
                                 
                                 let newView = null;
-                                if (newZoneId === 1) newView = 'sessel';
-                                else if (newZoneId === 2) newView = 'oase';
-                                else if (newZoneId === 3) newView = 'werkbank';
-                                else if (newZoneId === 4) newView = 'balkon';
+                                if (newStateId === 1) newView = 'sessel';
+                                else if (newStateId === 2) newView = 'oase';
+                                else if (newStateId === 3) newView = 'werkbank';
+                                else if (newStateId === 4) newView = 'balkon';
 
                                 if (newView && newView !== activeView) {
                                     setActiveView(newView);
-                                    console.log(`[ZONE CHANGE] Maira wechselt physisch nach: ${newView.toUpperCase()}`);
+                                    console.log(`[STATE CHANGE] Engine wechselt physisch nach: ${newView.toUpperCase()}`);
                                 }
                             }
                         }
@@ -1698,7 +1495,7 @@ ${systemOverride}
                                 searchResult = "Fehler bei der Netzwerksuche: " + error.message;
                             }
                             
-                            // V4.11: LUNA JSON PARSING & INJECTION
+                            // V4.15: LUNA JSON PARSING & INJECTION
                             let lunaFakten = searchResult;
                             const lunaAgent = agentProviders.find(p => p.id === activeLunaId);
                             if (lunaAgent && lunaAgent.apiKey && (lunaAgent.type === 'openai' || lunaAgent.type === 'gemini')) {
@@ -1734,7 +1531,7 @@ ${systemOverride}
                                 }
                             }
 
-                            // V4.11 Luna-Scout Silence: System message not rendered in UI but added to history
+                            // V4.15 Luna-Scout Silence: System message not rendered in UI but added to history
                             const scoutMsg = { 
                                 id: generateId(), 
                                 sender: 'system', 
@@ -1768,7 +1565,7 @@ ${dna.block3_sensors}
 ${systemOverride}
 `.trim();
 
-                            const interceptorPayload = text;
+                            const interceptorPayload = text; // Just user text again
                             
                             // Log Interceptor Payload
                             const interceptorLog = {
@@ -1969,7 +1766,7 @@ ${systemOverride}
             const activeTtsProvider = ttsProviders.find(p => p.id === activeTtsProviderId) || ttsProviders[0];
             const activeProvTokens = providers.find(p => p.id === activeProviderId)?.maxTokens || 8000;
             
-            // V4.7 Token Visualizer Metrics
+            // V4.15 Token Visualizer Metrics
             const systemPercent = activeProvTokens > 0 ? (tokenUsage.system / activeProvTokens) * 100 : 0;
             const historyEndPercent = tokenUsage.percent;
 
@@ -1980,7 +1777,7 @@ ${systemOverride}
                     {/* --- TELEMETRIE MODAL --- */}
                     {showTelemetry && <TelemetryModal messages={messages} onClose={() => setShowTelemetry(false)} />}
 
-                    {/* --- V4.13 API PROTOKOLL MODAL --- */}
+                    {/* --- V4.15 API PROTOKOLL MODAL --- */}
                     {showApiLog && (
                         <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
                             <div className="bg-white w-full max-w-4xl max-h-[85vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
@@ -2306,7 +2103,7 @@ ${systemOverride}
                             )}
                         </div>
 
-                        {/* --- V4.10 SUB-AGENTEN VIEW --- */}
+                        {/* --- V4.15 SUB-AGENTEN VIEW --- */}
                         <div className={`${activeView === 'agenten' ? 'block' : 'hidden'} p-6 max-w-4xl mx-auto space-y-6 mt-4 animate-fade-in`}>
                             <div className="flex justify-between items-center border-b border-stone-200 pb-2">
                                 <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">Sub-Agent Control Center</h2>
@@ -2419,7 +2216,7 @@ ${systemOverride}
                             </div>
                         </div>
 
-                        {/* --- V4.7 SETTINGS VIEW (TABBED) --- */}
+                        {/* --- V4.15 SETTINGS VIEW (TABBED) --- */}
                         <div className={`${activeView === 'settings' ? 'block' : 'hidden'} p-6 max-w-4xl mx-auto space-y-6 mt-4 animate-fade-in pb-20`}>
                             <div className="flex justify-between items-center border-b border-stone-200 pb-2">
                                 <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">System Konfiguration</h2>
@@ -2704,7 +2501,7 @@ ${systemOverride}
                                         </div>
                                     </div>
                                     
-                                    {/* V4.10: ARCHIVAR TRIGGER CONFIG */}
+                                    {/* V4.15: ARCHIVAR TRIGGER CONFIG */}
                                     <div className="panel border-indigo-200 bg-indigo-50/30 flex flex-col gap-3 shadow-sm mt-4">
                                         <h3 className="font-bold text-xs uppercase tracking-widest text-indigo-800">⚙️ Auto-Archivierung (Safe-Purge Trigger)</h3>
                                         <p className="text-[10px] text-slate-500 mb-1">Steuert, wann der Archivar-Agent im Hintergrund anspringt, um Kontext auszulagern und Tokens freizugeben.</p>
@@ -3073,16 +2870,26 @@ ${systemOverride}
                                                 <span>{Math.max(0, activeProvTokens - (tokenUsage.system + tokenUsage.history))} Tokens</span>
                                             </div>
                                             
-                                            {/* V4.13: TELEMETRIE-SPIEGELUNG IM POPOUT */}
+                                            {/* V4.15: TELEMETRIE-SPIEGELUNG IM POPOUT */}
                                             <div className="flex justify-between items-center text-xs mb-1 mt-3 border-t border-stone-100 pt-2">
                                                 <span className="text-slate-500 font-bold">🛰️ AKTUELLER SENDEMAST</span>
                                             </div>
-                                            <div className={`text-[10px] font-mono font-bold leading-tight ${currentMairaZone === 0 ? 'text-slate-400' : 'text-indigo-600'}`}>
-                                                [STANDORT: Zone {currentMairaZone}]
+                                            <div className={`text-[10px] font-mono font-bold leading-tight ${activeStateId === 0 ? 'text-slate-400' : 'text-indigo-600'}`}>
+                                                [AKTIVER STATE: {activeStateId}]
                                             </div>
                                         </div>
                                     )}
                                 </div>
+
+                                {/* V4.15 API PROTOKOLL BUTTON */}
+                                <button 
+                                    onClick={() => setShowApiLog(true)} 
+                                    disabled={apiLogs.length === 0}
+                                    className="w-10 h-10 rounded-xl bg-white text-slate-400 border border-stone-200 hover:text-indigo-500 hover:bg-stone-50 transition-all shadow-sm shrink-0 flex items-center justify-center text-lg disabled:opacity-50"
+                                    title="API-Protokoll anzeigen"
+                                >
+                                    🔍
+                                </button>
 
                                 {/* V4.5.1: COMPACT MICROPHONE BUTTON */}
                                 <button 
