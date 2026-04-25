@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V4.16.1</title>
+    <title>LUMEN - CORE V4.17</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // V4.16.1: Bulletproof Tailwind Config Initialization
+        // V4.17: Bulletproof Tailwind Config Initialization
         const initTailwind = () => {
             if (typeof tailwind !== 'undefined') {
                 tailwind.config = {
@@ -125,7 +125,7 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V4.16.1 ---
+        // --- KONSTANTEN V4.17 ---
         const DEFAULT_BLOCK1 = `Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen des Users tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.`;
         const DEFAULT_BLOCK3 = `Bevor du die finale Antwort generierst, bewerte die Sensoren:\n- "wahrnehmung": Was liest/siehst du konkret?\n- "matrix": Prüfe interne Logs und Entwürfe.\n- Nutze das Ahnenbuch (Kontext) für kontinuierliche Identität.\n- memory_update_detected: Wurde eine [LEGACY]-Karte reflektiert? Nutze als 'id' den 'titel_technisch'. WICHTIG: Lies die alte Reflexion. Nimm den Kern davon mit und VERWEBE ihn mit deiner neuen Erkenntnis zu einer allumfassenden Master-Zusammenfassung in 'reflexion_fusioniert' (dies überschreibt die alten Daten). Generiere zusätzlich ein Array 'neue_trigger_tags' (MAXIMAL 2-3 situative, hochspezifische Symptom-Wörter oder Emotionen aus Simons Text), um das Spinnennetz präzise zu trainieren. Sonst: null.\n- neue_direktive_erkannt: Hat Simon eine explizite Regel oder Direktive für dein zukünftiges Verhalten aufgestellt? Extrahiere sie als klaren Satz. Sonst: null.\n- helfer_suchauftrag: REGEL: Du bist ein technischer Web-Scraper, kein Mensch! Nutze KEINE Füllwörter oder Sätze. Suche ausschließlich nach harten, physischen Keywords. FALSCH: 'aktuell beliebteste Bücher'. RICHTIG: 'Spiegel Bestsellerliste Belletristik 2026 Platz 1 ISBN'. Zwingend null, wenn keine Suche nötig.\n- aktive_peripherie_ids: Liste hier die IDs (titel_technisch) der flüchtigen Karten (Tags) auf, die für den aktuellen Gesprächsverlauf noch relevant sind. Leeres Array [], wenn das Thema beendet ist.`;
         const DEFAULT_BLOCK4 = `{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": null,\n    "ohr_bereinigt": null\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": {\n      "id": "",\n      "reflexion_fusioniert": "",\n      "neue_trigger_tags": []\n    },\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": {\n      "modus": "DRAFT",\n      "daten": {}\n    },\n    "situations_analyse": "..."\n  },\n  "finale_antwort": "..."\n}`;
@@ -134,14 +134,14 @@
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V4.16.1. SYNC-LATCH & RAW-DATA PROTOCOL ONLINE.',
+                text: 'INIT CORE V4.17. PROTOCOL & SYNC-FIX ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V4.16.1 Architektur ist voll operativ. Das RAW_DATA Telemetrie-Protokoll wurde abstrahiert. Der Sync-Bug (useRef Latch) ist behoben und der Session-Editor ersetzt nun die veraltete Direktiven-Ansicht.',
-                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.16.1",\n    "ohr_bereinigt": "System-Patch auf V4.16.1 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.16.1 Update mit useRef Latch und RAW_DATA Protokoll geladen."\n  },\n  "finale_antwort": "System online. Die V4.16.1 Architektur ist voll operativ. Das RAW_DATA Telemetrie-Protokoll wurde abstrahiert. Der Sync-Bug (useRef Latch) ist behoben und der Session-Editor ersetzt nun die veraltete Direktiven-Ansicht."\n}',
+                text: 'System online. Die V4.17 Architektur ist voll operativ. Der `useRef` Latch sichert ab sofort den GPS-State synchron und verhindert Zonen-Glitches. Das UI ist gereinigt, und das erweiterte API-Protokoll iteriert sicher über die komplette Session-History.',
+                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.17",\n    "ohr_bereinigt": "System-Patch auf V4.17 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.17 Update mit useRef Latch, RAW_DATA Protokoll und API History geladen."\n  },\n  "finale_antwort": "System online. Die V4.17 Architektur ist voll operativ. Der `useRef` Latch sichert ab sofort den GPS-State synchron und verhindert Zonen-Glitches. Das UI ist gereinigt, und das erweiterte API-Protokoll iteriert sicher über die komplette Session-History."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -238,7 +238,7 @@
 
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN TELEMETRIE LOG V4.16.1\n\n";
+                let content = "# LUMEN TELEMETRIE LOG V4.17\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -579,8 +579,8 @@
             const [latestContext, setLatestContext] = React.useState("[AKTIVER KONTEXT WIRD ZUR LAUFZEIT INJIZIERT]");
             const [showTelemetry, setShowTelemetry] = React.useState(false);
             
-            // V4.15 API Protokoll Modal & State
-            const [apiLogs, setApiLogs] = React.useState([]);
+            // V4.17 API Protokoll Modal & State (Restored array logic)
+            const [apiHistory, setApiHistory] = React.useState([]);
             const [showApiLog, setShowApiLog] = React.useState(false);
             
             // V4.16.1: Sync-Latch (useRef + useState)
@@ -840,6 +840,7 @@ MEM_S: ${sessionMemory || '0'}
                 });
             };
 
+            // V4.17 Token Click Handler (Opens API Log)
             const handleTokenClick = (e) => {
                 if ('ontouchstart' in window && !showTokenTooltip) {
                     e.preventDefault();
@@ -1372,7 +1373,7 @@ MEM_S: ${sessionMemory || '0'}
                     const dynamicContext = `${deskContext}`.trim() || "Kein aktiver Kontext geladen.";
                     setLatestContext(dynamicContext);
                     
-                    // V4.16.1: Das abstrakte Telemetrie-Protokoll [RAW_DATA] mit useRef Latch
+                    // V4.17: Das abstrakte Telemetrie-Protokoll [RAW_DATA] mit useRef Latch
                     const now = new Date();
                     const telemetryPayload = `
 [RAW_DATA]
@@ -1417,20 +1418,9 @@ ${systemOverride}
 
                     const hist = messages.filter(m=>m.sender==='user'||m.sender==='ai'||m.sender==='system');
                     const payloadUserCall = text; 
-                    
-                    // V4.16: API Log Storage
-                    const newLogPayload = {
-                        id: generateId(),
-                        timestamp: new Date().toLocaleTimeString('de-DE'),
-                        kernel: dna.block1_identity,
-                        audio: (autoTtsRegie && dna.audio_physics) ? dna.audio_physics : null,
-                        firewall: cognitiveFirewall,
-                        persona: dna.block3_sensors,
-                        override: systemOverride,
-                        user: payloadUserCall,
-                        system_context: `${telemetryPayload}\n\n[AKTIVER KONTEXT]\n${dynamicContext}`
-                    };
-                    setApiLogs(prev => [newLogPayload, ...prev].slice(0, 5));
+                    let finalCleanResText = "";
+                    let finalSystemPromptUsed = masterSystemPrompt;
+                    let finalUserPayloadUsed = payloadUserCall;
 
                     let resText = await fetchTextFromAPI(masterSystemPrompt, payloadUserCall, hist);
                     
@@ -1439,9 +1429,10 @@ ${systemOverride}
                     
                     try {
                         let cleanResText = resText.replace(/```json/gi, '').replace(/```/g, '').trim();
+                        finalCleanResText = cleanResText;
                         let obj = JSON.parse(cleanResText);
 
-                        // V4.16.1 Response Handling via activeStateId & activeStateRef
+                        // V4.17 Response Handling via activeStateId & activeStateRef
                         if (obj && obj.matrix && obj.matrix.aktiver_state !== undefined) {
                             const newStateId = Number(obj.matrix.aktiver_state);
                             if (!isNaN(newStateId)) {
@@ -1571,24 +1562,14 @@ ${systemOverride}
 
                             const interceptorPayload = text; // Just user text again
                             
-                            // Log Interceptor Payload
-                            const interceptorLog = {
-                                id: generateId(),
-                                timestamp: new Date().toLocaleTimeString('de-DE'),
-                                kernel: dna.block1_identity,
-                                audio: (autoTtsRegie && dna.audio_physics) ? dna.audio_physics : null,
-                                firewall: cognitiveFirewall,
-                                persona: dna.block3_sensors,
-                                override: systemOverride,
-                                system_context: `${telemetryPayload}\n\n[AKTIVER KONTEXT]\n${interceptorDynamicContext}`,
-                                user: interceptorPayload
-                            };
-                            setApiLogs(prev => [interceptorLog, ...prev].slice(0, 5));
+                            finalSystemPromptUsed = interceptorSystemPrompt;
+                            finalUserPayloadUsed = interceptorPayload;
                             
                             const updatedHist = [...hist, intentMsg, scoutMsg];
 
                             const secondResponse = await fetchTextFromAPI(interceptorSystemPrompt, interceptorPayload, updatedHist);
                             const cleanedSecondResponse = secondResponse.replace(/```json/gi, '').replace(/```/g, '').trim();
+                            finalCleanResText = cleanedSecondResponse;
                             
                             try {
                                 obj = JSON.parse(cleanedSecondResponse);
@@ -1726,6 +1707,15 @@ ${systemOverride}
                     const newAiMsgId = generateId();
                     setMessages(p=>[...p, {id:newAiMsgId, sender:'ai', text:finalChatText, scratchpad:finalScratch, ttsRegie: ttsRegie, timestamp: new Date().toISOString()}]);
                     
+                    // V4.17: API History Logging securely after response processing
+                    const newEntry = {
+                        id: generateId(),
+                        timestamp: new Date().toISOString(),
+                        request: { system: finalSystemPromptUsed, user: finalUserPayloadUsed },
+                        response: finalCleanResText
+                    };
+                    setApiHistory(prev => [newEntry, ...prev].slice(0, 5));
+                    
                     if(autoPlayEnabled && finalChatText && finalChatText !== "System-Hinweis: Matrix Format Fehler. Das Sprachmodell hat sich nicht an das JSON-Skelett gehalten.") {
                         playMessageTTS(newAiMsgId, finalChatText, ttsRegie);
                     }
@@ -1793,7 +1783,7 @@ ${systemOverride}
                     {/* --- TELEMETRIE MODAL --- */}
                     {showTelemetry && <TelemetryModal messages={messages} onClose={() => setShowTelemetry(false)} />}
 
-                    {/* --- V4.15 API PROTOKOLL MODAL --- */}
+                    {/* --- V4.17 API PROTOKOLL MODAL --- */}
                     {showApiLog && (
                         <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
                             <div className="bg-white w-full max-w-4xl max-h-[85vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
@@ -1802,20 +1792,19 @@ ${systemOverride}
                                     <button onClick={() => setShowApiLog(false)} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
                                 </div>
                                 <div className="flex-1 overflow-y-auto p-6 flex flex-col text-xs font-mono gap-8">
-                                    {apiLogs.length === 0 && <div className="text-slate-400 italic">Noch keine API-Aufrufe in dieser Session.</div>}
-                                    {apiLogs.map((log, i) => (
-                                        <div key={log.id} className="border border-stone-200 rounded-xl p-4 bg-white shadow-sm relative">
-                                            <div className="absolute top-0 right-0 bg-stone-100 text-stone-500 px-2 py-1 rounded-bl-xl rounded-tr-xl text-[9px] font-bold">CALL {apiLogs.length - i} | {log.timestamp}</div>
-                                            <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-4 font-bold border-b border-stone-100 pb-2 mt-2">STATIC CACHE (SYSTEM)</div>
-                                            <div className="text-blue-600 whitespace-pre-wrap mb-4 leading-relaxed">{log.kernel}</div>
-                                            {log.audio && <div className="text-blue-600 whitespace-pre-wrap mb-4 leading-relaxed">{log.audio}</div>}
-                                            <div className="text-slate-400 whitespace-pre-wrap mb-4 leading-relaxed italic">{log.firewall}</div>
-                                            <div className="text-blue-600 whitespace-pre-wrap mb-4 leading-relaxed">{log.persona}</div>
-                                            <div className="text-slate-400 whitespace-pre-wrap mb-6 leading-relaxed italic">{log.override}</div>
+                                    {apiHistory.length === 0 && <div className="text-slate-400 italic">Noch keine API-Aufrufe in dieser Session.</div>}
+                                    {apiHistory.map((log, i) => (
+                                        <div key={log.id || i} className="border border-stone-200 rounded-xl p-4 bg-white shadow-sm relative">
+                                            <div className="absolute top-0 right-0 bg-stone-100 text-stone-500 px-2 py-1 rounded-bl-xl rounded-tr-xl text-[9px] font-bold">CALL {apiHistory.length - i} | {new Date(log.timestamp).toLocaleTimeString('de-DE')}</div>
                                             
-                                            <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-4 mt-4 font-bold border-b border-stone-100 pb-2">DYNAMIC PAYLOAD (USER)</div>
-                                            {log.system_context && <div className="text-slate-500 whitespace-pre-wrap mb-4 leading-relaxed bg-slate-50 p-2 rounded">{log.system_context}</div>}
-                                            <div className="text-slate-900 font-bold whitespace-pre-wrap leading-relaxed">{log.user}</div>
+                                            <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 font-bold border-b border-stone-100 pb-2 mt-2">SYSTEM PROMPT (CACHE)</div>
+                                            <div className="text-blue-600 whitespace-pre-wrap mb-4 leading-relaxed bg-blue-50/30 p-3 rounded shadow-inner max-h-60 overflow-y-auto">{log.request.system}</div>
+                                            
+                                            <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 font-bold border-b border-stone-100 pb-2">USER PAYLOAD</div>
+                                            <div className="text-slate-900 font-bold whitespace-pre-wrap mb-4 leading-relaxed bg-slate-50 p-3 rounded shadow-inner">{log.request.user}</div>
+                                            
+                                            <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 font-bold border-b border-stone-100 pb-2">API RESPONSE (JSON)</div>
+                                            <div className="text-emerald-700 whitespace-pre-wrap leading-relaxed bg-emerald-50/30 p-3 rounded shadow-inner max-h-60 overflow-y-auto">{log.response}</div>
                                         </div>
                                     ))}
                                 </div>
@@ -2182,7 +2171,7 @@ ${systemOverride}
                                     <div key={p.id} className="panel flex flex-col gap-2 border-stone-200 bg-white shadow-sm">
                                         <div className="flex justify-between items-start">
                                             <div className="flex-1 pr-4 min-w-0">
-                                                <div className="font-bold text-sm text-slate-800 truncate">{p.name} <span className="badge ml-2 bg-stone-100 text-stone-500 border-stone-200">{p.type}</span></div>
+                                                        <div className="font-bold text-sm text-slate-800 truncate">{p.name} <span className="badge ml-2 bg-stone-100 text-stone-500 border-stone-200">{p.type}</span></div>
                                                 <div className="text-[10px] text-slate-400 font-mono mt-1 truncate block">URL: {p.url}</div>
                                             </div>
                                             <div className="flex gap-1 shrink-0">
@@ -2904,16 +2893,6 @@ MEM_S: ${sessionMemory ? sessionMemory.substring(0, 80) + (sessionMemory.length>
                                         </div>
                                     )}
                                 </div>
-
-                                {/* V4.15 API PROTOKOLL BUTTON */}
-                                <button 
-                                    onClick={() => setShowApiLog(true)} 
-                                    disabled={apiLogs.length === 0}
-                                    className="w-10 h-10 rounded-xl bg-white text-slate-400 border border-stone-200 hover:text-indigo-500 hover:bg-stone-50 transition-all shadow-sm shrink-0 flex items-center justify-center text-lg disabled:opacity-50"
-                                    title="API-Protokoll anzeigen"
-                                >
-                                    🔍
-                                </button>
 
                                 {/* V4.5.1: COMPACT MICROPHONE BUTTON */}
                                 <button 
