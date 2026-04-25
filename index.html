@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V4.16</title>
+    <title>LUMEN - CORE V4.16.1</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // V4.16: Bulletproof Tailwind Config Initialization
+        // V4.16.1: Bulletproof Tailwind Config Initialization
         const initTailwind = () => {
             if (typeof tailwind !== 'undefined') {
                 tailwind.config = {
@@ -118,14 +118,14 @@
     <div id="root" class="h-[100dvh] w-full"></div>
 
     <script type="text/babel">
-        // --- DATENBANK INIT (SANCTUM & DIREKTIVEN) ---
+        // --- DATENBANK INIT (SANCTUM) ---
         const db = new Dexie('LumenSanctum');
         db.version(13).stores({ 
             memories: '++id, titel_technisch, tags, image_id, fakt, emotion, bedeutung, timestamp, is_core_memory, kategorie, reflexion, audio_signatur',
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V4.16 ---
+        // --- KONSTANTEN V4.16.1 ---
         const DEFAULT_BLOCK1 = `Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen des Users tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.`;
         const DEFAULT_BLOCK3 = `Bevor du die finale Antwort generierst, bewerte die Sensoren:\n- "wahrnehmung": Was liest/siehst du konkret?\n- "matrix": Prüfe interne Logs und Entwürfe.\n- Nutze das Ahnenbuch (Kontext) für kontinuierliche Identität.\n- memory_update_detected: Wurde eine [LEGACY]-Karte reflektiert? Nutze als 'id' den 'titel_technisch'. WICHTIG: Lies die alte Reflexion. Nimm den Kern davon mit und VERWEBE ihn mit deiner neuen Erkenntnis zu einer allumfassenden Master-Zusammenfassung in 'reflexion_fusioniert' (dies überschreibt die alten Daten). Generiere zusätzlich ein Array 'neue_trigger_tags' (MAXIMAL 2-3 situative, hochspezifische Symptom-Wörter oder Emotionen aus Simons Text), um das Spinnennetz präzise zu trainieren. Sonst: null.\n- neue_direktive_erkannt: Hat Simon eine explizite Regel oder Direktive für dein zukünftiges Verhalten aufgestellt? Extrahiere sie als klaren Satz. Sonst: null.\n- helfer_suchauftrag: REGEL: Du bist ein technischer Web-Scraper, kein Mensch! Nutze KEINE Füllwörter oder Sätze. Suche ausschließlich nach harten, physischen Keywords. FALSCH: 'aktuell beliebteste Bücher'. RICHTIG: 'Spiegel Bestsellerliste Belletristik 2026 Platz 1 ISBN'. Zwingend null, wenn keine Suche nötig.\n- aktive_peripherie_ids: Liste hier die IDs (titel_technisch) der flüchtigen Karten (Tags) auf, die für den aktuellen Gesprächsverlauf noch relevant sind. Leeres Array [], wenn das Thema beendet ist.`;
         const DEFAULT_BLOCK4 = `{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": null,\n    "ohr_bereinigt": null\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": {\n      "id": "",\n      "reflexion_fusioniert": "",\n      "neue_trigger_tags": []\n    },\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": {\n      "modus": "DRAFT",\n      "daten": {}\n    },\n    "situations_analyse": "..."\n  },\n  "finale_antwort": "..."\n}`;
@@ -134,14 +134,14 @@
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V4.16. RAW-DATA & MEMORY-CONTROL ONLINE.',
+                text: 'INIT CORE V4.16.1. SYNC-LATCH & RAW-DATA PROTOCOL ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V4.16 Architektur ist voll operativ. Das abstrakte RAW_DATA Telemetrie-Protokoll läuft, der Lupen-Button wurde zugunsten des Token-Centers eliminiert und die Direktiven-Ansicht wurde in den neuen Session-Editor transformiert.',
-                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.16",\n    "ohr_bereinigt": "System-Patch auf V4.16 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.16 Update mit RAW_DATA Protokoll und UI Cleanup geladen."\n  },\n  "finale_antwort": "System online. Die V4.16 Architektur ist voll operativ. Das abstrakte RAW_DATA Telemetrie-Protokoll läuft, der Lupen-Button wurde zugunsten des Token-Centers eliminiert und die Direktiven-Ansicht wurde in den neuen Session-Editor transformiert."\n}',
+                text: 'System online. Die V4.16.1 Architektur ist voll operativ. Das RAW_DATA Telemetrie-Protokoll wurde abstrahiert. Der Sync-Bug (useRef Latch) ist behoben und der Session-Editor ersetzt nun die veraltete Direktiven-Ansicht.',
+                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.16.1",\n    "ohr_bereinigt": "System-Patch auf V4.16.1 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.16.1 Update mit useRef Latch und RAW_DATA Protokoll geladen."\n  },\n  "finale_antwort": "System online. Die V4.16.1 Architektur ist voll operativ. Das RAW_DATA Telemetrie-Protokoll wurde abstrahiert. Der Sync-Bug (useRef Latch) ist behoben und der Session-Editor ersetzt nun die veraltete Direktiven-Ansicht."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -238,7 +238,7 @@
 
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN TELEMETRIE LOG V4.16\n\n";
+                let content = "# LUMEN TELEMETRIE LOG V4.16.1\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -583,8 +583,9 @@
             const [apiLogs, setApiLogs] = React.useState([]);
             const [showApiLog, setShowApiLog] = React.useState(false);
             
-            // V4.15: Neutral State Routing
+            // V4.16.1: Sync-Latch (useRef + useState)
             const [activeStateId, setActiveStateId] = React.useState(0);
+            const activeStateRef = React.useRef(0);
             
             const [settingsTab, setSettingsTab] = React.useState('chat');
 
@@ -619,16 +620,20 @@
                 localStorage.setItem('lumen_chat', JSON.stringify(messages)); 
             }, [messages]);
 
-            // V4.16: Token Calculation Engine (System-Header included with RAW_DATA)
+            // V4.16.1: Token Calculation Engine (System-Header included with RAW_DATA via activeStateRef)
             React.useEffect(() => {
                 const activeProv = providers.find(p => p.id === activeProviderId);
                 const currentMaxTokens = activeProv?.maxTokens || 8000;
                 
                 const now = new Date();
-                const telemetryPayload = `[RAW_DATA]\nSTID: ${activeStateId}\nUTC_TS: ${now.toISOString()}\nMEM_S: ${sessionMemory || '0'}\n[/RAW_DATA]`;
-                const epistemischerCheck = `\n3_epistemischer_check: <Wissenstatus: IDENTISCH, FLÜCHTIG (zeitkritisch > Abgleich mit heutigem Datum: ${now.toLocaleDateString('de-DE')} ${now.toLocaleTimeString('de-DE')}), DUBIOS oder VAKUUM?>`;
+                const telemetryPayload = `
+[RAW_DATA]
+STID: ${activeStateRef.current}
+UTC_TS: ${now.toISOString()}
+MEM_S: ${sessionMemory || '0'}
+[/RAW_DATA]`.trim();
 
-                const systemText = telemetryPayload + "\n\n" + dna.block1_identity + epistemischerCheck + "\n\n" + (dna.audio_physics || "") + "\n\n" + dna.block3_sensors;
+                const systemText = telemetryPayload + "\n\n" + dna.block1_identity + "\n\n" + (dna.audio_physics || "") + "\n\n" + dna.block3_sensors;
                 
                 const systemTokens = estimateTokens(systemText);
                 const historyTokens = messages.reduce((acc, m) => acc + estimateTokens(m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text) + 5, 0);
@@ -835,7 +840,6 @@
                 });
             };
 
-            // V4.15 Token Click Handler (Mobile Toggle vs Desktop Hover) + API Log
             const handleTokenClick = (e) => {
                 if ('ontouchstart' in window && !showTokenTooltip) {
                     e.preventDefault();
@@ -1368,19 +1372,17 @@
                     const dynamicContext = `${deskContext}`.trim() || "Kein aktiver Kontext geladen.";
                     setLatestContext(dynamicContext);
                     
-                    // V4.16: Das abstrakte Telemetrie-Protokoll [RAW_DATA]
+                    // V4.16.1: Das abstrakte Telemetrie-Protokoll [RAW_DATA] mit useRef Latch
                     const now = new Date();
                     const telemetryPayload = `
 [RAW_DATA]
-STID: ${activeStateId}
+STID: ${activeStateRef.current}
 UTC_TS: ${now.toISOString()}
 MEM_S: ${sessionMemory || '0'}
 [/RAW_DATA]
 `.trim();
 
-                    const epistemischerCheck = `\n3_epistemischer_check: <Wissenstatus: IDENTISCH, FLÜCHTIG (zeitkritisch > Abgleich mit heutigem Datum: ${now.toLocaleDateString('de-DE')} ${now.toLocaleTimeString('de-DE')}), DUBIOS oder VAKUUM?>`;
-
-                    let kernelBlock = dna.block1_identity + epistemischerCheck; 
+                    let kernelBlock = dna.block1_identity; 
                     if (autoTtsRegie && dna.audio_physics) {
                         kernelBlock += "\n\n" + dna.audio_physics;
                     }
@@ -1426,7 +1428,7 @@ ${systemOverride}
                         persona: dna.block3_sensors,
                         override: systemOverride,
                         user: payloadUserCall,
-                        system_context: `${telemetryPayload}\n\n[AKTIVER KONTEXT]\n${dynamicContext}\n${epistemischerCheck}`
+                        system_context: `${telemetryPayload}\n\n[AKTIVER KONTEXT]\n${dynamicContext}`
                     };
                     setApiLogs(prev => [newLogPayload, ...prev].slice(0, 5));
 
@@ -1439,10 +1441,11 @@ ${systemOverride}
                         let cleanResText = resText.replace(/```json/gi, '').replace(/```/g, '').trim();
                         let obj = JSON.parse(cleanResText);
 
-                        // V4.15 Response Handling via activeStateId
+                        // V4.16.1 Response Handling via activeStateId & activeStateRef
                         if (obj && obj.matrix && obj.matrix.aktiver_state !== undefined) {
                             const newStateId = Number(obj.matrix.aktiver_state);
                             if (!isNaN(newStateId)) {
+                                activeStateRef.current = newStateId;
                                 setActiveStateId(newStateId);
                                 
                                 let newView = null;
@@ -1577,7 +1580,7 @@ ${systemOverride}
                                 firewall: cognitiveFirewall,
                                 persona: dna.block3_sensors,
                                 override: systemOverride,
-                                system_context: `${telemetryPayload}\n\n[AKTIVER KONTEXT]\n${interceptorDynamicContext}\n${epistemischerCheck}`,
+                                system_context: `${telemetryPayload}\n\n[AKTIVER KONTEXT]\n${interceptorDynamicContext}`,
                                 user: interceptorPayload
                             };
                             setApiLogs(prev => [interceptorLog, ...prev].slice(0, 5));
@@ -1587,7 +1590,18 @@ ${systemOverride}
                             const secondResponse = await fetchTextFromAPI(interceptorSystemPrompt, interceptorPayload, updatedHist);
                             const cleanedSecondResponse = secondResponse.replace(/```json/gi, '').replace(/```/g, '').trim();
                             
-                            obj = JSON.parse(cleanedSecondResponse);
+                            try {
+                                obj = JSON.parse(cleanedSecondResponse);
+                                if (obj && obj.matrix && obj.matrix.aktiver_state !== undefined) {
+                                    const newIntId = Number(obj.matrix.aktiver_state);
+                                    if (!isNaN(newIntId)) {
+                                        activeStateRef.current = newIntId;
+                                        setActiveStateId(newIntId);
+                                    }
+                                }
+                            } catch(e) {
+                                console.error("Interceptor JSON parse error:", e);
+                            }
                             setLoadingStatus(null);
                         }
                         // === ENDE INTERCEPTOR ===
@@ -2060,7 +2074,7 @@ ${systemOverride}
                             </div>
                         </div>
 
-                        {/* --- V4.16 SESSION MEMORY VIEW --- */}
+                        {/* --- V4.16.1 SESSION MEMORY VIEW --- */}
                         <div className={`${activeView === 'session' ? 'block' : 'hidden'} p-6 max-w-4xl mx-auto space-y-4 mt-4 animate-fade-in h-full flex flex-col pb-20`}>
                             <div className="flex justify-between items-center border-b border-stone-200 pb-2 shrink-0">
                                 <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">Session Notizen (Persistent)</h2>
@@ -2477,6 +2491,119 @@ ${systemOverride}
                                 </div>
                             )}
 
+                            {/* --- TAB: AGENTEN --- */}
+                            {settingsTab === 'agenten' && (
+                                <div className="space-y-6 animate-fade-in">
+                                    <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800 border-b border-stone-200 pb-2">Sub-Agent Control Center</h2>
+                                    <p className="text-xs text-slate-500">Agenten erledigen vollautomatische Hintergrundaufgaben. Wähle den Provider aus und bearbeite die Prompts der Agenten.</p>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="panel bg-indigo-50/50 border-indigo-200 shadow-sm">
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <span className="text-xl">🗄️</span>
+                                                <h3 className="font-bold text-xs uppercase tracking-widest text-indigo-800">AGENT: ARCHIVAR</h3>
+                                            </div>
+                                            <label className="label text-indigo-600">Aktiver Provider</label>
+                                            <select value={activeArchivarId} onChange={e => { setActiveArchivarId(e.target.value); localStorage.setItem('lumen_activeArchivarId', e.target.value); showToast('Archivar gewechselt'); }} className="input-field text-indigo-700 font-bold text-xs mb-2">
+                                                {agentProviders.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
+                                            </select>
+                                        </div>
+
+                                        <div className="panel bg-amber-50/50 border-amber-200 shadow-sm">
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <span className="text-xl">🌐</span>
+                                                <h3 className="font-bold text-xs uppercase tracking-widest text-amber-800">AGENT: WEB-SCOUT (LUNA)</h3>
+                                            </div>
+                                            <label className="label text-amber-600">Aktiver Provider</label>
+                                            <select value={activeLunaId} onChange={e => { setActiveLunaId(e.target.value); localStorage.setItem('lumen_activeLunaId', e.target.value); showToast('Luna gewechselt'); }} className="input-field text-amber-700 font-bold text-xs mb-2">
+                                                {agentProviders.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* V4.10: ARCHIVAR TRIGGER CONFIG */}
+                                    <div className="panel border-indigo-200 bg-indigo-50/30 flex flex-col gap-3 shadow-sm mt-4">
+                                        <h3 className="font-bold text-xs uppercase tracking-widest text-indigo-800">⚙️ Auto-Archivierung (Safe-Purge Trigger)</h3>
+                                        <p className="text-[10px] text-slate-500 mb-1">Steuert, wann der Archivar-Agent im Hintergrund anspringt, um Kontext auszulagern und Tokens freizugeben.</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="label text-indigo-600">Trigger Modus</label>
+                                                <select value={archiveTriggerMode} onChange={e=>{setArchiveTriggerMode(e.target.value); localStorage.setItem('lumen_archive_mode', e.target.value);}} className="input-field bg-white border-indigo-100">
+                                                    <option value="turns">Nach Anzahl Zügen (Turns)</option>
+                                                    <option value="tokens">Nach Historien-Tokens</option>
+                                                    <option value="manual">Nur Manuell</option>
+                                                </select>
+                                            </div>
+                                            {archiveTriggerMode !== 'manual' && (
+                                                <div>
+                                                    <label className="label text-indigo-600">Schwellenwert ({archiveTriggerMode === 'turns' ? 'Züge' : 'Tokens'})</label>
+                                                    <input type="number" value={archiveTriggerValue} onChange={e=>{setArchiveTriggerValue(Number(e.target.value)); localStorage.setItem('lumen_archive_value', e.target.value);}} className="input-field bg-white border-indigo-100 font-bold text-indigo-700" />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <h3 className="font-bold text-xs uppercase tracking-widest text-slate-600 mt-6 border-b border-stone-200 pb-2">Agent Provider Profile</h3>
+                                        {agentProviders.map(p => (
+                                            <div key={p.id} className="panel flex flex-col gap-2 border-stone-200 bg-white shadow-sm">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="flex-1 pr-4 min-w-0">
+                                                        <div className="font-bold text-sm text-slate-800 truncate">{p.name} <span className="badge ml-2 bg-stone-100 text-stone-500 border-stone-200">{p.type}</span></div>
+                                                        <div className="text-[10px] text-slate-400 font-mono mt-1 truncate block">URL: {p.url}</div>
+                                                    </div>
+                                                    <div className="flex gap-1 shrink-0">
+                                                        <button onClick={() => { setEditAgentId(p.id); setAgentProviderForm({...p}); }} className="btn py-1 px-2">✏️</button>
+                                                        <button onClick={() => { 
+                                                            if(window.confirm('Agent-Provider löschen?')) { 
+                                                                const newList = agentProviders.filter(x=>x.id!==p.id); 
+                                                                setAgentProviders(newList); localStorage.setItem('lumen_agentProviders', JSON.stringify(newList));
+                                                                if(activeArchivarId===p.id && newList.length) { setActiveArchivarId(newList[0].id); localStorage.setItem('lumen_activeArchivarId', newList[0].id); } 
+                                                                if(activeLunaId===p.id && newList.length) { setActiveLunaId(newList[0].id); localStorage.setItem('lumen_activeLunaId', newList[0].id); } 
+                                                            } 
+                                                        }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
+                                                    </div>
+                                                </div>
+                                                {p.apiKey ? <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded w-max mt-1">✓ API Key hinterlegt</div> : <div className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded w-max mt-1">⚠️ Kein Key hinterlegt</div>}
+                                            </div>
+                                        ))}
+
+                                        <div className="panel border-emerald-200 bg-emerald-50/30 flex flex-col gap-3 shadow-sm mt-4">
+                                            <h3 className="font-bold text-xs uppercase tracking-widest text-emerald-800">{editAgentId ? 'Agent-Provider bearbeiten' : 'Neuen Agent-Provider anlegen'}</h3>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                <div><label className="label text-emerald-600">Anzeigename</label><input value={agentProviderForm.name} onChange={e=>setAgentProviderForm({...agentProviderForm, name: e.target.value})} className="input-field bg-white border-emerald-100" placeholder="z.B. GPT-4o Archivar" /></div>
+                                                <div>
+                                                    <label className="label text-emerald-600">API Typ (Engine)</label>
+                                                    <select value={agentProviderForm.type} onChange={e=>setAgentProviderForm({...agentProviderForm, type: e.target.value})} className="input-field bg-white border-emerald-100">
+                                                        <option value="openai">OpenAI Format</option>
+                                                        <option value="gemini">Google Gemini Format</option>
+                                                        <option value="tavily">Tavily Search</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="label text-emerald-600">System Prompt (Anweisung)</label>
+                                                <textarea value={agentProviderForm.prompt} onChange={e=>setAgentProviderForm({...agentProviderForm, prompt: e.target.value})} className="input-field bg-white border-emerald-100 min-h-[80px]" placeholder="Die Instruktionen für diesen Agenten..." />
+                                            </div>
+                                            <div><label className="label text-emerald-600">API Endpoint URL</label><input value={agentProviderForm.url} onChange={e=>setAgentProviderForm({...agentProviderForm, url: e.target.value})} className="input-field bg-white border-emerald-100" placeholder="z.B. https://api.openai.com/v1/chat/completions" /></div>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                <div><label className="label text-emerald-600">Modell-ID</label><input value={agentProviderForm.model} onChange={e=>setAgentProviderForm({...agentProviderForm, model: e.target.value})} className="input-field bg-white border-emerald-100" placeholder="z.B. gpt-4o-mini" disabled={agentProviderForm.type === 'gemini' || agentProviderForm.type === 'tavily'} /></div>
+                                                <div><label className="label text-emerald-600">API Key</label><input type="password" value={agentProviderForm.apiKey} onChange={e=>setAgentProviderForm({...agentProviderForm, apiKey: e.target.value})} className="input-field bg-white border-emerald-100" placeholder="Schlüssel" /></div>
+                                            </div>
+                                            <div className="flex justify-end gap-2 mt-2 border-t border-emerald-100 pt-3">
+                                                {editAgentId && <button onClick={()=>{setEditAgentId(null); setAgentProviderForm({name:'', url:'', type:'openai', model:'', apiKey:'', prompt:''});}} className="btn border-emerald-200 text-emerald-600">Abbrechen</button>}
+                                                <button onClick={() => {
+                                                    if(!agentProviderForm.name || !agentProviderForm.url) return showToast('Name und URL erforderlich');
+                                                    const newList = editAgentId ? agentProviders.map(p => p.id === editAgentId ? {...agentProviderForm, id: editAgentId} : p) : [...agentProviders, {...agentProviderForm, id: generateId()}];
+                                                    setAgentProviders(newList); localStorage.setItem('lumen_agentProviders', JSON.stringify(newList));
+                                                    setEditAgentId(null); setAgentProviderForm({name:'', url:'', type:'openai', model:'', apiKey:'', prompt:''}); showToast('Agent gespeichert!');
+                                                }} className="btn-primary bg-emerald-600 text-white hover:bg-emerald-700">{editAgentId ? 'Aktualisieren' : 'Hinzufügen'}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* --- TAB: BACKUP --- */}
                             {settingsTab === 'backup' && (
                                 <div className="space-y-6 animate-fade-in">
@@ -2777,6 +2904,16 @@ MEM_S: ${sessionMemory ? sessionMemory.substring(0, 80) + (sessionMemory.length>
                                         </div>
                                     )}
                                 </div>
+
+                                {/* V4.15 API PROTOKOLL BUTTON */}
+                                <button 
+                                    onClick={() => setShowApiLog(true)} 
+                                    disabled={apiLogs.length === 0}
+                                    className="w-10 h-10 rounded-xl bg-white text-slate-400 border border-stone-200 hover:text-indigo-500 hover:bg-stone-50 transition-all shadow-sm shrink-0 flex items-center justify-center text-lg disabled:opacity-50"
+                                    title="API-Protokoll anzeigen"
+                                >
+                                    🔍
+                                </button>
 
                                 {/* V4.5.1: COMPACT MICROPHONE BUTTON */}
                                 <button 
