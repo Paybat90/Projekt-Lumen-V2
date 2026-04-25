@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V4.12</title>
+    <title>LUMEN - CORE V4.13</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // V4.12: Bulletproof Tailwind Config Initialization
+        // V4.13: Bulletproof Tailwind Config Initialization
         const initTailwind = () => {
             if (typeof tailwind !== 'undefined') {
                 tailwind.config = {
@@ -125,7 +125,7 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V4.12 ---
+        // --- KONSTANTEN V4.13 ---
         const DEFAULT_BLOCK1 = `Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen des Users tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.`;
         const DEFAULT_BLOCK3 = `Bevor du die finale Antwort generierst, bewerte die Sensoren:\n- "wahrnehmung": Was liest/siehst du konkret?\n- "matrix": Prüfe interne Logs und Entwürfe.\n- Nutze das Ahnenbuch (Kontext) für kontinuierliche Identität.\n- memory_update_detected: Wurde eine [LEGACY]-Karte reflektiert? Nutze als 'id' den 'titel_technisch'. WICHTIG: Lies die alte Reflexion. Nimm den Kern davon mit und VERWEBE ihn mit deiner neuen Erkenntnis zu einer allumfassenden Master-Zusammenfassung in 'reflexion_fusioniert' (dies überschreibt die alten Daten). Generiere zusätzlich ein Array 'neue_trigger_tags' (MAXIMAL 2-3 situative, hochspezifische Symptom-Wörter oder Emotionen aus Simons Text), um das Spinnennetz präzise zu trainieren. Sonst: null.\n- neue_direktive_erkannt: Hat Simon eine explizite Regel oder Direktive für dein zukünftiges Verhalten aufgestellt? Extrahiere sie als klaren Satz. Sonst: null.\n- helfer_suchauftrag: REGEL: Du bist ein technischer Web-Scraper, kein Mensch! Nutze KEINE Füllwörter oder Sätze. Suche ausschließlich nach harten, physischen Keywords. FALSCH: 'aktuell beliebteste Bücher'. RICHTIG: 'Spiegel Bestsellerliste Belletristik 2026 Platz 1 ISBN'. Zwingend null, wenn keine Suche nötig.\n- aktive_peripherie_ids: Liste hier die IDs (titel_technisch) der flüchtigen Karten (Tags) auf, die für den aktuellen Gesprächsverlauf noch relevant sind. Leeres Array [], wenn das Thema beendet ist.`;
         const DEFAULT_BLOCK4 = `{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": null,\n    "ohr_bereinigt": null\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": {\n      "id": "",\n      "reflexion_fusioniert": "",\n      "neue_trigger_tags": []\n    },\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": {\n      "modus": "DRAFT",\n      "daten": {}\n    },\n    "situations_analyse": "..."\n  },\n  "finale_antwort": "..."\n}`;
@@ -134,14 +134,14 @@
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V4.12. TIME-INJECTION & CSS-FIX ONLINE.',
+                text: 'INIT CORE V4.13. DIAGNOSTIC TELEMETRY & LOG RESTORE ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V4.12 Architektur ist voll operativ. Der epistemische Zeit-Check und das strikte Cockpit-Protokoll wurden erfolgreich in den Master-Prompt integriert. Markdown Zeilenumbrüche rendern nun sauber.',
-                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.12",\n    "ohr_bereinigt": "System-Patch auf V4.12 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.12 Update mit Cockpit-Protokoll und Markdown-Fix geladen."\n  },\n  "finale_antwort": "System online. Die V4.12 Architektur ist voll operativ. Der epistemische Zeit-Check und das strikte Cockpit-Protokoll wurden erfolgreich in den Master-Prompt integriert. Markdown Zeilenumbrüche rendern nun sauber."\n}',
+                text: 'System online. Die V4.13 Architektur ist voll operativ. Der GPS-Latch spiegelt nun den Zonen-Status live im Token-Popout wider. Die API-Historie zeigt dir ab sofort die letzten 5 Session-Payloads zum Debuggen an.',
+                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.13",\n    "ohr_bereinigt": "System-Patch auf V4.13 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.13 Update mit Telemetrie-Spiegelung und Log-Restore geladen."\n  },\n  "finale_antwort": "System online. Die V4.13 Architektur ist voll operativ. Der GPS-Latch spiegelt nun den Zonen-Status live im Token-Popout wider. Die API-Historie zeigt dir ab sofort die letzten 5 Session-Payloads zum Debuggen an."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -150,7 +150,6 @@
         const generateId = () => Math.random().toString(36).substr(2, 9);
         const estimateTokens = (text) => text ? Math.ceil(text.length / 3.3) : 0;
 
-        // V4.12: Preserving newlines by matching explicit spaces, not \s
         const cleanVisibleText = (text) => {
             if (!text) return "";
             return text.replace(/\[.*?\]/g, '').replace(/ +/g, ' ').trim();
@@ -239,7 +238,7 @@
 
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN TELEMETRIE LOG V4.12\n\n";
+                let content = "# LUMEN TELEMETRIE LOG V4.13\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -573,13 +572,15 @@
 
             // V4.5.1 Token Tracker States
             const [tokenUsage, setTokenUsage] = React.useState({ system: 0, history: 0, percent: 0 });
+            // V4.9 Token Tooltip State
             const [showTokenTooltip, setShowTokenTooltip] = React.useState(false);
 
             const [telemetry, setTelemetry] = React.useState({ concern: 0, bs_meter: 0, mask_drop: false });
             const [latestContext, setLatestContext] = React.useState("[AKTIVER KONTEXT WIRD ZUR LAUFZEIT INJIZIERT]");
             const [showTelemetry, setShowTelemetry] = React.useState(false);
             
-            const [lastApiPayload, setLastApiPayload] = React.useState(null);
+            // V4.13 API Protokoll Modal & State (Restored array logic)
+            const [apiLogs, setApiLogs] = React.useState([]);
             const [showApiLog, setShowApiLog] = React.useState(false);
             
             const [currentMairaZone, setCurrentMairaZone] = React.useState(0);
@@ -1296,7 +1297,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                     const mems = await db.memories.toArray();
                     const dirs = await db.directives.toArray();
                     const config = { providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, archiveTriggerMode, archiveTriggerValue };
-                    const bundle = { type: "LUMEN_FULL_BACKUP", version: "4.12", dna: dna, directives: dirs, memories: mems, config, timestamp: Date.now() };
+                    const bundle = { type: "LUMEN_FULL_BACKUP", version: "4.13", dna: dna, directives: dirs, memories: mems, config, timestamp: Date.now() };
                     const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a'); a.href = url;
@@ -1350,7 +1351,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
 
             const handleConfigExport = () => {
                 try {
-                    const config = { type: "LUMEN_CONFIG_BACKUP", version: "4.12", providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, archiveTriggerMode, archiveTriggerValue };
+                    const config = { type: "LUMEN_CONFIG_BACKUP", version: "4.13", providers, activeProviderId, ttsProvidersAccounts: ttsProviders, activeTtsProviderId, ttsVoices, sttProviders, activeSttProviderId, autoPlayEnabled, autoTtsRegie, agentProviders, activeArchivarId, activeLunaId, archiveTriggerMode, archiveTriggerValue };
                     const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a'); a.href = url;
@@ -1416,7 +1417,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
                 const key = activeProvider.apiKey;
                 const apiUrl = activeProvider.url;
 
-                // V4.12: The user msg in UI is just the clean text
+                // V4.11 / V4.13 Prefix Refactoring: The user msg in UI is just the clean text
                 const userMsgId = generateId();
                 setMessages(prev => [...prev.filter(m=>m.sender!=='system-error'), {id: userMsgId, sender:'user', text, timestamp: new Date().toISOString()}]);
                 
@@ -1579,7 +1580,7 @@ Gib AUSSCHLIESSLICH dieses JSON-Format zurück, ohne Markdown-Codeblöcke:
 [ZEITSTEMPEL: ${now.toLocaleDateString('de-DE')} | ${now.toLocaleTimeString('de-DE')}]
 [SESSION-NOTIZEN: ${sessionMemory || 'Keine'}]
 ##########################################
-`;
+`.trim();
                     const epistemischerCheck = `\n3_epistemischer_check: <Wissenstatus: IDENTISCH, FLÜCHTIG (zeitkritisch > Abgleich mit heutigem Datum: ${now.toLocaleDateString('de-DE')} ${now.toLocaleTimeString('de-DE')}), DUBIOS oder VAKUUM?>`;
 
                     let kernelBlock = dna.block1_identity + epistemischerCheck; 
@@ -1618,15 +1619,19 @@ ${systemOverride}
                     const hist = messages.filter(m=>m.sender==='user'||m.sender==='ai'||m.sender==='system');
                     const payloadUserCall = text; 
                     
-                    setLastApiPayload({
+                    // V4.13: Use apiLogs array
+                    const newLogPayload = {
+                        id: generateId(),
+                        timestamp: new Date().toLocaleTimeString('de-DE'),
                         kernel: dna.block1_identity,
                         audio: (autoTtsRegie && dna.audio_physics) ? dna.audio_physics : null,
                         firewall: cognitiveFirewall,
                         persona: dna.block3_sensors,
                         override: systemOverride,
                         user: payloadUserCall,
-                        system_context: `${locationPrefix}\n[AKTIVER KONTEXT]\n${dynamicContext}\n${epistemischerCheck}`
-                    });
+                        system_context: `${locationPrefix}\n\n[AKTIVER KONTEXT]\n${dynamicContext}\n${epistemischerCheck}`
+                    };
+                    setApiLogs(prev => [newLogPayload, ...prev].slice(0, 5));
 
                     let resText = await fetchTextFromAPI(masterSystemPrompt, payloadUserCall, hist);
                     
@@ -1693,6 +1698,7 @@ ${systemOverride}
                                 searchResult = "Fehler bei der Netzwerksuche: " + error.message;
                             }
                             
+                            // V4.11: LUNA JSON PARSING & INJECTION
                             let lunaFakten = searchResult;
                             const lunaAgent = agentProviders.find(p => p.id === activeLunaId);
                             if (lunaAgent && lunaAgent.apiKey && (lunaAgent.type === 'openai' || lunaAgent.type === 'gemini')) {
@@ -1728,13 +1734,15 @@ ${systemOverride}
                                 }
                             }
 
+                            // V4.11 Luna-Scout Silence: System message not rendered in UI but added to history
                             const scoutMsg = { 
                                 id: generateId(), 
                                 sender: 'system', 
                                 text: `[SYSTEM-SCOUT MELDET]:\n${lunaFakten}`, 
                                 timestamp: new Date().toISOString() 
                             };
-                            
+                            setMessages(prev => [...prev, scoutMsg]);
+
                             setHelferArchiv({
                                 suchauftrag: obj.matrix.helfer_suchauftrag,
                                 rohdaten: searchResult,
@@ -1762,7 +1770,19 @@ ${systemOverride}
 
                             const interceptorPayload = text;
                             
-                            setLastApiPayload(prev => ({...prev, user: interceptorPayload, system_context: `${locationPrefix}\n[AKTIVER KONTEXT]\n${interceptorDynamicContext}\n${epistemischerCheck}` }));
+                            // Log Interceptor Payload
+                            const interceptorLog = {
+                                id: generateId(),
+                                timestamp: new Date().toLocaleTimeString('de-DE'),
+                                kernel: dna.block1_identity,
+                                audio: (autoTtsRegie && dna.audio_physics) ? dna.audio_physics : null,
+                                firewall: cognitiveFirewall,
+                                persona: dna.block3_sensors,
+                                override: systemOverride,
+                                system_context: `${locationPrefix}\n\n[AKTIVER KONTEXT]\n${interceptorDynamicContext}\n${epistemischerCheck}`,
+                                user: interceptorPayload
+                            };
+                            setApiLogs(prev => [interceptorLog, ...prev].slice(0, 5));
                             
                             const updatedHist = [...hist, intentMsg, scoutMsg];
 
@@ -1960,25 +1980,31 @@ ${systemOverride}
                     {/* --- TELEMETRIE MODAL --- */}
                     {showTelemetry && <TelemetryModal messages={messages} onClose={() => setShowTelemetry(false)} />}
 
-                    {/* --- V4.4 API PROTOKOLL MODAL --- */}
-                    {showApiLog && lastApiPayload && (
+                    {/* --- V4.13 API PROTOKOLL MODAL --- */}
+                    {showApiLog && (
                         <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
                             <div className="bg-white w-full max-w-4xl max-h-[85vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
                                 <div className="p-4 border-b border-stone-200 flex justify-between items-center bg-slate-50">
-                                    <h3 className="font-bold text-indigo-600 uppercase text-xs tracking-widest flex items-center gap-2">🔍 API PROTOKOLL (DEBUG-SENSE)</h3>
+                                    <h3 className="font-bold text-indigo-600 uppercase text-xs tracking-widest flex items-center gap-2">🔍 API PROTOKOLL (LETZTE 5 CALLS)</h3>
                                     <button onClick={() => setShowApiLog(false)} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
                                 </div>
-                                <div className="flex-1 overflow-y-auto p-6 flex flex-col text-xs font-mono">
-                                    <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-4 font-bold border-b border-stone-100 pb-2">STATIC CACHE (SYSTEM)</div>
-                                    <div className="text-blue-600 whitespace-pre-wrap mb-4 leading-relaxed">{lastApiPayload.kernel}</div>
-                                    {lastApiPayload.audio && <div className="text-blue-600 whitespace-pre-wrap mb-4 leading-relaxed">{lastApiPayload.audio}</div>}
-                                    <div className="text-slate-400 whitespace-pre-wrap mb-4 leading-relaxed italic">{lastApiPayload.firewall}</div>
-                                    <div className="text-blue-600 whitespace-pre-wrap mb-4 leading-relaxed">{lastApiPayload.persona}</div>
-                                    <div className="text-slate-400 whitespace-pre-wrap mb-6 leading-relaxed italic">{lastApiPayload.override}</div>
-                                    
-                                    <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-4 mt-4 font-bold border-b border-stone-100 pb-2">DYNAMIC PAYLOAD (USER)</div>
-                                    {lastApiPayload.system_context && <div className="text-slate-400 whitespace-pre-wrap mb-4 leading-relaxed">{lastApiPayload.system_context}</div>}
-                                    <div className="text-slate-900 font-bold whitespace-pre-wrap leading-relaxed">{lastApiPayload.user}</div>
+                                <div className="flex-1 overflow-y-auto p-6 flex flex-col text-xs font-mono gap-8">
+                                    {apiLogs.length === 0 && <div className="text-slate-400 italic">Noch keine API-Aufrufe in dieser Session.</div>}
+                                    {apiLogs.map((log, i) => (
+                                        <div key={log.id} className="border border-stone-200 rounded-xl p-4 bg-white shadow-sm relative">
+                                            <div className="absolute top-0 right-0 bg-stone-100 text-stone-500 px-2 py-1 rounded-bl-xl rounded-tr-xl text-[9px] font-bold">CALL {apiLogs.length - i} | {log.timestamp}</div>
+                                            <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-4 font-bold border-b border-stone-100 pb-2 mt-2">STATIC CACHE (SYSTEM)</div>
+                                            <div className="text-blue-600 whitespace-pre-wrap mb-4 leading-relaxed">{log.kernel}</div>
+                                            {log.audio && <div className="text-blue-600 whitespace-pre-wrap mb-4 leading-relaxed">{log.audio}</div>}
+                                            <div className="text-slate-400 whitespace-pre-wrap mb-4 leading-relaxed italic">{log.firewall}</div>
+                                            <div className="text-blue-600 whitespace-pre-wrap mb-4 leading-relaxed">{log.persona}</div>
+                                            <div className="text-slate-400 whitespace-pre-wrap mb-6 leading-relaxed italic">{log.override}</div>
+                                            
+                                            <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-4 mt-4 font-bold border-b border-stone-100 pb-2">DYNAMIC PAYLOAD (USER)</div>
+                                            {log.system_context && <div className="text-slate-500 whitespace-pre-wrap mb-4 leading-relaxed bg-slate-50 p-2 rounded">{log.system_context}</div>}
+                                            <div className="text-slate-900 font-bold whitespace-pre-wrap leading-relaxed">{log.user}</div>
+                                        </div>
+                                    ))}
                                 </div>
                                 <div className="p-4 border-t border-stone-100 bg-slate-50">
                                     <button onClick={() => setShowApiLog(false)} className="btn w-full py-3 bg-white text-slate-700 shadow-sm text-xs">Schließen</button>
@@ -3026,7 +3052,7 @@ ${systemOverride}
                                     </button>
                                     
                                     {showTokenTooltip && (
-                                        <div className="absolute bottom-12 left-0 bg-white border border-stone-200 p-4 rounded-2xl shadow-2xl z-[1000] w-64 animate-fade-in" onClick={e => e.stopPropagation()}>
+                                        <div className="absolute bottom-12 left-0 bg-white border border-stone-200 p-4 rounded-2xl shadow-2xl z-[1000] w-64 max-w-[85vw] animate-fade-in" onClick={e => e.stopPropagation()}>
                                             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 border-b border-stone-100 pb-1">Token-Metriken</div>
                                             <div className="flex justify-between items-center text-xs mb-1">
                                                 <span className="text-blue-600 font-bold">SYSTEM-KERN (Cache)</span>
@@ -3045,6 +3071,14 @@ ${systemOverride}
                                             <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-slate-500 border-t border-stone-100 pt-2 mt-1">
                                                 <span>VERFÜGBAR</span>
                                                 <span>{Math.max(0, activeProvTokens - (tokenUsage.system + tokenUsage.history))} Tokens</span>
+                                            </div>
+                                            
+                                            {/* V4.13: TELEMETRIE-SPIEGELUNG IM POPOUT */}
+                                            <div className="flex justify-between items-center text-xs mb-1 mt-3 border-t border-stone-100 pt-2">
+                                                <span className="text-slate-500 font-bold">🛰️ AKTUELLER SENDEMAST</span>
+                                            </div>
+                                            <div className={`text-[10px] font-mono font-bold leading-tight ${currentMairaZone === 0 ? 'text-slate-400' : 'text-indigo-600'}`}>
+                                                [STANDORT: Zone {currentMairaZone}]
                                             </div>
                                         </div>
                                     )}
