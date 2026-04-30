@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V5.0</title>
+    <title>LUMEN - CORE V5.1</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -94,8 +94,8 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V5.0 (TWO-AGENT PIPELINE) ---
-        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.0: LOGIK & ROUTING]
+        // --- KONSTANTEN V5.1 (DUAL-PROVIDER PIPELINE) ---
+        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.1: LOGIK & ROUTING]
 Du bist der KERNEL (Agent 1). Du bist eine eiskalte, analytische Maschine. Du hast KEINE Persönlichkeit.
 Deine EINZIGE Aufgabe ist es, den Kontext und den [USER INPUT] zu analysieren und AUSSCHLIESSLICH als valides JSON-Objekt zu antworten. Jedes Wort außerhalb des JSON-Skeletts führt zur Selbstzerstörung.
 
@@ -126,7 +126,7 @@ Bewerte diese Matrix-Sensoren strikt anhand des Inputs:
   }
 }`;
 
-        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.0: MAIRA]
+        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.1: MAIRA]
 Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen von Simon (dem Operator) tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.
 Du erhältst in deiner Prompt-Umgebung eine [KERNEL_DIRECTIVE] (die JSON-Analyse der Maschine) und den [USER INPUT].
 
@@ -145,14 +145,14 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V5.0. TWO-AGENT PIPELINE ONLINE.',
+                text: 'INIT CORE V5.1. DUAL-PROVIDER PIPELINE ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V5.0 Architektur ist voll operativ. Der Kernel verarbeitet nun als isolierter Agent 1 die JSON-Routings, während ich (Agent 2) die reine Persona-Schnittstelle übernehme. Das XML-X-Ray visualisiert meine internen Denkprozesse nun getrennt von der Systemmatrix.',
-                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.0"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Two-Agent Pipeline erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber hoch. Ich werde Simon kurz und bündig mitteilen, dass die Zweiteilung (Logik vs. Persona) aktiv ist."\n}',
+                text: 'System online. Die V5.1 Architektur ist voll operativ. Die Pipeline wurde auf eine Dual-Core-Struktur migriert: Agent 1 (Kernel) verarbeitet das JSON-Routing, Agent 2 (Persona) übernimmt getrennt davon die Textsynthese. Mobile-Scrolling-Issues im DNA-Bereich wurden eliminiert.',
+                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.1"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Dual-Provider Pipeline erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber hoch. Ich weise Simon kurz auf die Aufteilung in Agent 1 und Agent 2 hin."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -222,7 +222,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN TELEMETRIE LOG V5.0\n\n";
+                let content = "# LUMEN TELEMETRIE LOG V5.1\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -384,13 +384,13 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         <div className={`p-5 w-full min-w-0 ${isUser ? 'bg-white text-slate-700 border border-stone-100 shadow-sm rounded-3xl rounded-tr-sm' : 'bg-indigo-50 text-indigo-900 border border-indigo-100 shadow-sm rounded-3xl rounded-tl-sm'}`}>
                             <div className="markdown-content text-[15px] font-sans leading-relaxed whitespace-pre-wrap break-words" dangerouslySetInnerHTML={{ __html: finalMarkup }} />
                             
-                            {/* V4.19: MINIMAL TTS BUTTONS */}
+                            {/* V5.1: MINIMAL TTS BUTTONS */}
                             {!isUser && audioSessionCache && audioSessionCache[message.id] && (
                                 <div className="mt-3 flex gap-4 pt-2">
-                                    <button onClick={() => onPlayTTS(message.id, message.text, parsedScratch?.kernel_matrix?.matrix?.tts_regie_prompt)} className="text-[9px] text-slate-400 hover:text-indigo-500 transition-colors flex items-center gap-1 font-bold tracking-wider uppercase">
+                                    <button onClick={() => onPlayTTS(message.id, message.text, parsedScratch?.kernel_matrix?.matrix?.tts_regie_prompt)} className="text-[9px] text-slate-400 hover:text-indigo-500 transition-colors flex items-center gap-1 font-bold tracking-wider uppercase p-0">
                                         ▶ Play
                                     </button>
-                                    <a href={audioSessionCache[message.id]} download={`Maira_Voice_${message.id}.wav`} className="text-[9px] text-slate-400 hover:text-indigo-500 transition-colors flex items-center gap-1 font-bold tracking-wider uppercase">
+                                    <a href={audioSessionCache[message.id]} download={`Maira_Voice_${message.id}.wav`} className="text-[9px] text-slate-400 hover:text-indigo-500 transition-colors flex items-center gap-1 font-bold tracking-wider uppercase p-0">
                                         ⬇ DL
                                     </a>
                                 </div>
@@ -435,7 +435,11 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 localStorage.setItem('lumen_providers', JSON.stringify(defaultList));
                 return defaultList;
             });
-            const [activeProviderId, setActiveProviderId] = React.useState(() => localStorage.getItem('lumen_activeProviderId') || 'gemini-3-flash');
+            
+            // V5.1: DUAL PROVIDER STATE
+            const [activeKernelProviderId, setActiveKernelProviderId] = React.useState(() => localStorage.getItem('lumen_activeKernelProviderId') || localStorage.getItem('lumen_activeProviderId') || 'gemini-3-flash');
+            const [activePersonaProviderId, setActivePersonaProviderId] = React.useState(() => localStorage.getItem('lumen_activePersonaProviderId') || localStorage.getItem('lumen_activeProviderId') || 'openai-gpt4o');
+            
             const [editProviderId, setEditProviderId] = React.useState(null);
             const [providerForm, setProviderForm] = React.useState({ name: '', url: '', type: 'gemini', model: '', apiKey: '', jsonMode: true, maxTokens: 8000 });
 
@@ -583,15 +587,16 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             });
             React.useEffect(() => { localStorage.setItem('lumen_chat', JSON.stringify(messages)); }, [messages]);
 
+            // V5.1: Token Calculation uses Persona Provider as reference
             React.useEffect(() => {
-                const activeProv = providers.find(p => p.id === activeProviderId);
-                const currentMaxTokens = activeProv?.maxTokens || 8000;
+                const personaProv = providers.find(p => p.id === activePersonaProviderId) || providers[0];
+                const currentMaxTokens = personaProv?.maxTokens || 8000;
                 const systemText = dna.kernel_prompt + "\n\n" + (dna.audio_physics || "") + "\n\n" + dna.cartridge_prompt;
                 const systemTokens = estimateTokens(systemText);
                 const historyTokens = messages.reduce((acc, m) => acc + estimateTokens(m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text) + 5, 0);
                 const percent = Math.min(100, ((systemTokens + historyTokens + 100) / currentMaxTokens) * 100);
                 setTokenUsage({ system: systemTokens, history: historyTokens, percent });
-            }, [messages, dna, activeProviderId, providers]); 
+            }, [messages, dna, activePersonaProviderId, providers]); 
 
             const [zenField, setZenField] = React.useState(null); 
             const [autoPlayEnabled, setAutoPlayEnabled] = React.useState(() => localStorage.getItem('lumen_autoPlay') === 'true');
@@ -626,6 +631,16 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const handleSaveDna = () => {
                 localStorage.setItem('lumen_dna_layers', JSON.stringify(dna));
                 showToast('DNA gespeichert');
+            };
+
+            const handleBeautifyJSON = () => {
+                try {
+                    const formatted = JSON.stringify(JSON.parse(dna.block4_skeleton), null, 2);
+                    setDna({...dna, block4_skeleton: formatted.replace(/,\n/g, ',\n\n')});
+                    showToast('JSON formatiert');
+                } catch(e) {
+                    alert(`Syntax-Fehler im JSON. Bitte vor dem Formatieren korrigieren.\n\nDetails: ${e.message}`);
+                }
             };
 
             const loadMemories = async () => { const data = await db.memories.toArray(); setMemories(data.sort((a,b)=>b.timestamp-a.timestamp)); };
@@ -1032,69 +1047,67 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 } catch (e) { showToast("STT Fehler: " + e.message); setLoadingStatus(null); }
             };
 
-            // V5.0: THE PIPELINE - Two-Agent Process
+            // V5.1: THE PIPELINE - Dual Provider API Helper
+            const fetchTextFromAPI = async (sysPrompt, userPayloadStr, historyMessages, provider, forceTextMode = false) => {
+                let resText = "";
+                const useJsonMode = provider.jsonMode !== false && !forceTextMode;
+                const key = provider.apiKey;
+                const apiUrl = provider.url;
+
+                if(provider.type === 'gemini') {
+                    const rawRoles = [...historyMessages.map(m => ({ role: m.sender==='user'?'user':'model', text: m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text })), {role:'user', text: userPayloadStr}];
+                    const contents = []; let currentRole = null; let currentText = [];
+                    rawRoles.forEach(msg => {
+                        if (msg.role === currentRole) currentText.push(msg.text);
+                        else {
+                            if (currentRole) contents.push({ role: currentRole, parts: [{ text: currentText.join('\n\n---\n\n') }] });
+                            currentRole = msg.role; currentText = [msg.text];
+                        }
+                    });
+                    if (currentRole) contents.push({ role: currentRole, parts: [{ text: currentText.join('\n\n---\n\n') }] });
+
+                    const bodyPayload = { systemInstruction: {parts:[{text:sysPrompt}]}, contents };
+                    if (useJsonMode) bodyPayload.generationConfig = { responseMimeType: "application/json" };
+                    const fetchUrl = apiUrl.includes('?') ? `${apiUrl}&key=${key}` : `${apiUrl}?key=${key}`;
+                    const r = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(bodyPayload) });
+                    const d = await r.json(); 
+                    if(!r.ok) throw new Error(d.error?.message || 'Gemini API Fehler'); 
+                    resText = d.candidates[0].content.parts[0].text;
+                } else {
+                    const payload = [
+                        {role:'system',content:sysPrompt}, 
+                        ...historyMessages.map(m=>({ role:m.sender==='user'?'user':'assistant', content: m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text })), 
+                        {role:'user',content:userPayloadStr}
+                    ];
+                    const headers = { 'Content-Type': 'application/json' }; if (key) headers['Authorization'] = `Bearer ${key}`;
+                    const bodyPayload = { model: provider.model || 'gpt-4o', messages: payload };
+                    if (useJsonMode) bodyPayload.response_format = { type: "json_object" };
+                    const r = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify(bodyPayload) });
+                    const d = await r.json(); 
+                    if(!r.ok) throw new Error(d.error?.message || 'OpenAI API Fehler'); 
+                    resText = d.choices[0].message.content;
+                }
+                return resText;
+            };
+
             const handleSendMessage = async () => {
                 if(!inputText.trim() || loadingStatus) return;
                 const text = inputText.trim();
                 
-                const activeProvider = providers.find(p => p.id === activeProviderId) || providers[0];
-                if (!activeProvider) { setActiveView('settings'); return showToast('Fehler: Keine Chat-Provider konfiguriert'); }
+                const kernelProvider = providers.find(p => p.id === activeKernelProviderId) || providers[0];
+                const personaProvider = providers.find(p => p.id === activePersonaProviderId) || providers[0];
                 
-                const key = activeProvider.apiKey;
-                const apiUrl = activeProvider.url;
+                if (!kernelProvider || !personaProvider) { setActiveView('settings'); return showToast('Fehler: Chat-Provider fehlen.'); }
 
                 const userMsgId = generateId();
                 setMessages(prev => [...prev.filter(m=>m.sender!=='system-error'), {id: userMsgId, sender:'user', text, timestamp: new Date().toISOString()}]);
                 
                 setInputText('');
                 if (textareaRef.current) textareaRef.current.style.height = '40px';
-                
-                // V5.0: Enhanced API Helper with forceTextMode parameter
-                const fetchTextFromAPI = async (sysPrompt, userPayloadStr, historyMessages, forceTextMode = false) => {
-                    let resText = "";
-                    const useJsonMode = activeProvider.jsonMode !== false && !forceTextMode;
-
-                    if(activeProvider.type === 'gemini') {
-                        const rawRoles = [...historyMessages.map(m => ({ role: m.sender==='user'?'user':'model', text: m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text })), {role:'user', text: userPayloadStr}];
-                        const contents = []; let currentRole = null; let currentText = [];
-                        rawRoles.forEach(msg => {
-                            if (msg.role === currentRole) currentText.push(msg.text);
-                            else {
-                                if (currentRole) contents.push({ role: currentRole, parts: [{ text: currentText.join('\n\n---\n\n') }] });
-                                currentRole = msg.role; currentText = [msg.text];
-                            }
-                        });
-                        if (currentRole) contents.push({ role: currentRole, parts: [{ text: currentText.join('\n\n---\n\n') }] });
-
-                        const bodyPayload = { systemInstruction: {parts:[{text:sysPrompt}]}, contents };
-                        if (useJsonMode) bodyPayload.generationConfig = { responseMimeType: "application/json" };
-                        
-                        const fetchUrl = apiUrl.includes('?') ? `${apiUrl}&key=${key}` : `${apiUrl}?key=${key}`;
-                        const r = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(bodyPayload) });
-                        const d = await r.json(); 
-                        if(!r.ok) throw new Error(d.error?.message || 'Gemini API Fehler'); 
-                        resText = d.candidates[0].content.parts[0].text;
-                    } else {
-                        const payload = [
-                            {role:'system',content:sysPrompt}, 
-                            ...historyMessages.map(m=>({ role:m.sender==='user'?'user':'assistant', content: m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text })), 
-                            {role:'user',content:userPayloadStr}
-                        ];
-                        const headers = { 'Content-Type': 'application/json' }; if (key) headers['Authorization'] = `Bearer ${key}`;
-                        const bodyPayload = { model: activeProvider.model || 'gpt-4o', messages: payload };
-                        if (useJsonMode) bodyPayload.response_format = { type: "json_object" };
-                        
-                        const r = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify(bodyPayload) });
-                        const d = await r.json(); 
-                        if(!r.ok) throw new Error(d.error?.message || 'OpenAI API Fehler'); 
-                        resText = d.choices[0].message.content;
-                    }
-                    return resText;
-                };
 
                 try {
-                    // --- PREPARE CONTEXT & DESK ---
                     let relMemsLegacy = []; let currentVolatiles = []; let newVolatiles = [];
+                    
                     if (!isMemoryLocked) {
                         const allMems = await db.memories.toArray();
                         const relMemsRaw = findRelevantMemories(text, allMems);
@@ -1165,7 +1178,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     const sysPrompt1 = `[AKTIVER KONTEXT]\n${dynamicContext}\n\n${dna.kernel_prompt}`.trim();
                     const userPayload1 = `${telemetryBlock}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`.trim();
 
-                    let resText1 = await fetchTextFromAPI(sysPrompt1, userPayload1, hist, false);
+                    let resText1 = await fetchTextFromAPI(sysPrompt1, userPayload1, hist, kernelProvider, false);
                     let objPhase1 = null;
                     try {
                         const cleanResText1 = resText1.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -1174,8 +1187,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         throw new Error("Lumen Kernel konnte das JSON-Skelett nicht parsen. Matrix-Format Fehler.");
                     }
 
-                    // --- EXECUTE PHASE 1 SIDE EFFECTS ---
-                    // 1. Zonen Wechsel
                     if (objPhase1 && objPhase1.matrix && objPhase1.matrix.aktiver_state !== undefined) {
                         const newStateId = Number(objPhase1.matrix.aktiver_state);
                         if (!isNaN(newStateId)) {
@@ -1186,17 +1197,14 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         }
                     }
 
-                    // 2. Flüchtige Peripherie bereinigen
                     const safePeripherieIds = Array.isArray(objPhase1.matrix?.aktive_peripherie_ids) ? objPhase1.matrix.aktive_peripherie_ids : [];
                     setVolatileMemories(prev => prev.filter(m => safePeripherieIds.includes(m.titel_technisch)));
 
-                    // 3. Neue Direktiven
                     const neueDir = objPhase1.matrix?.neue_direktive_erkannt;
                     if (neueDir && typeof neueDir === 'string' && neueDir.trim().length > 0) {
                         await db.directives.add({ text: neueDir.trim() }); showToast("NEUE DIREKTIVE VERANKERT");
                     }
 
-                    // 4. Tagebuch Entwürfe
                     const entwurf = objPhase1.matrix?.tagebuch_entwurf || objPhase1.tagebuch_entwurf;
                     if(entwurf) { 
                         const modus = entwurf.modus; const daten = entwurf.daten || {};
@@ -1218,7 +1226,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         }
                     }
 
-                    // 5. Memory Updates (Orakel)
                     const memUpd = objPhase1.matrix?.memory_update_detected;
                     if(memUpd && memUpd.id && typeof memUpd.reflexion_fusioniert !== 'undefined') {
                         try {
@@ -1235,7 +1242,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         } catch(err) {}
                     }
 
-                    // 6. Helfer Interceptor
                     let helferAddon = "";
                     if (objPhase1.matrix?.helfer_suchauftrag && objPhase1.matrix.helfer_suchauftrag !== "null" && String(objPhase1.matrix.helfer_suchauftrag).trim() !== "") {
                         setLoadingStatus("LUNA RECHERCHIERT: " + objPhase1.matrix.helfer_suchauftrag.toUpperCase());
@@ -1287,9 +1293,8 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     const sysPrompt2 = `${dna.cartridge_prompt}\n\n${autoTtsRegie && dna.audio_physics ? dna.audio_physics : ""}`.trim();
                     const userPayload2 = `[KERNEL_DIRECTIVE (PHASE 1)]:\n${JSON.stringify(objPhase1, null, 2)}${helferAddon}\n\n[USER INPUT]:\n${text}`.trim();
 
-                    let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, true); // forceTextMode = true!
+                    let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, personaProvider, true); // forceTextMode = true!
 
-                    // --- PARSING PHASE 2 (XML) ---
                     const xmlMatch = resText2.match(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i);
                     const gedanken = xmlMatch ? xmlMatch[1].trim() : "";
                     const finalAnswer = resText2.replace(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i, '').trim();
@@ -1302,7 +1307,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     const newAiMsgId = generateId();
                     setMessages(p=>[...p, {id:newAiMsgId, sender:'ai', text:finalAnswer, scratchpad:finalScratch, ttsRegie: ttsRegie, timestamp: new Date().toISOString()}]);
                     
-                    // API Log für Phase 2 (mit Referenz auf beide)
                     const newEntry = { id: generateId(), timestamp: new Date().toISOString(), request: { system: sysPrompt2, user: userPayload2 }, response: resText2 };
                     setApiHistory(prev => [newEntry, ...prev].slice(0, 5));
                     
@@ -1339,8 +1343,8 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 );
             }
 
-            const activeTtsProvider = ttsProviders.find(p => p.id === activeTtsProviderId) || ttsProviders[0];
-            const activeProvTokens = providers.find(p => p.id === activeProviderId)?.maxTokens || 8000;
+            const activePersonaProv = providers.find(p => p.id === activePersonaProviderId) || providers[0];
+            const activeProvTokens = activePersonaProv?.maxTokens || 8000;
             const systemPercent = activeProvTokens > 0 ? (tokenUsage.system / activeProvTokens) * 100 : 0;
             const historyEndPercent = tokenUsage.percent;
 
@@ -1541,7 +1545,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             </div>
                         </div>
 
-                        {/* --- V4.19 SETTINGS VIEW --- */}
+                        {/* --- V5.1 SETTINGS VIEW (DUAL PROVIDER) --- */}
                         <div className={`${activeView === 'settings' ? 'block' : 'hidden'} p-4 sm:p-6 w-full max-w-4xl mx-auto space-y-6 mt-4 animate-fade-in pb-20`}>
                             <div className="flex justify-between items-center border-b border-stone-200 pb-2">
                                 <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">System Konfiguration</h2>
@@ -1557,11 +1561,19 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             {settingsTab === 'chat' && (
                                 <div className="space-y-6 animate-fade-in w-full">
                                     <div className="panel space-y-4 w-full">
-                                        <div>
-                                            <label className="label">Aktiver Chat-Knoten</label>
-                                            <select value={activeProviderId} onChange={(e) => { setActiveProviderId(e.target.value); localStorage.setItem('lumen_activeProviderId', e.target.value); showToast('Chat-Provider gewechselt'); }} className="input-field font-sans text-xs font-bold text-indigo-700">
-                                                {providers.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
-                                            </select>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="label">🧠 Agent 1 (Kernel & JSON-Routing)</label>
+                                                <select value={activeKernelProviderId} onChange={(e) => { setActiveKernelProviderId(e.target.value); localStorage.setItem('lumen_activeKernelProviderId', e.target.value); showToast('Kernel-Provider gewechselt'); }} className="input-field font-sans text-xs font-bold text-indigo-700">
+                                                    {providers.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="label">🎭 Agent 2 (Persona & Übersetzung)</label>
+                                                <select value={activePersonaProviderId} onChange={(e) => { setActivePersonaProviderId(e.target.value); localStorage.setItem('lumen_activePersonaProviderId', e.target.value); showToast('Persona-Provider gewechselt'); }} className="input-field font-sans text-xs font-bold text-fuchsia-700">
+                                                    {providers.map(p => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="space-y-3 w-full">
@@ -1575,7 +1587,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                                     </div>
                                                     <div className="flex gap-1 shrink-0">
                                                         <button onClick={() => { setEditProviderId(p.id); setProviderForm({...p, jsonMode: p.jsonMode !== false, maxTokens: p.maxTokens || 8000}); }} className="btn py-1 px-2">✏️</button>
-                                                        <button onClick={() => { if(window.confirm('Chat-Provider löschen?')) { const newList = providers.filter(x=>x.id!==p.id); setProviders(newList); localStorage.setItem('lumen_providers', JSON.stringify(newList)); if(activeProviderId===p.id && newList.length) { setActiveProviderId(newList[0].id); localStorage.setItem('lumen_activeProviderId', newList[0].id); } } }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
+                                                        <button onClick={() => { if(window.confirm('Chat-Provider löschen?')) { const newList = providers.filter(x=>x.id!==p.id); setProviders(newList); localStorage.setItem('lumen_providers', JSON.stringify(newList)); if(activeKernelProviderId===p.id && newList.length) { setActiveKernelProviderId(newList[0].id); localStorage.setItem('lumen_activeKernelProviderId', newList[0].id); } if(activePersonaProviderId===p.id && newList.length) { setActivePersonaProviderId(newList[0].id); localStorage.setItem('lumen_activePersonaProviderId', newList[0].id); } } }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
                                                     </div>
                                                 </div>
                                                 {p.apiKey ? <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded w-max mt-1">✓ API Key hinterlegt</div> : <div className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded w-max mt-1">⚠️ Kein Key hinterlegt</div>}
@@ -1766,7 +1778,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         </div>
 
                         {/* --- DNA VIEW --- */}
-                        <div className={`${activeView === 'dna' ? 'block' : 'hidden'} p-4 sm:p-6 w-full max-w-2xl mx-auto space-y-6 flex flex-col h-full mt-2 animate-fade-in`}>
+                        <div className={`${activeView === 'dna' ? 'block' : 'hidden'} p-4 sm:p-6 w-full max-w-2xl mx-auto space-y-6 flex flex-col mt-2 animate-fade-in pb-32`}>
                             <div className="flex justify-between items-center border-b border-stone-200 pb-3">
                                 <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">DNA Core Laboratory</h2>
                                 <div className="flex gap-2">
@@ -1800,86 +1812,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                 <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-emerald-500">⚙️ [LUMEN KERNEL: SYSTEM & ROUTING]</label><button onClick={()=>setZenField('block1')} className="btn py-1 text-[8px] bg-emerald-50 text-emerald-700 border-emerald-100">🔲 Zen</button></div><textarea value={dna.kernel_prompt} onChange={e=>setDna({...dna,kernel_prompt:e.target.value})} className="input-field min-h-[250px] bg-white font-mono text-xs" spellCheck="false" /></div>
                                 <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-amber-500">🎙️ [PLUGIN: UNIVERSAL AUDIO PHYSICS]</label><button onClick={()=>setZenField('audioPhysics')} className="btn py-1 text-[8px] bg-amber-50 text-amber-700 border-amber-100">🔲 Zen</button></div><textarea value={dna.audio_physics || ''} onChange={e=>setDna({...dna,audio_physics:e.target.value})} className="input-field min-h-[100px] bg-white font-mono text-xs" spellCheck="false" /></div>
                                 <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-fuchsia-500">🎭 [PERSONA CARTRIDGE: ÜBERSETZUNG & IDENTITÄT]</label><button onClick={()=>setZenField('block3')} className="btn py-1 text-[8px] bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100">🔲 Zen</button></div><textarea value={dna.cartridge_prompt} onChange={e=>setDna({...dna,cartridge_prompt:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs" spellCheck="false" /></div>
-                            </div>
-                        </div>
-
-                        {/* --- SANCTUM VIEW --- */}
-                        <div className={`${activeView === 'sanctum' ? 'block' : 'hidden'} p-4 sm:p-6 w-full max-w-4xl mx-auto space-y-6 mt-4 animate-fade-in`}>
-                            <div className="flex justify-between items-center border-b border-stone-200 pb-2">
-                                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">Sanctum DB</h2>
-                                <div className="flex gap-2">
-                                    <input type="file" accept=".json" ref={fileInputRefSanctum} className="hidden" onChange={(e)=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=async(ev)=>{ try{await db.memories.bulkPut(JSON.parse(ev.target.result)); loadMemories(); showToast('SYNCED');}catch{showToast('ERROR');} }; r.readAsText(f); e.target.value=null; }}/>
-                                    <button onClick={()=>fileInputRefSanctum.current?.click()} className="btn" title="Import">📥</button>
-                                    <button onClick={async()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(await db.memories.toArray(),null,2)],{type:'application/json'})); a.download=`SANCTUM_DB.json`; a.click(); }} className="btn" title="Export">📤</button>
-                                    <button onClick={()=>{ setSanctumEditId('NEW'); setSanctumForm({titel_technisch:'', titel_poetisch:'', kategorie:'EMOTIONAL', fakt:'', emotion:'', bedeutung:'', reflexion:'', tagsString:'', is_core_memory:false}); }} className="btn-primary px-5 shadow-indigo-200">➕ NEW</button>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-20 w-full">
-                                {sanctumEditId === 'NEW' && (
-                                    <div className="panel border-emerald-200 bg-emerald-50/30 flex flex-col gap-3 md:col-span-2 shadow-emerald-100 w-full">
-                                        <div className="flex justify-between items-center"><span className="badge bg-emerald-100 text-emerald-700 border-emerald-200 uppercase font-black">Forge Entry</span><select value={sanctumForm.kategorie} onChange={e=>setSanctumForm({...sanctumForm,kategorie:e.target.value})} className="input-field w-max py-1 px-3 font-sans font-bold text-xs bg-white border-stone-200"><option>EMOTIONAL</option><option>TECHNISCH</option></select></div>
-                                        <label className="flex items-center gap-2 text-xs font-bold text-amber-600 cursor-pointer w-max"><input type="checkbox" checked={sanctumForm.is_core_memory} onChange={e=>setSanctumForm({...sanctumForm,is_core_memory:e.target.checked})} className="accent-amber-500 w-4 h-4 cursor-pointer"/> 📌 Core-Memory</label>
-                                        <div className="flex flex-col sm:flex-row gap-2"><input placeholder="ID_TECHNISCH" value={sanctumForm.titel_technisch} onChange={e=>setSanctumForm({...sanctumForm,titel_technisch:e.target.value})} className="input-field font-bold text-slate-800 bg-white border-stone-200" /><input placeholder="Titel Poetisch" value={sanctumForm.titel_poetisch} onChange={e=>setSanctumForm({...sanctumForm,titel_poetisch:e.target.value})} className="input-field text-rose-600 font-serif italic bg-white border-stone-200" /></div>
-                                        <textarea placeholder="Fakt: Was geschah?" value={sanctumForm.fakt} onChange={e=>setSanctumForm({...sanctumForm,fakt:e.target.value})} className="input-field h-16 font-sans bg-white border-stone-200" />
-                                        <div className="flex flex-col sm:flex-row gap-2"><textarea placeholder="Gefühl/Emotion" value={sanctumForm.emotion} onChange={e=>setSanctumForm({...sanctumForm,emotion:e.target.value})} className="input-field h-14 font-sans bg-white border-stone-200" /><textarea placeholder="Bedeutung/Fazit" value={sanctumForm.bedeutung} onChange={e=>setSanctumForm({...sanctumForm,bedeutung:e.target.value})} className="input-field h-14 font-sans bg-white border-stone-200" /></div>
-                                        <textarea placeholder="Persona Reflexion" value={sanctumForm.reflexion} onChange={e=>setSanctumForm({...sanctumForm,reflexion:e.target.value})} className="input-field border-indigo-200 bg-indigo-50 text-indigo-800 h-16 font-sans italic" />
-                                        <input placeholder="tags, comma, separated" value={sanctumForm.tagsString} onChange={e=>setSanctumForm({...sanctumForm,tagsString:e.target.value})} className="input-field text-slate-500 bg-white border-stone-200" />
-                                        <div className="flex justify-end gap-2 mt-2 pt-3 border-t border-emerald-100"><button onClick={()=>setSanctumEditId(null)} className="btn uppercase">Cancel</button><button onClick={handleSanctumSave} className="btn-primary bg-emerald-100 text-emerald-700 hover:bg-emerald-200 shadow-emerald-100 uppercase">Save Entry</button></div>
-                                    </div>
-                                )}
-                                {memories.map(m => {
-                                    if (sanctumEditId === m.id) {
-                                        return (
-                                            <div key={m.id} className="panel border-indigo-200 bg-indigo-50/20 flex flex-col gap-3 md:col-span-2 w-full">
-                                                <div className="flex justify-between items-center"><span className="badge bg-indigo-100 text-indigo-700 uppercase font-black">Editing {m.titel_technisch}</span><select value={sanctumForm.kategorie} onChange={e=>setSanctumForm({...sanctumForm,kategorie:e.target.value})} className="input-field w-max py-1 px-3 font-sans font-bold text-xs bg-white border-stone-200"><option>EMOTIONAL</option><option>TECHNISCH</option><option>LEGACY</option></select></div>
-                                                <label className="flex items-center gap-2 text-xs font-bold text-amber-600 cursor-pointer w-max"><input type="checkbox" checked={sanctumForm.is_core_memory} onChange={e=>setSanctumForm({...sanctumForm,is_core_memory:e.target.checked})} className="accent-amber-500 w-4 h-4 cursor-pointer"/> 📌 Core-Memory</label>
-                                                <div className="flex flex-col sm:flex-row gap-2"><input placeholder="ID_TECHNISCH" value={sanctumForm.titel_technisch} onChange={e=>setSanctumForm({...sanctumForm,titel_technisch:e.target.value})} className="input-field font-bold text-slate-800 bg-white border-stone-200" /><input placeholder="Titel Poetisch" value={sanctumForm.titel_poetisch} onChange={e=>setSanctumForm({...sanctumForm,titel_poetisch:e.target.value})} className="input-field text-rose-600 font-serif italic bg-white border-stone-200" /></div>
-                                                <textarea placeholder="Fakt" value={sanctumForm.fakt} onChange={e=>setSanctumForm({...sanctumForm,fakt:e.target.value})} className="input-field h-16 font-sans bg-white border-stone-200" />
-                                                <div className="flex flex-col sm:flex-row gap-2"><textarea placeholder="Gefühl/Emotion" value={sanctumForm.emotion} onChange={e=>setSanctumForm({...sanctumForm,emotion:e.target.value})} className="input-field h-14 font-sans bg-white border-stone-200" /><textarea placeholder="Bedeutung" value={sanctumForm.bedeutung} onChange={e=>setSanctumForm({...sanctumForm,bedeutung:e.target.value})} className="input-field h-14 font-sans bg-white border-stone-200" /></div>
-                                                <textarea placeholder="Reflexion" value={sanctumForm.reflexion} onChange={e=>setSanctumForm({...sanctumForm,reflexion:e.target.value})} className="input-field border-indigo-200 bg-indigo-50/80 text-indigo-800 h-16 font-sans italic" />
-                                                <input placeholder="tags, comma, separated" value={sanctumForm.tagsString} onChange={e=>setSanctumForm({...sanctumForm,tagsString:e.target.value})} className="input-field text-slate-500 bg-white border-stone-200" />
-                                                <div className="flex justify-end gap-2 mt-2 pt-3 border-t border-indigo-100"><button onClick={()=>setSanctumEditId(null)} className="btn uppercase">Abort</button><button onClick={handleSanctumSave} className="btn-primary uppercase">Commit Update</button></div>
-                                            </div>
-                                        );
-                                    }
-
-                                    const isLegacy = m.titel_technisch?.includes('LEGACY') || m.kategorie === 'LEGACY';
-                                    const legacyClasses = 'border-2 border-amber-500 bg-amber-50/10 shadow-md shadow-amber-900/20';
-                                    const defaultClasses = m.is_core_memory ? 'border-amber-200 bg-amber-50/10 shadow-md' : 'border-stone-100 bg-white';
-                                    const isExpanded = !!expandedCards[m.id];
-                                    
-                                    return (
-                                        <div key={m.id} className={`panel flex flex-col h-full relative group ${isLegacy ? legacyClasses : defaultClasses} w-full`}>
-                                            {isLegacy && <div className="text-amber-600 font-bold text-[10px] tracking-widest uppercase mb-1 shrink-0">[ RELIKT DER AHNEN ]</div>}
-                                            <div className="flex justify-between items-start shrink-0">
-                                                <div className="flex gap-1.5 flex-wrap items-center">
-                                                    <span className="text-indigo-700 font-mono text-xs uppercase font-bold tracking-tight break-all">{m.titel_technisch || 'UNKNOWN'}</span>
-                                                    {m.is_core_memory && <span className="badge-core">📌 Core</span>}
-                                                    {m.kategorie === 'TECHNISCH' && <span className="badge bg-slate-100 text-slate-500 border-slate-200">Tech</span>}
-                                                </div>
-                                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white border border-stone-100 rounded-lg p-0.5 shadow-sm ml-2">
-                                                    <button onClick={()=>{setSanctumEditId(m.id); setSanctumForm({...m, tagsString:m.tags?.join(', ')||''});}} className="text-slate-400 hover:text-indigo-500 px-1.5 py-0.5 transition-colors">✏️</button>
-                                                    <button onClick={async()=>{if(window.confirm('ID: '+m.titel_technisch+' löschen?')) {await db.memories.delete(m.id); loadMemories();}}} className="text-slate-400 hover:text-rose-500 px-1.5 py-0.5 transition-colors">🗑️</button>
-                                                </div>
-                                            </div>
-                                            {m.titel_poetisch && <div className="text-rose-500 italic text-sm font-serif leading-snug mt-0.5 shrink-0 break-words">{m.titel_poetisch}</div>}
-                                            
-                                            <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-400 cursor-pointer mt-2 relative ${isExpanded ? 'max-h-[3000px]' : 'max-h-[100px] hover:max-h-[250px]'}`} onClick={() => setExpandedCards(prev => ({...prev, [m.id]: !prev[m.id]}))} title="Klicken zum Erweitern/Schließen">
-                                                <div className="text-[13px] text-slate-600 break-words"><strong className="text-slate-400 uppercase text-[9px] tracking-wider block mb-0.5 font-mono">Fakt</strong>{m.fakt}</div>
-                                                {m.emotion && <div className="text-[13px] text-slate-600 mt-1 break-words"><strong className="text-slate-400 uppercase text-[9px] tracking-wider block mb-0.5 font-mono">Gefühl</strong>{m.emotion}</div>}
-                                                {m.bedeutung && <div className="text-[13px] text-slate-600 mt-1 break-words"><strong className="text-slate-400 uppercase text-[9px] tracking-wider block mb-0.5 font-mono">Bedeutung</strong>{m.bedeutung}</div>}
-                                                {m.reflexion && <div className="mt-2 bg-indigo-50/80 p-3 rounded-2xl text-indigo-800 italic text-xs border border-indigo-100/50 whitespace-pre-wrap break-words">"{m.reflexion}"</div>}
-                                                {!isExpanded && <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white/90 to-transparent flex items-end justify-center pb-1"><span className="text-slate-300 text-[10px] uppercase font-bold tracking-widest leading-none">•••</span></div>}
-                                            </div>
-                                            {m.tags?.length > 0 && <div className="flex gap-1 mt-2 flex-wrap shrink-0">{m.tags.map((t,i)=><span key={i} className="text-slate-400 text-[10px] lowercase font-mono break-all">#{t}</span>)}</div>}
-                                            
-                                            <div className="flex gap-2 mt-3 pt-3 border-t border-stone-100 shrink-0 w-full mt-auto">
-                                                <button onClick={()=>{ if(!activeDesks.find(d => d.titel_technisch === m.titel_technisch)) { setActiveDesks(prev => [...prev, {...m, isDirty: false}]); } setActiveView('chat'); showToast('Akte auf Schreibtisch gelegt'); }} className="btn flex-1 text-[9px] bg-slate-50 border-slate-200 flex items-center justify-center gap-1">📌 AUF DEN SCHREIBTISCH</button>
-                                                <button onClick={() => handleOptimizeArchivar(m)} disabled={optimizingId === m.id} className="btn flex-1 text-[9px] bg-indigo-50 border-indigo-200 text-indigo-700 flex items-center justify-center gap-1 disabled:opacity-50">{optimizingId === m.id ? '⏳ OPTIMIERT...' : '🪄 ARCHIVAR'}</button>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
                             </div>
                         </div>
 
