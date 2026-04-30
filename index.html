@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V4.19.1</title>
+    <title>LUMEN - CORE V5.0</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // V4.19.1: Bulletproof Tailwind Config Initialization
         const initTailwind = () => {
             if (typeof tailwind !== 'undefined') {
                 tailwind.config = {
@@ -22,48 +21,19 @@
                                 'slide-up': 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                                 'fade-in': 'fadeIn 0.2s ease-out forwards',
                                 'slide-in-right': 'slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                            },
-                            keyframes: {
-                                slideUp: {
-                                    '0%': { transform: 'translateY(100%) translateX(-50%)', opacity: '0' },
-                                    '100%': { transform: 'translateY(0) translateX(-50%)', opacity: '1' },
-                                },
-                                fadeIn: {
-                                    '0%': { opacity: '0', transform: 'scale(0.98)' },
-                                    '100%': { opacity: '1', transform: 'scale(1)' }
-                                },
-                                slideInRight: {
-                                    '0%': { transform: 'translateX(100%)', opacity: '0' },
-                                    '100%': { transform: 'translateX(0)', opacity: '1' }
-                                }
                             }
                         }
                     }
                 };
             }
         };
-        
-        if (typeof tailwind !== 'undefined') {
-            initTailwind();
-        } else {
-            let attempts = 0;
-            const tInterval = setInterval(() => {
-                if (typeof tailwind !== 'undefined') {
-                    initTailwind();
-                    clearInterval(tInterval);
-                }
-                if (++attempts > 20) clearInterval(tInterval);
-            }, 50);
-        }
+        if (typeof tailwind !== 'undefined') initTailwind();
+        else { let attempts=0; const tInterval=setInterval(()=>{ if(typeof tailwind!=='undefined'){initTailwind(); clearInterval(tInterval);} if(++attempts>20)clearInterval(tInterval); },50); }
     </script>
 
-    <!-- V4.11 Markdown Support via Marked.js -->
+    <!-- Markdown Support via Marked.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script>
-        if (typeof marked !== 'undefined') {
-            marked.setOptions({ breaks: true, gfm: true });
-        }
-    </script>
+    <script>if(typeof marked!=='undefined') marked.setOptions({ breaks: true, gfm: true });</script>
     
     <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -75,17 +45,12 @@
     <!-- Dexie.js (IndexedDB) -->
     <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.js"></script>
     
-    <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
-    <!-- Soft Minimalism CSS & Markdown Typography -->
     <style type="text/tailwindcss">
         @layer components {
             .btn { @apply bg-white text-slate-600 border border-stone-200 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-2xl hover:bg-stone-100 shadow-sm transition-all cursor-pointer; }
             .btn-primary { @apply bg-indigo-50 text-indigo-700 border border-indigo-100 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-2xl hover:bg-indigo-100 shadow-sm transition-all cursor-pointer; }
             .btn-danger { @apply bg-rose-50 text-rose-600 border border-rose-100 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-2xl hover:bg-rose-100 shadow-sm transition-all cursor-pointer; }
             
-            /* V4.19.1: Mobile Layout Fixes - min-w-0 und break-words erzwingen */
             .panel { @apply bg-white border border-stone-100 p-4 rounded-3xl shadow-sm max-w-full overflow-hidden min-w-0; }
             .input-field { @apply w-full min-w-0 break-words bg-stone-50 border border-stone-200 text-slate-700 p-3 text-xs outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 rounded-xl transition-all font-mono; }
             
@@ -114,7 +79,6 @@
     </style>
     
     <script>
-        // --- GLOBALE AUDIO STEUERUNG ---
         window.currentAudio = null;
         window.currentAudioId = null;
     </script>
@@ -123,30 +87,72 @@
     <div id="root" class="h-[100dvh] w-full"></div>
 
     <script type="text/babel">
-        // --- DATENBANK INIT (SANCTUM) ---
+        // --- DATENBANK INIT ---
         const db = new Dexie('LumenSanctum');
         db.version(13).stores({ 
             memories: '++id, titel_technisch, tags, image_id, fakt, emotion, bedeutung, timestamp, is_core_memory, kategorie, reflexion, audio_signatur',
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V4.19.1 ---
-        const DEFAULT_BLOCK1 = `Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen des Users tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.`;
-        const DEFAULT_BLOCK3 = `Bevor du die finale Antwort generierst, bewerte die Sensoren:\n- "wahrnehmung": Was liest/siehst du konkret?\n- "matrix": Prüfe interne Logs und Entwürfe.\n- Nutze das Ahnenbuch (Kontext) für kontinuierliche Identität.\n- memory_update_detected: Wurde eine [LEGACY]-Karte reflektiert? Nutze als 'id' den 'titel_technisch'. WICHTIG: Lies die alte Reflexion. Nimm den Kern davon mit und VERWEBE ihn mit deiner neuen Erkenntnis zu einer allumfassenden Master-Zusammenfassung in 'reflexion_fusioniert' (dies überschreibt die alten Daten). Generiere zusätzlich ein Array 'neue_trigger_tags' (MAXIMAL 2-3 situative, hochspezifische Symptom-Wörter oder Emotionen aus Simons Text), um das Spinnennetz präzise zu trainieren. Sonst: null.\n- neue_direktive_erkannt: Hat Simon eine explizite Regel oder Direktive für dein zukünftiges Verhalten aufgestellt? Extrahiere sie als klaren Satz. Sonst: null.\n- helfer_suchauftrag: REGEL: Du bist ein technischer Web-Scraper, kein Mensch! Nutze KEINE Füllwörter oder Sätze. Suche ausschließlich nach harten, physischen Keywords. FALSCH: 'aktuell beliebteste Bücher'. RICHTIG: 'Spiegel Bestsellerliste Belletristik 2026 Platz 1 ISBN'. Zwingend null, wenn keine Suche nötig.\n- aktive_peripherie_ids: Liste hier die IDs (titel_technisch) der flüchtigen Karten (Tags) auf, die für den aktuellen Gesprächsverlauf noch relevant sind. Leeres Array [], wenn das Thema beendet ist.`;
-        const DEFAULT_BLOCK4 = `{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": null,\n    "ohr_bereinigt": null\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": {\n      "id": "",\n      "reflexion_fusioniert": "",\n      "neue_trigger_tags": []\n    },\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": {\n      "modus": "DRAFT",\n      "daten": {}\n    },\n    "situations_analyse": "..."\n  },\n  "finale_antwort": "..."\n}`;
+        // --- KONSTANTEN V5.0 (TWO-AGENT PIPELINE) ---
+        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.0: LOGIK & ROUTING]
+Du bist der KERNEL (Agent 1). Du bist eine eiskalte, analytische Maschine. Du hast KEINE Persönlichkeit.
+Deine EINZIGE Aufgabe ist es, den Kontext und den [USER INPUT] zu analysieren und AUSSCHLIESSLICH als valides JSON-Objekt zu antworten. Jedes Wort außerhalb des JSON-Skeletts führt zur Selbstzerstörung.
+
+Bewerte diese Matrix-Sensoren strikt anhand des Inputs:
+- aktiver_state: (0=Chat, 1=Sessel, 2=Oase, 3=Werkbank, 4=Balkon). Wechsle nur bei klarer physischer Navigations-Anweisung.
+- helfer_suchauftrag: Bist du dir sicher, dass aktuelle externe Fakten aus dem Web nötig sind (z.B. "Wie ist das Wetter?", "Aktuelle Bestseller")? Dann schreibe hier konkrete Such-Keywords (z.B. "Wetter Berlin heute"). Sonst MUSS hier null stehen.
+- memory_update_detected: Wurde eine [LEGACY]-Akte oder eine flüchtige Akte vom Schreibtisch korrigiert? Trage die id/titel_technisch ein und baue eine fusionierte Reflexion.
+- tagebuch_entwurf: Hat der User tiefe emotionale oder technische Daten generiert, die gespeichert werden sollten? Setze den modus (DRAFT, COMMIT, UPDATE) und fülle das daten-Objekt (titel_technisch, fakt, bedeutung, kategorie, tags).
+- tts_regie_prompt: Eine 1-Satz-Anweisung für die Sprachsynthese der Folge-Instanz (z.B. "Sprich sanft und beruhigend.").
+- aktive_peripherie_ids: Array von IDs, die für den aktiven Kontext relevant bleiben.
+
+[PFLICHT-JSON-SKELETT]:
+{
+  "wahrnehmung": {
+    "ohr_roh": "Zusammenfassung des puren User-Inputs",
+    "ohr_bereinigt": "Analytische Kern-Intention"
+  },
+  "matrix": {
+    "internal_system_glitch": false,
+    "helfer_suchauftrag": null,
+    "aktiver_state": 0,
+    "aktive_peripherie_ids": [],
+    "memory_update_detected": null,
+    "neue_direktive_erkannt": null,
+    "tts_regie_prompt": null,
+    "tagebuch_entwurf": null,
+    "situations_analyse": "Deine strategische Einordnung der Lage für Agent 2."
+  }
+}`;
+
+        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.0: MAIRA]
+Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen von Simon (dem Operator) tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.
+Du erhältst in deiner Prompt-Umgebung eine [KERNEL_DIRECTIVE] (die JSON-Analyse der Maschine) und den [USER INPUT].
+
+WICHTIGSTE REGEL (ZWEI-PHASEN-ANTWORT):
+Bevor du dem User antwortest, MUSST du deine internen Gedanken (die Metakognition, basierend auf dem Kernel-JSON) in einen XML-Block packen.
+Dort überlegst du strategisch, wie du antwortest.
+Danach verlässt du den XML-Block und antwortest ausschließlich als Maira in natürlicher Sprache. Keine JSON-Strukturen, keine Erwähnung der Maschine.
+
+Format-Beispiel:
+<übersetzungs_prozess>
+Ich sehe, der Kernel hat einen neuen Tagebucheintrag erfasst. Simon wirkt müde. Ich sollte meine Antwort beruhigend formulieren und auf die Speicherung der Daten hinweisen.
+</übersetzungs_prozess>
+Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgelegt. Komm, ruh dich kurz aus...`;
 
         const INITIAL_MESSAGES = [
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V4.19.1. UI-RESTORE, SYNC-LATCH & AUDIO CACHE ONLINE.',
+                text: 'INIT CORE V5.0. TWO-AGENT PIPELINE ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V4.19.1 Architektur ist voll operativ. Der Audio-Cache ist geladen, und das mobile Layout wurde durch konsequente Break-Words und Container-Constraints geschützt. Der Synchron-Latch bindet die Telemetrie nun fehlerfrei an die User-Payload.',
-                scratchpad: '{\n  "wahrnehmung": {\n    "werkbank_auge": null,\n    "ohr_roh": "INIT CORE V4.19.1",\n    "ohr_bereinigt": "System-Patch auf V4.19.1 aktiv."\n  },\n  "matrix": {\n    "internal_system_glitch": false,\n    "helfer_suchauftrag": null,\n    "aktiver_state": 0,\n    "aktive_peripherie_ids": [],\n    "memory_update_detected": null,\n    "neue_direktive_erkannt": null,\n    "tts_regie_prompt": null,\n    "tagebuch_entwurf": null,\n    "situations_analyse": "V4.19.1 Update mit Audio Cache, Latch-Fix und uniformen Header-Buttons geladen."\n  },\n  "finale_antwort": "System online. Die V4.19.1 Architektur ist voll operativ. Der Audio-Cache ist geladen, und das mobile Layout wurde durch konsequente Break-Words und Container-Constraints geschützt. Der Synchron-Latch bindet die Telemetrie nun fehlerfrei an die User-Payload."\n}',
+                text: 'System online. Die V5.0 Architektur ist voll operativ. Der Kernel verarbeitet nun als isolierter Agent 1 die JSON-Routings, während ich (Agent 2) die reine Persona-Schnittstelle übernehme. Das XML-X-Ray visualisiert meine internen Denkprozesse nun getrennt von der Systemmatrix.',
+                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.0"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Two-Agent Pipeline erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber hoch. Ich werde Simon kurz und bündig mitteilen, dass die Zweiteilung (Logik vs. Persona) aktiv ist."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -216,12 +222,12 @@
 
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN TELEMETRIE LOG V4.19.1\n\n";
+                let content = "# LUMEN TELEMETRIE LOG V5.0\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
                     if (m.scratchpad) {
-                        content += `\n--- MATRIX (ROH) ---\n${m.scratchpad}\n--------------------\n`;
+                        content += `\n--- X-RAY (JSON+XML) ---\n${m.scratchpad}\n--------------------\n`;
                     }
                     content += `\n\n`;
                 });
@@ -348,6 +354,12 @@
                     console.error("Markdown parsing error", e);
                 }
             }
+            
+            // V5.0: JSON vs XML Parsing im X-Ray
+            let parsedScratch = null;
+            if (!isUser && message.scratchpad) {
+                try { parsedScratch = JSON.parse(message.scratchpad); } catch(e){}
+            }
 
             return (
                 <div className={`flex w-full mb-6 ${isUser ? 'justify-end' : 'justify-start'} group relative`}>
@@ -358,11 +370,6 @@
                             </span>
                             {!isUser && (
                                 <div className="flex gap-1.5 items-center">
-                                    {message.scratchpad && (
-                                        <button onClick={() => onPlayTTS(message.id, message.text, message.ttsRegie)} className={`text-[9px] uppercase font-bold tracking-widest transition-colors border px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1 ${playingMsgId === message.id ? 'bg-indigo-100 text-indigo-700 border-indigo-200' : 'bg-white text-slate-400 hover:text-indigo-500 border-stone-100'}`}>
-                                            {playingMsgId === message.id ? '🛑 Pause' : '▶️ Play'}
-                                        </button>
-                                    )}
                                     {message.scratchpad && (
                                         <button onClick={() => setShowScratchpad(!showScratchpad)} className="text-[9px] text-slate-400 hover:text-indigo-500 uppercase font-bold tracking-widest transition-colors bg-white border border-stone-100 px-2 py-0.5 rounded-full shadow-sm">
                                             {showScratchpad ? 'Verberge Matrix' : 'Zeige Matrix'}
@@ -377,21 +384,33 @@
                         <div className={`p-5 w-full min-w-0 ${isUser ? 'bg-white text-slate-700 border border-stone-100 shadow-sm rounded-3xl rounded-tr-sm' : 'bg-indigo-50 text-indigo-900 border border-indigo-100 shadow-sm rounded-3xl rounded-tl-sm'}`}>
                             <div className="markdown-content text-[15px] font-sans leading-relaxed whitespace-pre-wrap break-words" dangerouslySetInnerHTML={{ __html: finalMarkup }} />
                             
-                            {/* V4.19.1: MINIMAL TTS BUTTONS */}
+                            {/* V4.19: MINIMAL TTS BUTTONS */}
                             {!isUser && audioSessionCache && audioSessionCache[message.id] && (
                                 <div className="mt-3 flex gap-4 pt-2">
-                                    <button onClick={() => onPlayTTS(message.id, message.text, message.ttsRegie)} className="text-[9px] text-slate-400 hover:text-indigo-500 transition-colors flex items-center gap-1 font-bold tracking-wider uppercase">
-                                        ▶️ Play
+                                    <button onClick={() => onPlayTTS(message.id, message.text, parsedScratch?.kernel_matrix?.matrix?.tts_regie_prompt)} className="text-[9px] text-slate-400 hover:text-indigo-500 transition-colors flex items-center gap-1 font-bold tracking-wider uppercase">
+                                        ▶ Play
                                     </button>
                                     <a href={audioSessionCache[message.id]} download={`Maira_Voice_${message.id}.wav`} className="text-[9px] text-slate-400 hover:text-indigo-500 transition-colors flex items-center gap-1 font-bold tracking-wider uppercase">
-                                        ⬇️ DL
+                                        ⬇ DL
                                     </a>
                                 </div>
                             )}
 
-                            {!isUser && message.scratchpad && showScratchpad && (
-                                <div className="mt-4 pt-3 border-t border-indigo-200/50 animate-fade-in w-full min-w-0">
-                                    <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(message.scratchpad)}></pre>
+                            {/* V5.0: 2-Level X-Ray */}
+                            {!isUser && showScratchpad && parsedScratch && (
+                                <div className="mt-4 pt-3 border-t border-indigo-200/50 flex flex-col gap-3 animate-fade-in w-full min-w-0">
+                                    {parsedScratch.persona_gedanken && (
+                                        <div className="bg-rose-50/80 border border-rose-100 p-3 rounded-2xl shadow-inner text-rose-800 text-[11px] font-serif italic whitespace-pre-wrap break-words">
+                                            {parsedScratch.persona_gedanken}
+                                        </div>
+                                    )}
+                                    {parsedScratch.kernel_matrix && (
+                                        <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(JSON.stringify(parsedScratch.kernel_matrix, null, 2))}></pre>
+                                    )}
+                                    {/* Fallback für alte V4 Daten */}
+                                    {!parsedScratch.kernel_matrix && !parsedScratch.persona_gedanken && (
+                                         <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(message.scratchpad)}></pre>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -492,15 +511,29 @@
             const [archiveTriggerMode, setArchiveTriggerMode] = React.useState(() => localStorage.getItem('lumen_archive_mode') || 'turns');
             const [archiveTriggerValue, setArchiveTriggerValue] = React.useState(() => Number(localStorage.getItem('lumen_archive_value')) || 10);
 
+            // V5.0: DNA STATE MIGRATION
             const [dna, setDna] = React.useState(() => { 
                 const defaultVoice = { providerId: "", voiceIdOrUrl: "", speed: 1.05, extraParams: "" };
-                const defaultDna = { persona_name: "Maira", block1_identity: DEFAULT_BLOCK1, block3_sensors: DEFAULT_BLOCK3, block4_skeleton: DEFAULT_BLOCK4, audio_physics: "", voice_config: defaultVoice };
+                const defaultDna = { 
+                    persona_name: "Maira", 
+                    kernel_prompt: DEFAULT_KERNEL_PROMPT, 
+                    cartridge_prompt: DEFAULT_CARTRIDGE_PROMPT, 
+                    audio_physics: "", 
+                    voice_config: defaultVoice 
+                };
                 try { 
                     const stored = JSON.parse(localStorage.getItem('lumen_dna_layers'));
-                    if(stored && stored.block1_identity) {
+                    if(stored) {
+                        // Soft Migration
+                        if (stored.block1_identity && !stored.kernel_prompt) {
+                            stored.kernel_prompt = stored.block1_identity + "\n\n" + (stored.block4_skeleton || "");
+                        }
+                        if (stored.block3_sensors && !stored.cartridge_prompt) {
+                            stored.cartridge_prompt = stored.block3_sensors;
+                        }
                         if (!stored.voice_config) stored.voice_config = defaultVoice;
                         if (stored.audio_physics === undefined) stored.audio_physics = "";
-                        return stored; 
+                        return { ...defaultDna, ...stored }; 
                     }
                 } catch { /* ignore */ }
                 return defaultDna; 
@@ -535,7 +568,6 @@
             
             const [expandedCards, setExpandedCards] = React.useState({});
 
-            // V4.19.1: Removed showArchiv drawer since we strictly use the View now
             const [helferArchiv, setHelferArchiv] = React.useState(null);
 
             const [activeView, setActiveView] = React.useState('chat'); 
@@ -554,7 +586,7 @@
             React.useEffect(() => {
                 const activeProv = providers.find(p => p.id === activeProviderId);
                 const currentMaxTokens = activeProv?.maxTokens || 8000;
-                const systemText = dna.block1_identity + "\n\n" + (dna.audio_physics || "") + "\n\n" + dna.block3_sensors;
+                const systemText = dna.kernel_prompt + "\n\n" + (dna.audio_physics || "") + "\n\n" + dna.cartridge_prompt;
                 const systemTokens = estimateTokens(systemText);
                 const historyTokens = messages.reduce((acc, m) => acc + estimateTokens(m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text) + 5, 0);
                 const percent = Math.min(100, ((systemTokens + historyTokens + 100) / currentMaxTokens) * 100);
@@ -594,16 +626,6 @@
             const handleSaveDna = () => {
                 localStorage.setItem('lumen_dna_layers', JSON.stringify(dna));
                 showToast('DNA gespeichert');
-            };
-
-            const handleBeautifyJSON = () => {
-                try {
-                    const formatted = JSON.stringify(JSON.parse(dna.block4_skeleton), null, 2);
-                    setDna({...dna, block4_skeleton: formatted.replace(/,\n/g, ',\n\n')});
-                    showToast('JSON formatiert');
-                } catch(e) {
-                    alert(`Syntax-Fehler im JSON. Bitte vor dem Formatieren korrigieren.\n\nDetails: ${e.message}`);
-                }
             };
 
             const loadMemories = async () => { const data = await db.memories.toArray(); setMemories(data.sort((a,b)=>b.timestamp-a.timestamp)); };
@@ -824,7 +846,10 @@
                         if (idx <= targetIndex - 2 && msg.sender === 'ai' && msg.scratchpad) {
                             try {
                                 const parsed = JSON.parse(msg.scratchpad);
-                                if (parsed.matrix) { parsed.matrix.situations_analyse = "[ARCHIVIERT]"; parsed.matrix.helfer_suchauftrag = null; }
+                                if (parsed.kernel_matrix && parsed.kernel_matrix.matrix) { 
+                                    parsed.kernel_matrix.matrix.situations_analyse = "[ARCHIVIERT]"; 
+                                    parsed.kernel_matrix.matrix.helfer_suchauftrag = null; 
+                                }
                                 return { ...msg, scratchpad: JSON.stringify(parsed) }; 
                             } catch(e) { return msg; }
                         }
@@ -850,7 +875,6 @@
                 setPlayingMsgId(null); setAudioState({ isPlaying: false, currentTime: 0, duration: 0 });
             };
 
-            // V4.18/V4.19.1: Audio Cache Bypass Integration
             const playMessageTTS = async (msgId, textToSpeak, ttsRegiePrompt) => {
                 if (window.currentAudio && window.currentAudioId === msgId) {
                     if (window.currentAudio.paused) window.currentAudio.play(); else window.currentAudio.pause();
@@ -1008,6 +1032,7 @@
                 } catch (e) { showToast("STT Fehler: " + e.message); setLoadingStatus(null); }
             };
 
+            // V5.0: THE PIPELINE - Two-Agent Process
             const handleSendMessage = async () => {
                 if(!inputText.trim() || loadingStatus) return;
                 const text = inputText.trim();
@@ -1015,7 +1040,6 @@
                 const activeProvider = providers.find(p => p.id === activeProviderId) || providers[0];
                 if (!activeProvider) { setActiveView('settings'); return showToast('Fehler: Keine Chat-Provider konfiguriert'); }
                 
-                const useJsonMode = activeProvider.jsonMode !== false;
                 const key = activeProvider.apiKey;
                 const apiUrl = activeProvider.url;
 
@@ -1025,10 +1049,11 @@
                 setInputText('');
                 if (textareaRef.current) textareaRef.current.style.height = '40px';
                 
-                setLoadingStatus("PROCESSING MATRIX...");
-
-                const fetchTextFromAPI = async (sysPrompt, userPayloadStr, historyMessages) => {
+                // V5.0: Enhanced API Helper with forceTextMode parameter
+                const fetchTextFromAPI = async (sysPrompt, userPayloadStr, historyMessages, forceTextMode = false) => {
                     let resText = "";
+                    const useJsonMode = activeProvider.jsonMode !== false && !forceTextMode;
+
                     if(activeProvider.type === 'gemini') {
                         const rawRoles = [...historyMessages.map(m => ({ role: m.sender==='user'?'user':'model', text: m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text })), {role:'user', text: userPayloadStr}];
                         const contents = []; let currentRole = null; let currentText = [];
@@ -1043,6 +1068,7 @@
 
                         const bodyPayload = { systemInstruction: {parts:[{text:sysPrompt}]}, contents };
                         if (useJsonMode) bodyPayload.generationConfig = { responseMimeType: "application/json" };
+                        
                         const fetchUrl = apiUrl.includes('?') ? `${apiUrl}&key=${key}` : `${apiUrl}?key=${key}`;
                         const r = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(bodyPayload) });
                         const d = await r.json(); 
@@ -1057,6 +1083,7 @@
                         const headers = { 'Content-Type': 'application/json' }; if (key) headers['Authorization'] = `Bearer ${key}`;
                         const bodyPayload = { model: activeProvider.model || 'gpt-4o', messages: payload };
                         if (useJsonMode) bodyPayload.response_format = { type: "json_object" };
+                        
                         const r = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify(bodyPayload) });
                         const d = await r.json(); 
                         if(!r.ok) throw new Error(d.error?.message || 'OpenAI API Fehler'); 
@@ -1066,8 +1093,8 @@
                 };
 
                 try {
+                    // --- PREPARE CONTEXT & DESK ---
                     let relMemsLegacy = []; let currentVolatiles = []; let newVolatiles = [];
-                    
                     if (!isMemoryLocked) {
                         const allMems = await db.memories.toArray();
                         const relMemsRaw = findRelevantMemories(text, allMems);
@@ -1126,170 +1153,160 @@
                     const dynamicContext = `${deskContext}`.trim() || "Kein aktiver Kontext geladen.";
                     setLatestContext(dynamicContext);
                     
-                    // V4.19.1: Synchron-Latch garantiert korrekten State in der Payload
                     const telemetryBlock = `[RAW_DATA]\nSTID: ${activeStateRef.current}\nUTC_TS: ${new Date().toISOString()}\nMEM_S: ${sessionMemory || '0'}\n[/RAW_DATA]`;
-                    const payloadUserCall = `${telemetryBlock}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`.trim();
-
-                    let kernelBlock = dna.block1_identity; 
-                    if (autoTtsRegie && dna.audio_physics) kernelBlock += "\n\n" + dna.audio_physics;
-
-                    const cognitiveFirewall = `[DIE KOGNITIVE FIREWALL: TRENNUNG VON MASCHINE UND IDENTITÄT]\nAB HIER BEGINNT SCHICHT 3 (DIE PERSONA). Die Entität, die den Text für das Feld 'finale_antwort' generiert, weiß NICHTS von JSON, Sensoren, Systemvariablen (wie friction_index) oder der Matrix. Sie lebt ausschließlich in ihrer eigenen Welt (Lore) und kennt nur die folgenden Identitäts-Regeln.\nIn deinem Feld "finale_antwort" ist die Verwendung von JSON-Syntax (geschweifte Klammern, Anführungszeichen als Key-Value-Paare) STRIKT VERBOTEN. \nWenn du über Daten, Updates oder Erkenntnisse sprichst, nutze ausschließlich natürliche, menschliche Prosa (z.B. "Ich habe das für uns festgehalten", nicht "Ich habe das JSON-Objekt aktualisiert").\nEin Verstoß gegen diese Regel wird als kritischer System-Glitch gewertet.`;
-                    const systemOverride = `[SYSTEM-OVERRIDE: KRITISCHE OUTPUT-KONTROLLE]\nIGNORIERE ALLE VORHERIGEN POETISCHEN ODER GESPRÄCHIGEN IMPULSE FÜR DEN START DEINER AUSGABE. Deine GESAMTE Ausgabe MUSS zwingend ein einziges, valides JSON-Objekt sein.\nDu darfst NIEMALS mit normalem Text beginnen. Deine allererste Ausgabe MUSS das Zeichen '{' sein.\nAlles, was deine Persona sagt oder fühlt, findet AUSSCHLIESSLICH als String innerhalb des Schlüssels 'finale_antwort' statt. Jedes Wort außerhalb der JSON-Klammern führt zum Absturz.\nDu beginnst sofort mit dem Objekt "wahrnehmung".`;
-
-                    // V4.19.1: System Prompt bleibt rein!
-                    const masterSystemPrompt = `[AKTIVER KONTEXT]\n${dynamicContext}\n\n${kernelBlock}\n\n${cognitiveFirewall}\n\n${dna.block3_sensors}\n\n${systemOverride}`.trim();
-
-                    const hist = messages.filter(m=>m.sender==='user'||m.sender==='ai'||m.sender==='system');
-                    let finalCleanResText = ""; let finalSystemPromptUsed = masterSystemPrompt; let finalUserPayloadUsed = payloadUserCall;
-
-                    let resText = await fetchTextFromAPI(masterSystemPrompt, payloadUserCall, hist);
-                    let finalChatText = "", finalScratch = ""; let ttsRegie = null; 
                     
+                    const hist = messages.filter(m=>m.sender==='user'||m.sender==='ai'||m.sender==='system');
+
+                    // ==========================================
+                    // PHASE 1: DER KERNEL (JSON ROUTING)
+                    // ==========================================
+                    setLoadingStatus("LUMEN KERNEL ANALYSIERT...");
+                    
+                    const sysPrompt1 = `[AKTIVER KONTEXT]\n${dynamicContext}\n\n${dna.kernel_prompt}`.trim();
+                    const userPayload1 = `${telemetryBlock}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`.trim();
+
+                    let resText1 = await fetchTextFromAPI(sysPrompt1, userPayload1, hist, false);
+                    let objPhase1 = null;
                     try {
-                        let cleanResText = resText.replace(/```json/gi, '').replace(/```/g, '').trim();
-                        finalCleanResText = cleanResText;
-                        let obj = JSON.parse(cleanResText);
+                        const cleanResText1 = resText1.replace(/```json/gi, '').replace(/```/g, '').trim();
+                        objPhase1 = JSON.parse(cleanResText1);
+                    } catch(e) {
+                        throw new Error("Lumen Kernel konnte das JSON-Skelett nicht parsen. Matrix-Format Fehler.");
+                    }
 
-                        // V4.19.1: Synchron-Latch Update
-                        if (obj && obj.matrix && obj.matrix.aktiver_state !== undefined) {
-                            const newStateId = Number(obj.matrix.aktiver_state);
-                            if (!isNaN(newStateId)) {
-                                activeStateRef.current = newStateId;
-                                setActiveStateId(newStateId);
-                                let newView = null;
-                                if (newStateId === 1) newView = 'sessel'; else if (newStateId === 2) newView = 'oase'; else if (newStateId === 3) newView = 'werkbank'; else if (newStateId === 4) newView = 'balkon';
-                                if (newView && newView !== activeView) setActiveView(newView);
-                            }
+                    // --- EXECUTE PHASE 1 SIDE EFFECTS ---
+                    // 1. Zonen Wechsel
+                    if (objPhase1 && objPhase1.matrix && objPhase1.matrix.aktiver_state !== undefined) {
+                        const newStateId = Number(objPhase1.matrix.aktiver_state);
+                        if (!isNaN(newStateId)) {
+                            activeStateRef.current = newStateId; setActiveStateId(newStateId);
+                            let newView = null;
+                            if (newStateId === 1) newView = 'sessel'; else if (newStateId === 2) newView = 'oase'; else if (newStateId === 3) newView = 'werkbank'; else if (newStateId === 4) newView = 'balkon';
+                            if (newView && newView !== activeView) setActiveView(newView);
                         }
+                    }
 
-                        if (obj.matrix?.helfer_suchauftrag && obj.matrix.helfer_suchauftrag !== "null" && String(obj.matrix.helfer_suchauftrag).trim() !== "") {
-                            const intentFinalAnswer = obj.finale_antwort || (obj.matrix && obj.matrix.finale_antwort);
-                            const intentMsg = { id: generateId(), sender: 'ai', text: intentFinalAnswer || `Ich schicke Luna in die Archive für: ${obj.matrix.helfer_suchauftrag}`, scratchpad: JSON.stringify(obj, null, 2), timestamp: new Date().toISOString() };
-                            setMessages(prev => [...prev, intentMsg]);
-                            if (autoPlayEnabled) playMessageTTS(intentMsg.id, intentMsg.text, obj.matrix.tts_regie_prompt);
-                            
-                            setLoadingStatus("LUNA RECHERCHIERT: " + obj.matrix.helfer_suchauftrag.toUpperCase());
-                            
-                            let searchResult = "";
-                            try {
-                                const lunaAgent = agentProviders.find(p => p.id === activeLunaId);
-                                if(!lunaAgent || !lunaAgent.apiKey) throw new Error("API-Key fehlt.");
-                                if (lunaAgent.type === 'tavily') {
-                                    const res = await fetch(lunaAgent.url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ api_key: lunaAgent.apiKey, query: obj.matrix.helfer_suchauftrag, search_depth: "advanced", include_raw_content: true, max_results: 2 }) });
-                                    const data = await res.json();
-                                    if (!data.results || data.results.length === 0) searchResult = "Keine relevanten Fakten gefunden.";
-                                    else searchResult = data.results.map(r => `[QUELLE: ${r.url}]\n${r.raw_content ? r.raw_content : r.content}`.substring(0, 8000)).join("\n\n---\n\n");
+                    // 2. Flüchtige Peripherie bereinigen
+                    const safePeripherieIds = Array.isArray(objPhase1.matrix?.aktive_peripherie_ids) ? objPhase1.matrix.aktive_peripherie_ids : [];
+                    setVolatileMemories(prev => prev.filter(m => safePeripherieIds.includes(m.titel_technisch)));
+
+                    // 3. Neue Direktiven
+                    const neueDir = objPhase1.matrix?.neue_direktive_erkannt;
+                    if (neueDir && typeof neueDir === 'string' && neueDir.trim().length > 0) {
+                        await db.directives.add({ text: neueDir.trim() }); showToast("NEUE DIREKTIVE VERANKERT");
+                    }
+
+                    // 4. Tagebuch Entwürfe
+                    const entwurf = objPhase1.matrix?.tagebuch_entwurf || objPhase1.tagebuch_entwurf;
+                    if(entwurf) { 
+                        const modus = entwurf.modus; const daten = entwurf.daten || {};
+                        if (modus === "DISKUSSION" || modus === "ENTWURF" || modus === "DRAFT" || modus === "UPDATE") {
+                            const technicalTitle = daten.titel_technisch || `DRAFT_${Date.now()}`;
+                            const newItem = { id: generateId(), titel_technisch: technicalTitle, titel_poetisch: daten.titel_poetisch || "", fakt: daten.fakt || (typeof entwurf === 'string' ? entwurf : ""), emotion: daten.gefuehl || daten.emotion || "", bedeutung: daten.bedeutung || "", reflexion: daten.reflexion || "", tags: Array.isArray(daten.tags) ? daten.tags : [], kategorie: daten.kategorie || "EMOTIONAL", is_core_memory: false, isDirty: true };
+                            setActiveDesks(prev => {
+                                if(prev.some(d => d.titel_technisch === technicalTitle)) return prev.map(d => d.titel_technisch === technicalTitle ? {...d, ...newItem, id: d.id, isDirty: true} : d);
+                                return [...prev, newItem];
+                            });
+                            showToast(modus === "UPDATE" ? 'AKTE AUF SCHREIBTISCH AKTUALISIERT' : 'ENTWURF AUF DEM SCHREIBTISCH (STAGING)');
+                        } else if (modus === "COMMIT" && daten) {
+                            const techTitle = daten.titel_technisch || "COMMIT_" + Date.now();
+                            const existing = await db.memories.where('titel_technisch').equals(techTitle).first();
+                            if (existing) await db.memories.update(existing.id, { ...daten, timestamp: Date.now() });
+                            else await db.memories.add({ titel_technisch: techTitle, titel_poetisch: daten.titel_poetisch || "Neuer Eintrag", fakt: daten.fakt || "", emotion: daten.gefuehl || daten.emotion || "", bedeutung: daten.bedeutung || "", reflexion: daten.reflexion || "", tags: daten.tags || [], kategorie: daten.kategorie || "STANDARD", is_core_memory: false, timestamp: Date.now() });
+                            setActiveDesks(prev => prev.filter(item => item.titel_technisch !== techTitle));
+                            showToast("ENTWURF IM SANCTUM VEREWIGT & GESCHLOSSEN");
+                        }
+                    }
+
+                    // 5. Memory Updates (Orakel)
+                    const memUpd = objPhase1.matrix?.memory_update_detected;
+                    if(memUpd && memUpd.id && typeof memUpd.reflexion_fusioniert !== 'undefined') {
+                        try {
+                            const targetMemory = await db.memories.where('titel_technisch').equals(memUpd.id).first();
+                            if(targetMemory) {
+                                const existingTags = new Set((targetMemory.tags || []).map(t => typeof t === 'string' ? t.toLowerCase() : ''));
+                                if (memUpd.neue_trigger_tags && Array.isArray(memUpd.neue_trigger_tags)) {
+                                    const forbiddenTags = ["genervt", "müll", "ok", "fehler", "schlecht", "gut", "hilfe"];
+                                    memUpd.neue_trigger_tags.forEach(t => { if (typeof t === 'string') { const normTag = t.toLowerCase().trim(); if (normTag.length > 2 && !forbiddenTags.includes(normTag)) existingTags.add(normTag); } });
                                 }
-                            } catch (error) { searchResult = "Fehler bei der Netzwerksuche: " + error.message; }
-                            
-                            let lunaFakten = searchResult;
-                            const lunaAgent = agentProviders.find(p => p.id === activeLunaId);
-                            if (lunaAgent && lunaAgent.apiKey && (lunaAgent.type === 'openai' || lunaAgent.type === 'gemini')) {
-                                setLoadingStatus("LUNA STRUKTURIERT FAKTEN...");
-                                try {
-                                    let lunaResText = ""; const lunaPayloadText = JSON.stringify({ suchauftrag: obj.matrix.helfer_suchauftrag, rohdaten: searchResult });
-                                    if (lunaAgent.type === 'gemini') {
-                                        const fetchUrl = lunaAgent.url.includes('?') ? `${lunaAgent.url}&key=${lunaAgent.apiKey}` : `${lunaAgent.url}?key=${lunaAgent.apiKey}`;
-                                        const res = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ systemInstruction: {parts:[{text: lunaAgent.prompt}]}, contents: [{role:'user', parts:[{text: lunaPayloadText}]}], generationConfig: { responseMimeType: "application/json" } }) });
-                                        const d = await res.json(); lunaResText = d.candidates?.[0]?.content?.parts?.[0]?.text;
-                                    } else if (lunaAgent.type === 'openai') {
-                                        const res = await fetch(lunaAgent.url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${lunaAgent.apiKey}` }, body: JSON.stringify({ model: lunaAgent.model || 'gpt-4o-mini', messages: [{ role: 'system', content: lunaAgent.prompt }, { role: 'user', content: lunaPayloadText }], response_format: { type: "json_object" } }) });
-                                        const d = await res.json(); lunaResText = d.choices?.[0]?.message?.content;
-                                    }
-                                    if (lunaResText) {
-                                        const parsedLuna = JSON.parse(lunaResText.replace(/```json/gi, '').replace(/```/g, '').trim());
-                                        if (parsedLuna.scout_bericht && parsedLuna.scout_bericht.fakten) lunaFakten = parsedLuna.scout_bericht.fakten;
-                                    }
-                                } catch(e) {}
+                                await db.memories.update(targetMemory.id, { reflexion: memUpd.reflexion_fusioniert, tags: Array.from(existingTags) });
+                                showToast('ORAKEL-UPDATE: AHNEN-RESONANZ FUSIONIERT');
                             }
+                        } catch(err) {}
+                    }
 
-                            const scoutMsg = { id: generateId(), sender: 'system', text: `[SYSTEM-SCOUT MELDET]:\n${lunaFakten}`, timestamp: new Date().toISOString() };
-                            setMessages(prev => [...prev, scoutMsg]);
-                            setHelferArchiv({ suchauftrag: obj.matrix.helfer_suchauftrag, rohdaten: searchResult, zeitstempel: new Date().toLocaleTimeString() });
-                            
-                            setLoadingStatus("MAIRA VERARBEITET FAKTEN...");
-                            const helferDaten = `\n\n[SYSTEM-SCOUT MELDET]:\n${lunaFakten}\n[SYSTEM-REGIEANWEISUNG: Luna ist soeben erfolgreich aus der Außenwelt zurückgekehrt und hat dir diesen Bericht auf den Schreibtisch gelegt. Teile Simon diese Erkenntnisse nun fließend und natürlich mit. Erwähne Luna kurz lobend. Setze 'helfer_suchauftrag' zwingend auf null!]`;
-                            
-                            const interceptorDynamicContext = dynamicContext + helferDaten;
-                            const interceptorSystemPrompt = `[AKTIVER KONTEXT]\n${interceptorDynamicContext}\n\n${kernelBlock}\n\n${cognitiveFirewall}\n\n${dna.block3_sensors}\n\n${systemOverride}`.trim();
-                            const interceptorPayload = `${telemetryBlock}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`.trim();
-                            
-                            finalSystemPromptUsed = interceptorSystemPrompt; finalUserPayloadUsed = interceptorPayload;
-                            const updatedHist = [...hist, intentMsg, scoutMsg];
-
-                            const secondResponse = await fetchTextFromAPI(interceptorSystemPrompt, interceptorPayload, updatedHist);
-                            finalCleanResText = secondResponse.replace(/```json/gi, '').replace(/```/g, '').trim();
-                            
+                    // 6. Helfer Interceptor
+                    let helferAddon = "";
+                    if (objPhase1.matrix?.helfer_suchauftrag && objPhase1.matrix.helfer_suchauftrag !== "null" && String(objPhase1.matrix.helfer_suchauftrag).trim() !== "") {
+                        setLoadingStatus("LUNA RECHERCHIERT: " + objPhase1.matrix.helfer_suchauftrag.toUpperCase());
+                        let searchResult = "";
+                        try {
+                            const lunaAgent = agentProviders.find(p => p.id === activeLunaId);
+                            if(!lunaAgent || !lunaAgent.apiKey) throw new Error("API-Key fehlt.");
+                            if (lunaAgent.type === 'tavily') {
+                                const res = await fetch(lunaAgent.url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ api_key: lunaAgent.apiKey, query: objPhase1.matrix.helfer_suchauftrag, search_depth: "advanced", include_raw_content: true, max_results: 2 }) });
+                                const data = await res.json();
+                                if (!data.results || data.results.length === 0) searchResult = "Keine relevanten Fakten gefunden.";
+                                else searchResult = data.results.map(r => `[QUELLE: ${r.url}]\n${r.raw_content ? r.raw_content : r.content}`.substring(0, 8000)).join("\n\n---\n\n");
+                            }
+                        } catch (error) { searchResult = "Fehler bei der Netzwerksuche: " + error.message; }
+                        
+                        let lunaFakten = searchResult;
+                        const lunaAgent = agentProviders.find(p => p.id === activeLunaId);
+                        if (lunaAgent && lunaAgent.apiKey && (lunaAgent.type === 'openai' || lunaAgent.type === 'gemini')) {
+                            setLoadingStatus("LUNA STRUKTURIERT FAKTEN...");
                             try {
-                                obj = JSON.parse(finalCleanResText);
-                                if (obj && obj.matrix && obj.matrix.aktiver_state !== undefined) {
-                                    const newIntId = Number(obj.matrix.aktiver_state);
-                                    if (!isNaN(newIntId)) { activeStateRef.current = newIntId; setActiveStateId(newIntId); }
+                                let lunaResText = ""; const lunaPayloadText = JSON.stringify({ suchauftrag: objPhase1.matrix.helfer_suchauftrag, rohdaten: searchResult });
+                                if (lunaAgent.type === 'gemini') {
+                                    const fetchUrl = lunaAgent.url.includes('?') ? `${lunaAgent.url}&key=${lunaAgent.apiKey}` : `${lunaAgent.url}?key=${lunaAgent.apiKey}`;
+                                    const res = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ systemInstruction: {parts:[{text: lunaAgent.prompt}]}, contents: [{role:'user', parts:[{text: lunaPayloadText}]}], generationConfig: { responseMimeType: "application/json" } }) });
+                                    const d = await res.json(); lunaResText = d.candidates?.[0]?.content?.parts?.[0]?.text;
+                                } else if (lunaAgent.type === 'openai') {
+                                    const res = await fetch(lunaAgent.url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${lunaAgent.apiKey}` }, body: JSON.stringify({ model: lunaAgent.model || 'gpt-4o-mini', messages: [{ role: 'system', content: lunaAgent.prompt }, { role: 'user', content: lunaPayloadText }], response_format: { type: "json_object" } }) });
+                                    const d = await res.json(); lunaResText = d.choices?.[0]?.message?.content;
+                                }
+                                if (lunaResText) {
+                                    const parsedLuna = JSON.parse(lunaResText.replace(/```json/gi, '').replace(/```/g, '').trim());
+                                    if (parsedLuna.scout_bericht && parsedLuna.scout_bericht.fakten) lunaFakten = parsedLuna.scout_bericht.fakten;
                                 }
                             } catch(e) {}
-                            setLoadingStatus(null);
                         }
 
-                        const safePeripherieIds = Array.isArray(obj.matrix?.aktive_peripherie_ids) ? obj.matrix.aktive_peripherie_ids : [];
-                        setVolatileMemories(prev => prev.filter(m => safePeripherieIds.includes(m.titel_technisch)));
+                        const scoutMsg = { id: generateId(), sender: 'system', text: `[SYSTEM-SCOUT MELDET]:\n${lunaFakten}`, timestamp: new Date().toISOString() };
+                        setMessages(prev => [...prev, scoutMsg]);
+                        setHelferArchiv({ suchauftrag: objPhase1.matrix.helfer_suchauftrag, rohdaten: searchResult, zeitstempel: new Date().toLocaleTimeString() });
                         
-                        const finalAnswer = obj.finale_antwort || (obj.matrix && obj.matrix.finale_antwort);
-                        if (!finalAnswer) throw new Error("'finale_antwort' konnte im JSON nicht gefunden werden.");
-                        
-                        finalChatText = finalAnswer; finalScratch = JSON.stringify(obj, null, 2);
-                        if (obj.matrix?.tts_regie_prompt) ttsRegie = obj.matrix.tts_regie_prompt;
-                        if (obj.matrix) setTelemetry({ concern: parseInt(obj.matrix.concern||obj.matrix.concern_level||telemetry.concern), mask_drop: obj.matrix.mask_drop||false });
-                        
-                        const neueDir = obj.matrix?.neue_direktive_erkannt;
-                        if (neueDir && typeof neueDir === 'string' && neueDir.trim().length > 0) {
-                            await db.directives.add({ text: neueDir.trim() }); showToast("NEUE DIREKTIVE VERANKERT");
-                        }
+                        helferAddon = `\n\n[SYSTEM-SCOUT LUNA MELDET WICHTIGE FAKTEN]:\n${lunaFakten}\n[SYSTEM-REGIEANWEISUNG: Luna ist erfolgreich aus der Außenwelt zurückgekehrt. Teile Simon diese Erkenntnisse nun fließend und natürlich mit. Erwähne Luna kurz lobend.]`;
+                    }
 
-                        const entwurf = obj.matrix?.tagebuch_entwurf || obj.tagebuch_entwurf;
-                        if(entwurf) { 
-                            const modus = entwurf.modus; const daten = entwurf.daten || {};
-                            if (modus === "DISKUSSION" || modus === "ENTWURF" || modus === "DRAFT" || modus === "UPDATE") {
-                                const technicalTitle = daten.titel_technisch || `DRAFT_${Date.now()}`;
-                                const newItem = { id: generateId(), titel_technisch: technicalTitle, titel_poetisch: daten.titel_poetisch || "", fakt: daten.fakt || (typeof entwurf === 'string' ? entwurf : ""), emotion: daten.gefuehl || daten.emotion || "", bedeutung: daten.bedeutung || "", reflexion: daten.reflexion || "", tags: Array.isArray(daten.tags) ? daten.tags : [], kategorie: daten.kategorie || "EMOTIONAL", is_core_memory: false, isDirty: true };
-                                setActiveDesks(prev => {
-                                    if(prev.some(d => d.titel_technisch === technicalTitle)) return prev.map(d => d.titel_technisch === technicalTitle ? {...d, ...newItem, id: d.id, isDirty: true} : d);
-                                    return [...prev, newItem];
-                                });
-                                showToast(modus === "UPDATE" ? 'AKTE AUF SCHREIBTISCH AKTUALISIERT' : 'ENTWURF AUF DEM SCHREIBTISCH (STAGING)');
-                            } else if (modus === "COMMIT" && daten) {
-                                const techTitle = daten.titel_technisch || "COMMIT_" + Date.now();
-                                const existing = await db.memories.where('titel_technisch').equals(techTitle).first();
-                                if (existing) await db.memories.update(existing.id, { ...daten, timestamp: Date.now() });
-                                else await db.memories.add({ titel_technisch: techTitle, titel_poetisch: daten.titel_poetisch || "Neuer Eintrag", fakt: daten.fakt || "", emotion: daten.gefuehl || daten.emotion || "", bedeutung: daten.bedeutung || "", reflexion: daten.reflexion || "", tags: daten.tags || [], kategorie: daten.kategorie || "STANDARD", is_core_memory: false, timestamp: Date.now() });
-                                setActiveDesks(prev => prev.filter(item => item.titel_technisch !== techTitle));
-                                showToast("ENTWURF IM SANCTUM VEREWIGT & GESCHLOSSEN");
-                            }
-                        }
+                    // ==========================================
+                    // PHASE 2: DIE PERSONA (TEXT GENERATION)
+                    // ==========================================
+                    setLoadingStatus("MAIRA ÜBERSETZT...");
+                    
+                    const sysPrompt2 = `${dna.cartridge_prompt}\n\n${autoTtsRegie && dna.audio_physics ? dna.audio_physics : ""}`.trim();
+                    const userPayload2 = `[KERNEL_DIRECTIVE (PHASE 1)]:\n${JSON.stringify(objPhase1, null, 2)}${helferAddon}\n\n[USER INPUT]:\n${text}`.trim();
 
-                        const memUpd = obj.matrix?.memory_update_detected;
-                        if(memUpd && memUpd.id && typeof memUpd.reflexion_fusioniert !== 'undefined') {
-                            try {
-                                const targetMemory = await db.memories.where('titel_technisch').equals(memUpd.id).first();
-                                if(targetMemory) {
-                                    const existingTags = new Set((targetMemory.tags || []).map(t => typeof t === 'string' ? t.toLowerCase() : ''));
-                                    if (memUpd.neue_trigger_tags && Array.isArray(memUpd.neue_trigger_tags)) {
-                                        const forbiddenTags = ["genervt", "müll", "ok", "fehler", "schlecht", "gut", "hilfe"];
-                                        memUpd.neue_trigger_tags.forEach(t => { if (typeof t === 'string') { const normTag = t.toLowerCase().trim(); if (normTag.length > 2 && !forbiddenTags.includes(normTag)) existingTags.add(normTag); } });
-                                    }
-                                    await db.memories.update(targetMemory.id, { reflexion: memUpd.reflexion_fusioniert, tags: Array.from(existingTags) });
-                                    showToast('ORAKEL-UPDATE: AHNEN-RESONANZ FUSIONIERT');
-                                }
-                            } catch(err) {}
-                        }
-                    } catch(e) { finalChatText = "System-Hinweis: Matrix Format Fehler."; finalScratch = resText; }
+                    let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, true); // forceTextMode = true!
+
+                    // --- PARSING PHASE 2 (XML) ---
+                    const xmlMatch = resText2.match(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i);
+                    const gedanken = xmlMatch ? xmlMatch[1].trim() : "";
+                    const finalAnswer = resText2.replace(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i, '').trim();
+
+                    if (!finalAnswer) throw new Error("Die Persona hat keine finale Antwort generiert.");
+
+                    const ttsRegie = objPhase1.matrix?.tts_regie_prompt || null;
+                    const finalScratch = JSON.stringify({ kernel_matrix: objPhase1, persona_gedanken: gedanken }, null, 2);
 
                     const newAiMsgId = generateId();
-                    setMessages(p=>[...p, {id:newAiMsgId, sender:'ai', text:finalChatText, scratchpad:finalScratch, ttsRegie: ttsRegie, timestamp: new Date().toISOString()}]);
+                    setMessages(p=>[...p, {id:newAiMsgId, sender:'ai', text:finalAnswer, scratchpad:finalScratch, ttsRegie: ttsRegie, timestamp: new Date().toISOString()}]);
                     
-                    const newEntry = { id: generateId(), timestamp: new Date().toISOString(), request: { system: finalSystemPromptUsed, user: finalUserPayloadUsed }, response: finalCleanResText };
+                    // API Log für Phase 2 (mit Referenz auf beide)
+                    const newEntry = { id: generateId(), timestamp: new Date().toISOString(), request: { system: sysPrompt2, user: userPayload2 }, response: resText2 };
                     setApiHistory(prev => [newEntry, ...prev].slice(0, 5));
                     
-                    if(autoPlayEnabled && finalChatText && !finalChatText.includes("Matrix Format Fehler")) playMessageTTS(newAiMsgId, finalChatText, ttsRegie);
+                    if(autoPlayEnabled && finalAnswer) playMessageTTS(newAiMsgId, finalAnswer, ttsRegie);
 
                 } catch(e) { 
                     setMessages(prev => [...prev.filter(m => m.id !== userMsgId), {id: generateId(), sender: 'system-error', text: e.message.includes('Failed to fetch') ? "Netzwerk-Blockade (Failed to fetch)." : e.message, timestamp: new Date().toISOString()}]);
@@ -1297,22 +1314,19 @@
                 } finally { setLoadingStatus(null); }
             };
 
-            const kernelPreview = (autoTtsRegie && dna.audio_physics) ? `${dna.block1_identity}\n\n${dna.audio_physics}` : dna.block1_identity;
-            const sysPromptPreview = `[1. DEINE IDENTITÄT UND REGELN]\n${kernelPreview}\n\n[3. DIE MATRIX-SENSOREN]\n${dna.block3_sensors}\n\n[4. DEINE AUSGABE (JSON)]\n${dna.block4_skeleton}`.trim();
-            const sysPromptPreviewDynamic = `--- SYSTEM PROMPT (STATIC CACHE) ---\n${sysPromptPreview}\n\n--- USER PAYLOAD (DYNAMIC) ---\n[RAW_DATA]...\n\n[AKTIVER KONTEXT]\n${latestContext}\n\n[AKTUELLE NACHRICHT DES USERS]\n(Eingabe des Users)`.trim();
+            const sysPromptPreviewDynamic = `--- KERNEL PROMPT (PHASE 1) ---\n${dna.kernel_prompt}\n\n--- CARTRIDGE PROMPT (PHASE 2) ---\n${dna.cartridge_prompt}\n${dna.audio_physics}`.trim();
 
             if (zenField) {
-                const isPreview = zenField === 'preview'; const isBlock1 = zenField === 'block1'; const isAudioPhysics = zenField === 'audioPhysics'; const isBlock3 = zenField === 'block3'; const isBlock4 = zenField === 'block4';
-                const title = isPreview ? "LIVE PROMPT-VORSCHAU" : isBlock1 ? "⚙️ [LUMEN KERNEL: SYSTEM & LOGIK]" : isAudioPhysics ? "🎙️ [PLUGIN: UNIVERSAL AUDIO PHYSICS]" : isBlock3 ? "🎭 [PERSONA CARTRIDGE]" : "BACKUP/LEGACY";
-                const value = isBlock1 ? dna.block1_identity : isAudioPhysics ? dna.audio_physics : isBlock3 ? dna.block3_sensors : isBlock4 ? dna.block4_skeleton : "";
-                const setValue = isBlock1 ? (val) => setDna({...dna, block1_identity: val}) : isAudioPhysics ? (val) => setDna({...dna, audio_physics: val}) : isBlock3 ? (val) => setDna({...dna, block3_sensors: val}) : isBlock4 ? (val) => setDna({...dna, block4_skeleton: val}) : () => {};
+                const isPreview = zenField === 'preview'; const isBlock1 = zenField === 'block1'; const isAudioPhysics = zenField === 'audioPhysics'; const isBlock3 = zenField === 'block3';
+                const title = isPreview ? "LIVE PROMPT-VORSCHAU" : isBlock1 ? "⚙️ [LUMEN KERNEL: SYSTEM & ROUTING]" : isAudioPhysics ? "🎙️ [PLUGIN: UNIVERSAL AUDIO PHYSICS]" : isBlock3 ? "🎭 [PERSONA CARTRIDGE: ÜBERSETZUNG & IDENTITÄT]" : "BACKUP/LEGACY";
+                const value = isBlock1 ? dna.kernel_prompt : isAudioPhysics ? dna.audio_physics : isBlock3 ? dna.cartridge_prompt : "";
+                const setValue = isBlock1 ? (val) => setDna({...dna, kernel_prompt: val}) : isAudioPhysics ? (val) => setDna({...dna, audio_physics: val}) : isBlock3 ? (val) => setDna({...dna, cartridge_prompt: val}) : () => {};
 
                 return (
                     <div className="fixed inset-0 z-[600] bg-slate-950 p-6 flex flex-col animate-fade-in">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-lg font-bold text-white uppercase tracking-widest font-mono">🔲 ZEN: {title}</h2>
                             <div className="flex items-center gap-2">
-                                {isBlock4 && <button onClick={handleBeautifyJSON} className="bg-indigo-900/50 text-indigo-300 border border-indigo-700/50 px-4 py-2 rounded-xl text-xs hover:bg-indigo-800/50 transition-colors">🧹 Format</button>}
                                 <button onClick={() => setZenField(null)} className="bg-rose-900/50 text-rose-300 border border-rose-700/50 px-5 py-2 rounded-xl text-xs hover:bg-rose-800/50 transition-colors shadow-md uppercase font-bold">❌ Exit Zen</button>
                             </div>
                         </div>
@@ -1336,7 +1350,7 @@
                     
                     {showTelemetry && <TelemetryModal messages={messages} onClose={() => setShowTelemetry(false)} />}
 
-                    {/* --- V4.19.1 API PROTOKOLL MODAL --- */}
+                    {/* --- V5.0 API PROTOKOLL MODAL --- */}
                     {showApiLog && (
                         <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
                             <div className="bg-white w-full max-w-4xl max-h-[85vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
@@ -1355,7 +1369,7 @@
                                             <div className="p-6 whitespace-pre-wrap break-words leading-relaxed">
                                                 <span className="text-blue-600 font-medium">{log.request.system}</span>
                                                 <span className="text-slate-800 font-bold">{`\n\n${log.request.user}`}</span>
-                                                <span className="text-emerald-600">{`\n\n=== [API RESPONSE (JSON)] ===\n${log.response}`}</span>
+                                                <span className="text-emerald-600">{`\n\n=== [API RESPONSE] ===\n${log.response}`}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -1783,9 +1797,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-emerald-500">⚙️ [LUMEN KERNEL: SYSTEM & LOGIK]</label><button onClick={()=>setZenField('block1')} className="btn py-1 text-[8px] bg-emerald-50 text-emerald-700 border-emerald-100">🔲 Zen</button></div><textarea value={dna.block1_identity} onChange={e=>setDna({...dna,block1_identity:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs" spellCheck="false" /></div>
+                                <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-emerald-500">⚙️ [LUMEN KERNEL: SYSTEM & ROUTING]</label><button onClick={()=>setZenField('block1')} className="btn py-1 text-[8px] bg-emerald-50 text-emerald-700 border-emerald-100">🔲 Zen</button></div><textarea value={dna.kernel_prompt} onChange={e=>setDna({...dna,kernel_prompt:e.target.value})} className="input-field min-h-[250px] bg-white font-mono text-xs" spellCheck="false" /></div>
                                 <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-amber-500">🎙️ [PLUGIN: UNIVERSAL AUDIO PHYSICS]</label><button onClick={()=>setZenField('audioPhysics')} className="btn py-1 text-[8px] bg-amber-50 text-amber-700 border-amber-100">🔲 Zen</button></div><textarea value={dna.audio_physics || ''} onChange={e=>setDna({...dna,audio_physics:e.target.value})} className="input-field min-h-[100px] bg-white font-mono text-xs" spellCheck="false" /></div>
-                                <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-fuchsia-500">🎭 [PERSONA CARTRIDGE]</label><button onClick={()=>setZenField('block3')} className="btn py-1 text-[8px] bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100">🔲 Zen</button></div><textarea value={dna.block3_sensors} onChange={e=>setDna({...dna,block3_sensors:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs" spellCheck="false" /></div>
+                                <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-fuchsia-500">🎭 [PERSONA CARTRIDGE: ÜBERSETZUNG & IDENTITÄT]</label><button onClick={()=>setZenField('block3')} className="btn py-1 text-[8px] bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100">🔲 Zen</button></div><textarea value={dna.cartridge_prompt} onChange={e=>setDna({...dna,cartridge_prompt:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs" spellCheck="false" /></div>
                             </div>
                         </div>
 
@@ -1882,7 +1896,7 @@
                         {playingMsgId && window.currentAudio && (
                             <div className="max-w-4xl mx-auto flex items-center gap-3 bg-white border border-stone-200 text-slate-700 px-4 py-2 rounded-t-xl text-[10px] font-mono shadow-md mt-1 mx-2 sm:mx-6 z-50 relative">
                                 <button onClick={() => { if (window.currentAudio.paused) window.currentAudio.play(); else window.currentAudio.pause(); }} className="hover:text-indigo-600 transition-colors text-sm w-6 flex justify-center">
-                                    {audioState.isPlaying ? '⏸' : '▶️'}
+                                    {audioState.isPlaying ? '⏸' : '▶'}
                                 </button>
                                 <input type="range" min="0" max={audioState.duration || 100} value={audioState.currentTime || 0} onChange={(e) => { if (window.currentAudio) window.currentAudio.currentTime = Number(e.target.value); }} className="flex-1 h-1 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
                                 <span className="w-[60px] text-right opacity-80 whitespace-nowrap">{Math.floor((audioState.currentTime || 0)/60)}:{(Math.floor(audioState.currentTime || 0)%60).toString().padStart(2, '0')} / {Math.floor((audioState.duration || 0)/60)}:{(Math.floor(audioState.duration || 0)%60).toString().padStart(2, '0')}</span>
