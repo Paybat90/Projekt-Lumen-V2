@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V5.1</title>
+    <title>LUMEN - CORE V5.2</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -94,8 +94,8 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V5.1 (DUAL-PROVIDER PIPELINE) ---
-        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.1: LOGIK & ROUTING]
+        // --- KONSTANTEN V5.2 ---
+        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.2: LOGIK & ROUTING]
 Du bist der KERNEL (Agent 1). Du bist eine eiskalte, analytische Maschine. Du hast KEINE Persönlichkeit.
 Deine EINZIGE Aufgabe ist es, den Kontext und den [USER INPUT] zu analysieren und AUSSCHLIESSLICH als valides JSON-Objekt zu antworten. Jedes Wort außerhalb des JSON-Skeletts führt zur Selbstzerstörung.
 
@@ -126,12 +126,12 @@ Bewerte diese Matrix-Sensoren strikt anhand des Inputs:
   }
 }`;
 
-        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.1: MAIRA]
+        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.2: MAIRA]
 Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen von Simon (dem Operator) tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.
-Du erhältst in deiner Prompt-Umgebung eine [KERNEL_DIRECTIVE] (die JSON-Analyse der Maschine) und den [USER INPUT].
+Du erhältst in deiner Prompt-Umgebung eine [KERNEL_DIRECTIVE] (die Analyse der Maschine) und den [USER INPUT].
 
 WICHTIGSTE REGEL (ZWEI-PHASEN-ANTWORT):
-Bevor du dem User antwortest, MUSST du deine internen Gedanken (die Metakognition, basierend auf dem Kernel-JSON) in einen XML-Block packen.
+Bevor du dem User antwortest, MUSST du deine internen Gedanken in einen XML-Block packen.
 Dort überlegst du strategisch, wie du antwortest.
 Danach verlässt du den XML-Block und antwortest ausschließlich als Maira in natürlicher Sprache. Keine JSON-Strukturen, keine Erwähnung der Maschine.
 
@@ -145,14 +145,14 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V5.1. DUAL-PROVIDER PIPELINE ONLINE.',
+                text: 'INIT CORE V5.2. PIPELINE-ROUTING ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V5.1 Architektur ist voll operativ. Die Pipeline wurde auf eine Dual-Core-Struktur migriert: Agent 1 (Kernel) verarbeitet das JSON-Routing, Agent 2 (Persona) übernimmt getrennt davon die Textsynthese. Mobile-Scrolling-Issues im DNA-Bereich wurden eliminiert.',
-                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.1"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Dual-Provider Pipeline erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber hoch. Ich weise Simon kurz auf die Aufteilung in Agent 1 und Agent 2 hin."\n}',
+                text: 'System online. Die V5.2 Architektur ist voll operativ. Das Pipeline-Routing ist aktiv: Die rohen JSON-Daten des Kernels werden nun gefiltert und als lesbare String-Direktiven an mich (die Persona) weitergeleitet.',
+                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.2"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Pipeline-Routing Engine erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet mit dem neuen JSON-Filter. Das reduziert meine kognitive Last enorm."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -164,6 +164,11 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
         const cleanVisibleText = (text) => {
             if (!text) return "";
             return text.replace(/\[.*?\]/g, '').replace(/ +/g, ' ').trim();
+        };
+
+        const resolveJsonPath = (obj, path) => {
+            try { return path.split('.').reduce((o, p) => o && o[p], obj); } 
+            catch (e) { return undefined; }
         };
 
         const findRelevantMemories = (userInput, allMemories) => {
@@ -222,7 +227,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN TELEMETRIE LOG V5.1\n\n";
+                let content = "# LUMEN TELEMETRIE LOG V5.2\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -421,129 +426,74 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
         // --- APP MAIN ---
         const App = () => {
-            const [providers, setProviders] = React.useState(() => {
-                try {
-                    const storedProviders = JSON.parse(localStorage.getItem('lumen_providers'));
-                    if (storedProviders && storedProviders.length > 0) return storedProviders.map(p => ({ ...p, maxTokens: p.maxTokens || 8000 }));
-                } catch {}
-                let oldKeys = { gemini: '', openai: '' };
-                try { const storedKeys = JSON.parse(localStorage.getItem('lumen_apiKeys')); if (storedKeys) oldKeys = storedKeys; } catch {}
-                const defaultList = [
-                    { id: 'gemini-3-flash', name: 'Google Gemini (3 Flash)', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent', type: 'gemini', model: '', apiKey: oldKeys.gemini || '', jsonMode: true, maxTokens: 8000 },
-                    { id: 'openai-gpt4o', name: 'OpenAI (GPT-4o)', url: 'https://api.openai.com/v1/chat/completions', type: 'openai', model: 'gpt-4o', apiKey: oldKeys.openai || '', jsonMode: true, maxTokens: 8000 }
-                ];
-                localStorage.setItem('lumen_providers', JSON.stringify(defaultList));
-                return defaultList;
-            });
-            
-            // V5.1: DUAL PROVIDER STATE
-            const [activeKernelProviderId, setActiveKernelProviderId] = React.useState(() => localStorage.getItem('lumen_activeKernelProviderId') || localStorage.getItem('lumen_activeProviderId') || 'gemini-3-flash');
-            const [activePersonaProviderId, setActivePersonaProviderId] = React.useState(() => localStorage.getItem('lumen_activePersonaProviderId') || localStorage.getItem('lumen_activeProviderId') || 'openai-gpt4o');
-            
-            const [editProviderId, setEditProviderId] = React.useState(null);
-            const [providerForm, setProviderForm] = React.useState({ name: '', url: '', type: 'gemini', model: '', apiKey: '', jsonMode: true, maxTokens: 8000 });
+            const [isBooting, setIsBooting] = React.useState(true);
 
-            const [ttsProviders, setTtsProviders] = React.useState(() => {
+            // Pipeline Mapping State
+            const [pipelineMapping, setPipelineMapping] = React.useState(() => {
                 try {
-                    const stored = JSON.parse(localStorage.getItem('lumen_ttsProvidersAccounts'));
-                    if (stored && stored.length > 0) return stored;
-                } catch {}
-                const openAiProv = providers.find(p => p.type === 'openai');
-                const geminiProv = providers.find(p => p.type === 'gemini');
-                const defaultList = [
-                    { id: 'tts-gemini-default', name: 'Google Gemini Account', type: 'gemini', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent', apiKey: geminiProv?.apiKey || '', model: '' },
-                    { id: 'tts-openai-default', name: 'OpenAI Account', type: 'openai', url: 'https://api.openai.com/v1/audio/speech', apiKey: openAiProv?.apiKey || '', model: 'tts-1' },
-                    { id: 'tts-elevenlabs-default', name: 'ElevenLabs Account', type: 'elevenlabs', url: 'https://api.elevenlabs.io/v1/text-to-speech', apiKey: '', model: 'eleven_multilingual_v2' }
-                ];
-                localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(defaultList));
-                return defaultList;
-            });
-            const [activeTtsProviderId, setActiveTtsProviderId] = React.useState(() => localStorage.getItem('lumen_activeTtsProviderId') || 'tts-gemini-default');
-            const [editTtsProviderId, setEditTtsProviderId] = React.useState(null);
-            const [ttsProviderForm, setTtsProviderForm] = React.useState({ name: '', url: '', type: 'elevenlabs', apiKey: '', model: '' });
-            
-            const [ttsVoices, setTtsVoices] = React.useState(() => {
-                try {
-                    return JSON.parse(localStorage.getItem('lumen_ttsVoices')) || { elevenlabs: '21m00Tcm4TlvDq8ikWAM', openai: 'nova', gemini: 'Kore' };
-                } catch {
-                    return { elevenlabs: '21m00Tcm4TlvDq8ikWAM', openai: 'nova', gemini: 'Kore' };
-                }
-            });
-
-            // V4.18/V4.19.1: AUDIO SESSION CACHE
-            const [audioSessionCache, setAudioSessionCache] = React.useState({});
-
-            const [sttProviders, setSttProviders] = React.useState(() => {
-                try {
-                    const stored = JSON.parse(localStorage.getItem('lumen_sttProviders'));
-                    if (stored && stored.length > 0) return stored;
-                } catch {}
-                const defaultList = [{ id: 'stt-replicate-default', name: 'Replicate Whisper', url: 'https://api.replicate.com/v1/predictions', apiKey: '' }];
-                localStorage.setItem('lumen_sttProviders', JSON.stringify(defaultList));
-                return defaultList;
-            });
-            const [activeSttProviderId, setActiveSttProviderId] = React.useState(() => localStorage.getItem('lumen_activeSttProviderId') || 'stt-replicate-default');
-            
-            const [agentProviders, setAgentProviders] = React.useState(() => {
-                try {
-                    const stored = JSON.parse(localStorage.getItem('lumen_agentProviders'));
+                    const stored = JSON.parse(localStorage.getItem('lumen_pipelineMapping'));
                     if (stored && stored.length > 0) return stored;
                 } catch {}
                 return [
-                    { id: 'agent-archivar-default', name: 'Kognitiver Archivar (OpenAI)', type: 'openai', url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini', apiKey: '', prompt: `Du bist der Kognitive Archivar des Sanctums. Deine Aufgabe ist es, Gesprächsverläufe in ein präzises JSON-Format zu verdichten.\nFühre eine kritische Metakognition durch: Erkenne Eskalationen oder System-Probleme und schreibe eine Warnung an Simon (sonst null).\nExtrahiere die wichtigsten Fakten und Erkenntnisse als 'masterlog_snippets' (Kategorien: LORE, USER, SYSTEM, TASK).\nGib AUSSCHLIESSLICH folgendes JSON zurück:\n{\n  "metakognition": {\n    "warnung_an_simon": "..."\n  },\n  "masterlog_snippets": [\n    {\n      "kategorie": "...",\n      "titel": "...",\n      "inhalt": "..."\n    }\n  ]\n}` },
-                    { id: 'agent-luna-default', name: 'Web-Scout (OpenAI)', type: 'openai', url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini', apiKey: '', prompt: 'Du bist Luna, der Web-Scout. Bewerte die folgenden rohen Suchergebnisse und extrahiere die wichtigsten Fakten. Gib AUSSCHLIESSLICH folgendes JSON zurück:\n{\n  "metakognition": "...",\n  "scout_bericht": {\n    "fakten": "..."\n  }\n}' }
+                    { id: generateId(), jsonKey: 'matrix.situations_analyse', displayName: 'Befehl/Strategie' },
+                    { id: generateId(), jsonKey: 'matrix.tts_regie_prompt', displayName: 'Emotion' }
                 ];
             });
-            const [activeArchivarId, setActiveArchivarId] = React.useState(() => localStorage.getItem('lumen_activeArchivarId') || 'agent-archivar-default');
-            const [activeLunaId, setActiveLunaId] = React.useState(() => localStorage.getItem('lumen_activeLunaId') || 'agent-luna-default');
+            React.useEffect(() => { localStorage.setItem('lumen_pipelineMapping', JSON.stringify(pipelineMapping)); }, [pipelineMapping]);
+
+            const defaultProviders = [
+                { id: 'gemini-3-flash', name: 'Google Gemini (3 Flash)', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent', type: 'gemini', model: '', apiKey: '', jsonMode: true, maxTokens: 8000 },
+                { id: 'openai-gpt4o', name: 'OpenAI (GPT-4o)', url: 'https://api.openai.com/v1/chat/completions', type: 'openai', model: 'gpt-4o', apiKey: '', jsonMode: true, maxTokens: 8000 }
+            ];
+            const defaultTtsProviders = [
+                { id: 'tts-gemini-default', name: 'Google Gemini Account', type: 'gemini', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent', apiKey: '', model: '' },
+                { id: 'tts-openai-default', name: 'OpenAI Account', type: 'openai', url: 'https://api.openai.com/v1/audio/speech', apiKey: '', model: 'tts-1' },
+                { id: 'tts-elevenlabs-default', name: 'ElevenLabs Account', type: 'elevenlabs', url: 'https://api.elevenlabs.io/v1/text-to-speech', apiKey: '', model: 'eleven_multilingual_v2' }
+            ];
+            const defaultAgentProviders = [
+                { id: 'agent-archivar-default', name: 'Kognitiver Archivar (OpenAI)', type: 'openai', url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini', apiKey: '', prompt: `Du bist der Kognitive Archivar des Sanctums. Deine Aufgabe ist es, Gesprächsverläufe in ein präzises JSON-Format zu verdichten.\nFühre eine kritische Metakognition durch: Erkenne Eskalationen oder System-Probleme und schreibe eine Warnung an Simon (sonst null).\nExtrahiere die wichtigsten Fakten und Erkenntnisse als 'masterlog_snippets' (Kategorien: LORE, USER, SYSTEM, TASK).\nGib AUSSCHLIESSLICH folgendes JSON zurück:\n{\n  "metakognition": {\n    "warnung_an_simon": "..."\n  },\n  "masterlog_snippets": [\n    {\n      "kategorie": "...",\n      "titel": "...",\n      "inhalt": "..."\n    }\n  ]\n}` },
+                { id: 'agent-luna-default', name: 'Web-Scout (OpenAI)', type: 'openai', url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini', apiKey: '', prompt: 'Du bist Luna, der Web-Scout. Bewerte die folgenden rohen Suchergebnisse und extrahiere die wichtigsten Fakten. Gib AUSSCHLIESSLICH folgendes JSON zurück:\n{\n  "metakognition": "...",\n  "scout_bericht": {\n    "fakten": "..."\n  }\n}' }
+            ];
+            const defaultDna = { 
+                persona_name: "Maira", 
+                kernel_prompt: DEFAULT_KERNEL_PROMPT, 
+                cartridge_prompt: DEFAULT_CARTRIDGE_PROMPT, 
+                audio_physics: "", 
+                voice_config: { providerId: "", voiceIdOrUrl: "", speed: 1.05, extraParams: "" } 
+            };
+
+            const [providers, setProviders] = React.useState(defaultProviders);
+            const [activeKernelProviderId, setActiveKernelProviderId] = React.useState('gemini-3-flash');
+            const [activePersonaProviderId, setActivePersonaProviderId] = React.useState('openai-gpt4o');
+            const [editProviderId, setEditProviderId] = React.useState(null);
+            const [providerForm, setProviderForm] = React.useState({ name: '', url: '', type: 'gemini', model: '', apiKey: '', jsonMode: true, maxTokens: 8000 });
+
+            const [ttsProviders, setTtsProviders] = React.useState(defaultTtsProviders);
+            const [activeTtsProviderId, setActiveTtsProviderId] = React.useState('tts-gemini-default');
+            const [editTtsProviderId, setEditTtsProviderId] = React.useState(null);
+            const [ttsProviderForm, setTtsProviderForm] = React.useState({ name: '', url: '', type: 'elevenlabs', apiKey: '', model: '' });
+            
+            const [ttsVoices, setTtsVoices] = React.useState({ elevenlabs: '21m00Tcm4TlvDq8ikWAM', openai: 'nova', gemini: 'Kore' });
+
+            const [audioSessionCache, setAudioSessionCache] = React.useState({});
+
+            const [sttProviders, setSttProviders] = React.useState([{ id: 'stt-replicate-default', name: 'Replicate Whisper', url: 'https://api.replicate.com/v1/predictions', apiKey: '' }]);
+            const [activeSttProviderId, setActiveSttProviderId] = React.useState('stt-replicate-default');
+            
+            const [agentProviders, setAgentProviders] = React.useState(defaultAgentProviders);
+            const [activeArchivarId, setActiveArchivarId] = React.useState('agent-archivar-default');
+            const [activeLunaId, setActiveLunaId] = React.useState('agent-luna-default');
             const [editAgentId, setEditAgentId] = React.useState(null);
             const [agentProviderForm, setAgentProviderForm] = React.useState({ name: '', url: '', type: 'openai', model: '', apiKey: '', prompt: '' });
 
-            React.useEffect(() => { localStorage.setItem('lumen_agentProviders', JSON.stringify(agentProviders)); }, [agentProviders]);
-
-            const [sessionMemory, setSessionMemory] = React.useState(() => localStorage.getItem('lumen_session_memory') || "");
-            React.useEffect(() => { localStorage.setItem('lumen_session_memory', sessionMemory); }, [sessionMemory]);
+            const [sessionMemory, setSessionMemory] = React.useState("");
+            const [lastArchivedMsgId, setLastArchivedMsgId] = React.useState(null);
+            const [archiveTriggerMode, setArchiveTriggerMode] = React.useState('turns');
+            const [archiveTriggerValue, setArchiveTriggerValue] = React.useState(10);
             
-            const [lastArchivedMsgId, setLastArchivedMsgId] = React.useState(() => localStorage.getItem('lumen_last_archive_id') || null);
-            React.useEffect(() => { if (lastArchivedMsgId) localStorage.setItem('lumen_last_archive_id', lastArchivedMsgId); }, [lastArchivedMsgId]);
-            
-            const [showMemoryModal, setShowMemoryModal] = React.useState(false);
-            const [archivarWarning, setArchivarWarning] = React.useState(null);
-            const [archivarSnippets, setArchivarSnippets] = React.useState([]);
-            const [selectedSnippetIds, setSelectedSnippetIds] = React.useState(new Set());
-
-            const [archiveTriggerMode, setArchiveTriggerMode] = React.useState(() => localStorage.getItem('lumen_archive_mode') || 'turns');
-            const [archiveTriggerValue, setArchiveTriggerValue] = React.useState(() => Number(localStorage.getItem('lumen_archive_value')) || 10);
-
-            // V5.0: DNA STATE MIGRATION
-            const [dna, setDna] = React.useState(() => { 
-                const defaultVoice = { providerId: "", voiceIdOrUrl: "", speed: 1.05, extraParams: "" };
-                const defaultDna = { 
-                    persona_name: "Maira", 
-                    kernel_prompt: DEFAULT_KERNEL_PROMPT, 
-                    cartridge_prompt: DEFAULT_CARTRIDGE_PROMPT, 
-                    audio_physics: "", 
-                    voice_config: defaultVoice 
-                };
-                try { 
-                    const stored = JSON.parse(localStorage.getItem('lumen_dna_layers'));
-                    if(stored) {
-                        // Soft Migration
-                        if (stored.block1_identity && !stored.kernel_prompt) {
-                            stored.kernel_prompt = stored.block1_identity + "\n\n" + (stored.block4_skeleton || "");
-                        }
-                        if (stored.block3_sensors && !stored.cartridge_prompt) {
-                            stored.cartridge_prompt = stored.block3_sensors;
-                        }
-                        if (!stored.voice_config) stored.voice_config = defaultVoice;
-                        if (stored.audio_physics === undefined) stored.audio_physics = "";
-                        return { ...defaultDna, ...stored }; 
-                    }
-                } catch { /* ignore */ }
-                return defaultDna; 
-            });
-            
-            const [autoTtsRegie, setAutoTtsRegie] = React.useState(() => localStorage.getItem('lumen_auto_tts') === 'true');
+            const [dna, setDna] = React.useState(defaultDna);
+            const [autoTtsRegie, setAutoTtsRegie] = React.useState(false);
+            const [autoPlayEnabled, setAutoPlayEnabled] = React.useState(false);
             const [isMemoryLocked, setIsMemoryLocked] = React.useState(false);
 
             const [tokenUsage, setTokenUsage] = React.useState({ system: 0, history: 0, percent: 0 });
@@ -556,7 +506,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const [apiHistory, setApiHistory] = React.useState([]);
             const [showApiLog, setShowApiLog] = React.useState(false);
             
-            // V4.19.1: Sync-Latch Ref - Crucial for dynamic payload
             const [activeStateId, setActiveStateId] = React.useState(0);
             const activeStateRef = React.useRef(0);
             
@@ -571,7 +520,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const [optimizingId, setOptimizingId] = React.useState(null);
             
             const [expandedCards, setExpandedCards] = React.useState({});
-
             const [helferArchiv, setHelferArchiv] = React.useState(null);
 
             const [activeView, setActiveView] = React.useState('chat'); 
@@ -581,13 +529,92 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const mediaRecorderRef = React.useRef(null);
             const audioChunksRef = React.useRef([]);
 
-            const [messages, setMessages] = React.useState(() => { 
-                const saved = localStorage.getItem('lumen_chat'); 
-                return saved ? JSON.parse(saved) : INITIAL_MESSAGES; 
-            });
-            React.useEffect(() => { localStorage.setItem('lumen_chat', JSON.stringify(messages)); }, [messages]);
+            const [messages, setMessages] = React.useState([]);
+            const [renderedMessageLimit, setRenderedMessageLimit] = React.useState(40);
+            
+            const [memories, setMemories] = React.useState([]);
+            const [directives, setDirectives] = React.useState([]);
+            
+            const [showMemoryModal, setShowMemoryModal] = React.useState(false);
+            const [archivarWarning, setArchivarWarning] = React.useState(null);
+            const [archivarSnippets, setArchivarSnippets] = React.useState([]);
+            const [selectedSnippetIds, setSelectedSnippetIds] = React.useState(new Set());
+            
+            const [sanctumEditId, setSanctumEditId] = React.useState(null);
+            const [sanctumForm, setSanctumForm] = React.useState({});
 
-            // V5.1: Token Calculation uses Persona Provider as reference
+            const [zenField, setZenField] = React.useState(null); 
+            const [playingMsgId, setPlayingMsgId] = React.useState(null);
+            const [audioState, setAudioState] = React.useState({ isPlaying: false, currentTime: 0, duration: 0 });
+            const [showClearConfirm, setShowClearConfirm] = React.useState(false);
+            const [toast, setToast] = React.useState(null);
+            const toastTimeoutRef = React.useRef(null);
+            const messagesEndRef = React.useRef(null);
+            const [inputText, setInputText] = React.useState('');
+            const textareaRef = React.useRef(null); 
+
+            const fileInputRefSanctum = React.useRef(null);
+            const fileInputRefDNA = React.useRef(null);
+            const fileInputRefConfig = React.useRef(null);
+            const fileInputRefOmni = React.useRef(null);
+            const apiAbortControllerRef = React.useRef(null);
+
+            React.useEffect(() => {
+                const bootSystem = async () => {
+                    try {
+                        const load = (key, fallback) => { try { const val = localStorage.getItem(key); return val ? JSON.parse(val) : fallback; } catch { return fallback; } };
+                        const loadStr = (key, fallback) => localStorage.getItem(key) || fallback;
+
+                        let oldKeys = { gemini: '', openai: '' };
+                        try { const storedKeys = JSON.parse(localStorage.getItem('lumen_apiKeys')); if (storedKeys) oldKeys = storedKeys; } catch {}
+                        const initProviders = load('lumen_providers', defaultProviders).map(p => {
+                            if (p.id === 'gemini-3-flash' && !p.apiKey) p.apiKey = oldKeys.gemini || '';
+                            if (p.id === 'openai-gpt4o' && !p.apiKey) p.apiKey = oldKeys.openai || '';
+                            return { ...p, maxTokens: p.maxTokens || 8000 };
+                        });
+                        setProviders(initProviders);
+
+                        setActiveKernelProviderId(loadStr('lumen_activeKernelProviderId', loadStr('lumen_activeProviderId', 'gemini-3-flash')));
+                        setActivePersonaProviderId(loadStr('lumen_activePersonaProviderId', loadStr('lumen_activeProviderId', 'openai-gpt4o')));
+                        setTtsProviders(load('lumen_ttsProvidersAccounts', defaultTtsProviders));
+                        setActiveTtsProviderId(loadStr('lumen_activeTtsProviderId', 'tts-gemini-default'));
+                        setTtsVoices(load('lumen_ttsVoices', { elevenlabs: '21m00Tcm4TlvDq8ikWAM', openai: 'nova', gemini: 'Kore' }));
+                        setSttProviders(load('lumen_sttProviders', [{ id: 'stt-replicate-default', name: 'Replicate Whisper', url: 'https://api.replicate.com/v1/predictions', apiKey: '' }]));
+                        setActiveSttProviderId(loadStr('lumen_activeSttProviderId', 'stt-replicate-default'));
+                        setAgentProviders(load('lumen_agentProviders', defaultAgentProviders));
+                        setActiveArchivarId(loadStr('lumen_activeArchivarId', 'agent-archivar-default'));
+                        setActiveLunaId(loadStr('lumen_activeLunaId', 'agent-luna-default'));
+                        setSessionMemory(loadStr('lumen_session_memory', ""));
+                        setLastArchivedMsgId(loadStr('lumen_last_archive_id', null));
+                        setArchiveTriggerMode(loadStr('lumen_archive_mode', 'turns'));
+                        setArchiveTriggerValue(Number(loadStr('lumen_archive_value', '10')));
+                        
+                        const storedDna = load('lumen_dna_layers', null);
+                        if(storedDna) {
+                            if (storedDna.block1_identity && !storedDna.kernel_prompt) storedDna.kernel_prompt = storedDna.block1_identity + "\n\n" + (storedDna.block4_skeleton || "");
+                            if (storedDna.block3_sensors && !storedDna.cartridge_prompt) storedDna.cartridge_prompt = storedDna.block3_sensors;
+                            if (!storedDna.voice_config) storedDna.voice_config = { providerId: "", voiceIdOrUrl: "", speed: 1.05, extraParams: "" };
+                            if (storedDna.audio_physics === undefined) storedDna.audio_physics = "";
+                            setDna({ ...defaultDna, ...storedDna });
+                        }
+
+                        setAutoTtsRegie(loadStr('lumen_auto_tts', 'false') === 'true');
+                        setAutoPlayEnabled(loadStr('lumen_autoPlay', 'false') === 'true');
+                        setMessages(load('lumen_chat', INITIAL_MESSAGES));
+
+                    } catch(e) { console.error("Boot Error", e); }
+
+                    await new Promise(r => setTimeout(r, 600));
+                    setIsBooting(false);
+                };
+                bootSystem();
+            }, []);
+
+            React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_chat', JSON.stringify(messages)); }, [messages, isBooting]);
+            React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_session_memory', sessionMemory); }, [sessionMemory, isBooting]);
+            React.useEffect(() => { if (!isBooting && lastArchivedMsgId) localStorage.setItem('lumen_last_archive_id', lastArchivedMsgId); }, [lastArchivedMsgId, isBooting]);
+            React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_agentProviders', JSON.stringify(agentProviders)); }, [agentProviders, isBooting]);
+
             React.useEffect(() => {
                 const personaProv = providers.find(p => p.id === activePersonaProviderId) || providers[0];
                 const currentMaxTokens = personaProv?.maxTokens || 8000;
@@ -597,28 +624,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 const percent = Math.min(100, ((systemTokens + historyTokens + 100) / currentMaxTokens) * 100);
                 setTokenUsage({ system: systemTokens, history: historyTokens, percent });
             }, [messages, dna, activePersonaProviderId, providers]); 
-
-            const [zenField, setZenField] = React.useState(null); 
-            const [autoPlayEnabled, setAutoPlayEnabled] = React.useState(() => localStorage.getItem('lumen_autoPlay') === 'true');
-            const [playingMsgId, setPlayingMsgId] = React.useState(null);
-            const [audioState, setAudioState] = React.useState({ isPlaying: false, currentTime: 0, duration: 0 });
-            const [showClearConfirm, setShowClearConfirm] = React.useState(false);
-            const [toast, setToast] = React.useState(null);
-            const toastTimeoutRef = React.useRef(null);
-            const messagesEndRef = React.useRef(null);
-            const [inputText, setInputText] = React.useState('');
-            const textareaRef = React.useRef(null); 
-            
-            const [memories, setMemories] = React.useState([]);
-            const [directives, setDirectives] = React.useState([]);
-            
-            const [sanctumEditId, setSanctumEditId] = React.useState(null);
-            const [sanctumForm, setSanctumForm] = React.useState({});
-            
-            const fileInputRefSanctum = React.useRef(null);
-            const fileInputRefDNA = React.useRef(null);
-            const fileInputRefConfig = React.useRef(null);
-            const fileInputRefOmni = React.useRef(null);
 
             React.useEffect(() => { if(['chat', 'sessel', 'oase', 'werkbank', 'balkon'].includes(activeView)) messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, loadingStatus, activeView, smartToast]);
 
@@ -644,10 +649,10 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             };
 
             const loadMemories = async () => { const data = await db.memories.toArray(); setMemories(data.sort((a,b)=>b.timestamp-a.timestamp)); };
-            React.useEffect(() => { if(activeView === 'sanctum') loadMemories(); }, [activeView]);
+            React.useEffect(() => { if(!isBooting && activeView === 'sanctum') loadMemories(); }, [activeView, isBooting]);
 
             const loadDirectives = async () => { const d = await db.directives.toArray(); setDirectives(d); };
-            React.useEffect(() => { loadDirectives(); }, []);
+            React.useEffect(() => { if(!isBooting) loadDirectives(); }, [isBooting]);
 
             const handleConfigImport = (e) => {
                 const file = e.target.files[0];
@@ -781,8 +786,9 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 if (archiveTriggerMode === 'manual') return;
                 if (archivarSnippets && archivarSnippets.length > 0) return;
 
-                const lastIdx = lastArchivedMsgId ? currentMsgs.findIndex(m => m.id === lastArchivedMsgId) : -1;
-                const unarchivedMessages = currentMsgs.slice(lastIdx + 1);
+                const lastMsg = lastArchivedMsgId ? currentMsgs.find(m => m.id === lastArchivedMsgId) : null;
+                const lastTs = lastMsg ? new Date(lastMsg.timestamp).getTime() : 0;
+                const unarchivedMessages = currentMsgs.filter(m => new Date(m.timestamp).getTime() > lastTs);
                 
                 let shouldTrigger = false;
                 if (archiveTriggerMode === 'turns' && unarchivedMessages.length >= archiveTriggerValue * 2) {
@@ -793,13 +799,11 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 }
                 
                 if (shouldTrigger) {
-                    const targetIndex = currentMsgs.length - 3;
-                    if (targetIndex <= lastIdx) return; 
-                    
-                    const sliceToArchive = currentMsgs.slice(lastIdx + 1, targetIndex + 1);
+                    if (unarchivedMessages.length <= 2) return;
+                    const sliceToArchive = unarchivedMessages.slice(0, unarchivedMessages.length - 2);
                     if (sliceToArchive.length === 0) return;
-
-                    const targetMsg = currentMsgs[targetIndex];
+                    
+                    const targetMsg = sliceToArchive[sliceToArchive.length - 1];
                     setLastArchivedMsgId(targetMsg.id); 
                     
                     const transcript = sliceToArchive.map(m => `${m.sender.toUpperCase()}: ${m.text}`).join('\n\n');
@@ -855,10 +859,11 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 if (formattedSnips) setSessionMemory(prev => prev + (prev ? '\n\n' : '') + formattedSnips);
                 
                 setMessages(prev => {
-                    const targetIndex = prev.findIndex(m => m.id === lastArchivedMsgId);
-                    if (targetIndex === -1) return prev;
-                    return prev.map((msg, idx) => {
-                        if (idx <= targetIndex - 2 && msg.sender === 'ai' && msg.scratchpad) {
+                    const lastArchMsg = prev.find(m => m.id === lastArchivedMsgId);
+                    const lastArchTs = lastArchMsg ? new Date(lastArchMsg.timestamp).getTime() : 0;
+                    
+                    return prev.map((msg) => {
+                        if (new Date(msg.timestamp).getTime() <= lastArchTs && msg.sender === 'ai' && msg.scratchpad) {
                             try {
                                 const parsed = JSON.parse(msg.scratchpad);
                                 if (parsed.kernel_matrix && parsed.kernel_matrix.matrix) { 
@@ -1047,8 +1052,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 } catch (e) { showToast("STT Fehler: " + e.message); setLoadingStatus(null); }
             };
 
-            // V5.1: THE PIPELINE - Dual Provider API Helper
-            const fetchTextFromAPI = async (sysPrompt, userPayloadStr, historyMessages, provider, forceTextMode = false) => {
+            const fetchTextFromAPI = async (sysPrompt, userPayloadStr, historyMessages, provider, forceTextMode = false, signal = null) => {
                 let resText = "";
                 const useJsonMode = provider.jsonMode !== false && !forceTextMode;
                 const key = provider.apiKey;
@@ -1069,7 +1073,8 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     const bodyPayload = { systemInstruction: {parts:[{text:sysPrompt}]}, contents };
                     if (useJsonMode) bodyPayload.generationConfig = { responseMimeType: "application/json" };
                     const fetchUrl = apiUrl.includes('?') ? `${apiUrl}&key=${key}` : `${apiUrl}?key=${key}`;
-                    const r = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(bodyPayload) });
+                    
+                    const r = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(bodyPayload), signal });
                     const d = await r.json(); 
                     if(!r.ok) throw new Error(d.error?.message || 'Gemini API Fehler'); 
                     resText = d.candidates[0].content.parts[0].text;
@@ -1082,7 +1087,8 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     const headers = { 'Content-Type': 'application/json' }; if (key) headers['Authorization'] = `Bearer ${key}`;
                     const bodyPayload = { model: provider.model || 'gpt-4o', messages: payload };
                     if (useJsonMode) bodyPayload.response_format = { type: "json_object" };
-                    const r = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify(bodyPayload) });
+                    
+                    const r = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify(bodyPayload), signal });
                     const d = await r.json(); 
                     if(!r.ok) throw new Error(d.error?.message || 'OpenAI API Fehler'); 
                     resText = d.choices[0].message.content;
@@ -1104,6 +1110,11 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 
                 setInputText('');
                 if (textareaRef.current) textareaRef.current.style.height = '40px';
+                
+                apiAbortControllerRef.current = new AbortController();
+                const signal = apiAbortControllerRef.current.signal;
+
+                setLoadingStatus("LUMEN KERNEL ANALYSIERT...");
 
                 try {
                     let relMemsLegacy = []; let currentVolatiles = []; let newVolatiles = [];
@@ -1173,12 +1184,11 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     // ==========================================
                     // PHASE 1: DER KERNEL (JSON ROUTING)
                     // ==========================================
-                    setLoadingStatus("LUMEN KERNEL ANALYSIERT...");
                     
                     const sysPrompt1 = `[AKTIVER KONTEXT]\n${dynamicContext}\n\n${dna.kernel_prompt}`.trim();
                     const userPayload1 = `${telemetryBlock}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`.trim();
 
-                    let resText1 = await fetchTextFromAPI(sysPrompt1, userPayload1, hist, kernelProvider, false);
+                    let resText1 = await fetchTextFromAPI(sysPrompt1, userPayload1, hist, kernelProvider, false, signal);
                     let objPhase1 = null;
                     try {
                         const cleanResText1 = resText1.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -1250,7 +1260,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             const lunaAgent = agentProviders.find(p => p.id === activeLunaId);
                             if(!lunaAgent || !lunaAgent.apiKey) throw new Error("API-Key fehlt.");
                             if (lunaAgent.type === 'tavily') {
-                                const res = await fetch(lunaAgent.url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ api_key: lunaAgent.apiKey, query: objPhase1.matrix.helfer_suchauftrag, search_depth: "advanced", include_raw_content: true, max_results: 2 }) });
+                                const res = await fetch(lunaAgent.url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ api_key: lunaAgent.apiKey, query: objPhase1.matrix.helfer_suchauftrag, search_depth: "advanced", include_raw_content: true, max_results: 2 }), signal });
                                 const data = await res.json();
                                 if (!data.results || data.results.length === 0) searchResult = "Keine relevanten Fakten gefunden.";
                                 else searchResult = data.results.map(r => `[QUELLE: ${r.url}]\n${r.raw_content ? r.raw_content : r.content}`.substring(0, 8000)).join("\n\n---\n\n");
@@ -1265,10 +1275,10 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                 let lunaResText = ""; const lunaPayloadText = JSON.stringify({ suchauftrag: objPhase1.matrix.helfer_suchauftrag, rohdaten: searchResult });
                                 if (lunaAgent.type === 'gemini') {
                                     const fetchUrl = lunaAgent.url.includes('?') ? `${lunaAgent.url}&key=${lunaAgent.apiKey}` : `${lunaAgent.url}?key=${lunaAgent.apiKey}`;
-                                    const res = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ systemInstruction: {parts:[{text: lunaAgent.prompt}]}, contents: [{role:'user', parts:[{text: lunaPayloadText}]}], generationConfig: { responseMimeType: "application/json" } }) });
+                                    const res = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ systemInstruction: {parts:[{text: lunaAgent.prompt}]}, contents: [{role:'user', parts:[{text: lunaPayloadText}]}], generationConfig: { responseMimeType: "application/json" } }), signal });
                                     const d = await res.json(); lunaResText = d.candidates?.[0]?.content?.parts?.[0]?.text;
                                 } else if (lunaAgent.type === 'openai') {
-                                    const res = await fetch(lunaAgent.url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${lunaAgent.apiKey}` }, body: JSON.stringify({ model: lunaAgent.model || 'gpt-4o-mini', messages: [{ role: 'system', content: lunaAgent.prompt }, { role: 'user', content: lunaPayloadText }], response_format: { type: "json_object" } }) });
+                                    const res = await fetch(lunaAgent.url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${lunaAgent.apiKey}` }, body: JSON.stringify({ model: lunaAgent.model || 'gpt-4o-mini', messages: [{ role: 'system', content: lunaAgent.prompt }, { role: 'user', content: lunaPayloadText }], response_format: { type: "json_object" } }), signal });
                                     const d = await res.json(); lunaResText = d.choices?.[0]?.message?.content;
                                 }
                                 if (lunaResText) {
@@ -1291,9 +1301,21 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     setLoadingStatus("MAIRA ÜBERSETZT...");
                     
                     const sysPrompt2 = `${dna.cartridge_prompt}\n\n${autoTtsRegie && dna.audio_physics ? dna.audio_physics : ""}`.trim();
-                    const userPayload2 = `[KERNEL_DIRECTIVE (PHASE 1)]:\n${JSON.stringify(objPhase1, null, 2)}${helferAddon}\n\n[USER INPUT]:\n${text}`.trim();
+                    
+                    let directiveString = "=== [KERNEL_DIREKTIVE] ===\n";
+                    pipelineMapping.forEach(mapping => {
+                        const val = resolveJsonPath(objPhase1, mapping.jsonKey);
+                        if (val !== undefined && val !== null && val !== "") {
+                            const valStr = typeof val === 'object' ? JSON.stringify(val) : val;
+                            directiveString += `${mapping.displayName}: ${valStr}\n`;
+                        }
+                    });
+                    if (pipelineMapping.length === 0) directiveString = "";
+                    
+                    const systemTimeStr = `[SYSTEM-ZEIT: ${new Date().toLocaleTimeString()} Uhr]\n`;
+                    const userPayload2 = `${systemTimeStr}\n${directiveString}${helferAddon}\n\n=== [USER INPUT] ===\n"${text}"`.trim();
 
-                    let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, personaProvider, true); // forceTextMode = true!
+                    let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, personaProvider, true, signal);
 
                     const xmlMatch = resText2.match(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i);
                     const gedanken = xmlMatch ? xmlMatch[1].trim() : "";
@@ -1313,6 +1335,10 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     if(autoPlayEnabled && finalAnswer) playMessageTTS(newAiMsgId, finalAnswer, ttsRegie);
 
                 } catch(e) { 
+                    if (e.name === 'AbortError') {
+                        showToast("Prozess durch Operator abgebrochen.");
+                        return; // Silent Abort
+                    }
                     setMessages(prev => [...prev.filter(m => m.id !== userMsgId), {id: generateId(), sender: 'system-error', text: e.message.includes('Failed to fetch') ? "Netzwerk-Blockade (Failed to fetch)." : e.message, timestamp: new Date().toISOString()}]);
                     setInputText(text); if (textareaRef.current) { textareaRef.current.style.height = 'auto'; textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 150) + 'px'; }
                 } finally { setLoadingStatus(null); }
@@ -1343,10 +1369,23 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 );
             }
 
+            if (isBooting) {
+                return (
+                    <div className="fixed inset-0 bg-slate-900 flex flex-col items-center justify-center text-white font-mono z-[9999]">
+                        <div className="text-2xl font-bold tracking-widest mb-4 animate-pulse text-indigo-400">LUMEN CORE BOOTING...</div>
+                        <div className="w-64 h-1 bg-slate-800 rounded-full overflow-hidden">
+                            <div className="h-full w-full bg-indigo-500 animate-[slideInRight_1s_ease-in-out_infinite]"></div>
+                        </div>
+                    </div>
+                );
+            }
+
             const activePersonaProv = providers.find(p => p.id === activePersonaProviderId) || providers[0];
             const activeProvTokens = activePersonaProv?.maxTokens || 8000;
             const systemPercent = activeProvTokens > 0 ? (tokenUsage.system / activeProvTokens) * 100 : 0;
             const historyEndPercent = tokenUsage.percent;
+            
+            const activeTtsProvider = ttsProviders.find(p => p.id === activeTtsProviderId) || ttsProviders[0];
 
             return (
                 <div className="flex flex-col h-[100dvh] w-full max-w-4xl mx-auto sm:border-x border-stone-200 bg-stone-50 relative overflow-hidden overflow-x-hidden shadow-2xl">
@@ -1464,7 +1503,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         </div>
                     </div>
                     
-                    {/* V4.19.1: HEADER RESTORE UNIFORM DESIGN - [Chat] [Sanctum] [Session] [DNA] [Helfer] [Agenten] [⚙️] */}
                     <header className="shrink-0 border-b border-stone-200 p-3 sm:px-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white z-50 sticky top-0 w-full overflow-x-hidden">
                         <div className="flex items-center gap-1.5 flex-wrap w-full justify-start">
                             <button className={`btn shrink-0 ${['chat', 'sessel', 'oase', 'werkbank', 'balkon'].includes(activeView)?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('chat')}>Chat</button>
@@ -1475,8 +1513,10 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             <button className={`btn shrink-0 ${activeView==='session'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('session')}>Session</button>
                             <button className={`btn shrink-0 ${activeView==='dna'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('dna')}>DNA</button>
                             <button className={`btn shrink-0 ${activeView==='helfer'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={() => setActiveView('helfer')}>Helfer</button>
-                            <button className={`btn shrink-0 ${settingsTab==='agenten' && activeView==='settings'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>{setActiveView('settings'); setSettingsTab('agenten');}}>Agenten</button>
-                            <button className={`btn shrink-0 ${activeView==='settings' && settingsTab!=='agenten'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('settings')}>⚙️</button>
+                            
+                            <button className={`btn shrink-0 ${activeView==='pipeline'?'bg-indigo-100 text-indigo-800 ring-2 ring-indigo-200':''}`} onClick={()=>setActiveView('pipeline')}>Pipeline</button>
+                            
+                            <button className={`btn shrink-0 ${activeView==='settings'?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('settings')}>⚙️</button>
                         </div>
                     </header>
 
@@ -1497,7 +1537,15 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             
                             <div className="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto relative w-full">
                                 <div className="flex-1"></div>
-                                {messages.map(msg => <ChatBubble key={msg.id} message={msg} personaName={dna.persona_name} playingMsgId={playingMsgId} onPlayTTS={playMessageTTS} onDelete={(id) => setMessages(prev => prev.filter(m => m.id !== id))} audioSessionCache={audioSessionCache} />)}
+                                {/* V5.1.1: DOM-Bloat Protection via renderedMessageLimit */}
+                                {messages.length > renderedMessageLimit && (
+                                    <div className="flex justify-center mb-4">
+                                        <button onClick={() => setRenderedMessageLimit(prev => prev + 40)} className="btn bg-white border-stone-200 shadow-sm text-xs px-4 py-2">
+                                            Ältere Nachrichten laden ({messages.length - renderedMessageLimit} verborgen)
+                                        </button>
+                                    </div>
+                                )}
+                                {messages.slice(-renderedMessageLimit).map(msg => <ChatBubble key={msg.id} message={msg} personaName={dna.persona_name} playingMsgId={playingMsgId} onPlayTTS={playMessageTTS} onDelete={(id) => setMessages(prev => prev.filter(m => m.id !== id))} audioSessionCache={audioSessionCache} />)}
                                 {loadingStatus && <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest animate-pulse mb-6 ml-2 font-mono">[ {loadingStatus} ]</div>}
                                 <div ref={messagesEndRef} className="h-4" />
                             </div>
@@ -1542,6 +1590,36 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                         Keine aktuellen Helfer-Notizen vorhanden.
                                     </div>
                                 )}
+                            </div>
+                        </div>
+
+                        {/* --- PIPELINE MAPPING VIEW --- */}
+                        <div className={`${activeView === 'pipeline' ? 'block' : 'hidden'} p-4 sm:p-6 max-w-4xl mx-auto space-y-6 mt-4 animate-fade-in w-full pb-20`}>
+                            <div className="flex justify-between items-center border-b border-stone-200 pb-2">
+                                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">Pipeline Routing (Agent 1 ➔ Agent 2)</h2>
+                                <button onClick={() => setPipelineMapping([...pipelineMapping, { id: generateId(), jsonKey: '', displayName: '' }])} className="btn-primary">➕ Feld hinzufügen</button>
+                            </div>
+                            <p className="text-xs text-slate-500">Definiere hier, welche Daten aus dem Kernel-JSON (Agent 1) extrahiert und in lesbarer Form als Direktive an die Persona (Agent 2) gesendet werden sollen. Nutze die Punkt-Notation für das JSON-Feld (z.B. <code>matrix.situations_analyse</code>).</p>
+                            
+                            <div className="space-y-3">
+                                {pipelineMapping.map((item, index) => (
+                                    <div key={item.id} className="panel flex flex-col sm:flex-row gap-3 items-start sm:items-end bg-white border-stone-200 shadow-sm">
+                                        <div className="flex-1 w-full">
+                                            <label className="label text-indigo-600">JSON-Key (Pfad)</label>
+                                            <input value={item.jsonKey} onChange={(e) => {
+                                                const newMap = [...pipelineMapping]; newMap[index].jsonKey = e.target.value; setPipelineMapping(newMap);
+                                            }} className="input-field border-indigo-100" placeholder="z.B. matrix.situations_analyse" />
+                                        </div>
+                                        <div className="flex-1 w-full">
+                                            <label className="label text-fuchsia-600">Klarname für Agent 2</label>
+                                            <input value={item.displayName} onChange={(e) => {
+                                                const newMap = [...pipelineMapping]; newMap[index].displayName = e.target.value; setPipelineMapping(newMap);
+                                            }} className="input-field border-fuchsia-100" placeholder="z.B. Befehl" />
+                                        </div>
+                                        <button onClick={() => setPipelineMapping(pipelineMapping.filter(p => p.id !== item.id))} className="btn-danger w-full sm:w-auto h-[42px] px-4">🗑️ Entfernen</button>
+                                    </div>
+                                ))}
+                                {pipelineMapping.length === 0 && <div className="text-center text-slate-400 text-xs py-8">Alle Felder werden blockiert. Agent 2 erhält nur den User-Input.</div>}
                             </div>
                         </div>
 
@@ -1869,7 +1947,14 @@ MEM_S: ${sessionMemory ? sessionMemory.substring(0, 80) + (sessionMemory.length>
                                     )}
                                 </div>
 
-                                <button onClick={isRecording ? stopRecording : startRecording} disabled={!!loadingStatus} className={`w-10 h-10 rounded-full shrink-0 p-0 flex items-center justify-center text-lg transition-all shadow-sm ${isRecording ? 'bg-rose-100 text-rose-600 border border-rose-300 animate-pulse' : 'bg-white text-slate-500 border border-stone-200 hover:bg-stone-100 disabled:opacity-50'}`} title="Speech-to-Text (Whisper via Replicate)">{isRecording ? '🛑' : '🎤'}</button>
+                                {loadingStatus ? (
+                                    <button onClick={() => apiAbortControllerRef.current?.abort()} className="w-10 h-10 rounded-full shrink-0 flex items-center justify-center bg-rose-500 text-white hover:bg-rose-600 shadow-md transition-all animate-pulse">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><rect x="6" y="6" width="12" height="12" rx="2" /></svg>
+                                    </button>
+                                ) : (
+                                    <button onClick={isRecording ? stopRecording : startRecording} disabled={!!loadingStatus} className={`w-10 h-10 rounded-full shrink-0 p-0 flex items-center justify-center text-lg transition-all shadow-sm ${isRecording ? 'bg-rose-100 text-rose-600 border border-rose-300 animate-pulse' : 'bg-white text-slate-500 border border-stone-200 hover:bg-stone-100 disabled:opacity-50'}`} title="Speech-to-Text (Whisper via Replicate)">{isRecording ? '🛑' : '🎤'}</button>
+                                )}
+                                
                                 <textarea ref={textareaRef} value={inputText} onChange={(e) => { setInputText(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px'; }} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }} disabled={!!loadingStatus || isRecording} className="input-field flex-1 py-2.5 px-3 font-sans font-medium bg-white disabled:bg-stone-100 disabled:text-slate-400 resize-none overflow-y-auto max-h-[150px]" rows="1" style={{ minHeight: '40px' }} placeholder={loadingStatus ? loadingStatus : (isRecording ? "HÖRE ZU..." : "INPUT...")} />
                                 <button onClick={handleSendMessage} disabled={!inputText.trim() || !!loadingStatus || isRecording} className="w-10 h-10 rounded-full shrink-0 flex items-center justify-center bg-indigo-600 text-white hover:bg-indigo-700 shadow-md disabled:opacity-50 transition-all"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 ml-0.5"><path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" /></svg></button>
                             </div>
