@@ -1189,6 +1189,8 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     const userPayload1 = `${telemetryBlock}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`.trim();
 
                     let resText1 = await fetchTextFromAPI(sysPrompt1, userPayload1, hist, kernelProvider, false, signal);
+                    setApiHistory(prev => [...prev, { id: generateId(), type: 'AGENT 1 (KERNEL)', timestamp: Date.now(), request: { system: sysPrompt1, user: userPayload1 }, response: resText1 }].slice(-30));
+                    
                     let objPhase1 = null;
                     try {
                         const cleanResText1 = resText1.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -1315,7 +1317,8 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     const systemTimeStr = `[SYSTEM-ZEIT: ${new Date().toLocaleTimeString()} Uhr]\n`;
                     const userPayload2 = `${systemTimeStr}\n${directiveString}${helferAddon}\n\n=== [USER INPUT] ===\n"${text}"`.trim();
 
-                    let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, personaProvider, true, signal);
+                    let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, personaProvider, true, signal); // forceTextMode = true!
+                    setApiHistory(prev => [...prev, { id: generateId(), type: 'AGENT 2 (PERSONA)', timestamp: Date.now(), request: { system: sysPrompt2, user: userPayload2 }, response: resText2 }].slice(-30));
 
                     const xmlMatch = resText2.match(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i);
                     const gedanken = xmlMatch ? xmlMatch[1].trim() : "";
@@ -1328,9 +1331,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
                     const newAiMsgId = generateId();
                     setMessages(p=>[...p, {id:newAiMsgId, sender:'ai', text:finalAnswer, scratchpad:finalScratch, ttsRegie: ttsRegie, timestamp: new Date().toISOString()}]);
-                    
-                    const newEntry = { id: generateId(), timestamp: new Date().toISOString(), request: { system: sysPrompt2, user: userPayload2 }, response: resText2 };
-                    setApiHistory(prev => [newEntry, ...prev].slice(0, 5));
                     
                     if(autoPlayEnabled && finalAnswer) playMessageTTS(newAiMsgId, finalAnswer, ttsRegie);
 
@@ -1391,34 +1391,60 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 <div className="flex flex-col h-[100dvh] w-full max-w-4xl mx-auto sm:border-x border-stone-200 bg-stone-50 relative overflow-hidden overflow-x-hidden shadow-2xl">
                     <Toast message={toast} />
                     
-                    {showTelemetry && <TelemetryModal messages={messages} onClose={() => setShowTelemetry(false)} />}
-
-                    {/* --- V5.0 API PROTOKOLL MODAL --- */}
+                    {/* --- V5.1 API PROTOKOLL MODAL (CHAT-FEED STYLE) --- */}
                     {showApiLog && (
                         <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
-                            <div className="bg-white w-full max-w-4xl max-h-[85vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
-                                <div className="p-4 border-b border-stone-100 flex justify-between items-center bg-slate-50">
-                                    <h3 className="font-bold text-indigo-600 uppercase text-xs tracking-widest flex items-center gap-2">API PROTOKOLL (LETZTE 5 CALLS)</h3>
-                                    <button onClick={() => setShowApiLog(false)} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
+                            <div className="bg-stone-50 w-full max-w-5xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
+                                <div className="p-4 border-b border-stone-200 flex justify-between items-center bg-white shrink-0">
+                                    <h3 className="font-bold text-indigo-600 uppercase text-xs tracking-widest flex items-center gap-2">
+                                        🔍 API PROTOKOLL (LIVE FEED)
+                                    </h3>
+                                    <div className="flex gap-2 items-center">
+                                        <button onClick={() => setApiHistory([])} className="btn py-1 px-3 hover:text-rose-600 border-stone-200">🗑️ Clear</button>
+                                        <button onClick={() => setShowApiLog(false)} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm ml-2">✕</button>
+                                    </div>
                                 </div>
-                                <div className="flex-1 overflow-y-auto p-6 flex flex-col text-[11px] font-mono gap-8 bg-stone-50">
-                                    {apiHistory.length === 0 && <div className="text-slate-400 italic text-center py-8">Noch keine API-Aufrufe in dieser Session.</div>}
-                                    {apiHistory.map((log, i) => (
-                                        <div key={log.id || i} className="border border-stone-200 rounded-xl bg-white shadow-sm relative overflow-hidden max-w-full">
-                                            <div className="bg-stone-100 border-b border-stone-200 px-4 py-2 text-[10px] text-stone-500 font-bold uppercase tracking-widest flex justify-between">
-                                                <span>CALL {apiHistory.length - i}</span>
-                                                <span>{new Date(log.timestamp).toLocaleTimeString('de-DE')}</span>
-                                            </div>
-                                            <div className="p-6 whitespace-pre-wrap break-words leading-relaxed">
-                                                <span className="text-blue-600 font-medium">{log.request.system}</span>
-                                                <span className="text-slate-800 font-bold">{`\n\n${log.request.user}`}</span>
-                                                <span className="text-emerald-600">{`\n\n=== [API RESPONSE] ===\n${log.response}`}</span>
-                                            </div>
+                                
+                                <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-6" ref={(el) => { if (el) el.scrollTop = el.scrollHeight; }}>
+                                    {apiHistory.length === 0 && (
+                                        <div className="flex items-center justify-center h-full text-slate-400 italic text-xs">
+                                            Warte auf API-Traffic...
                                         </div>
-                                    ))}
-                                </div>
-                                <div className="p-4 border-t border-stone-100 bg-slate-50">
-                                    <button onClick={() => setShowApiLog(false)} className="btn w-full py-3 bg-white text-slate-700 shadow-sm text-xs">Schließen</button>
+                                    )}
+                                    
+                                    {apiHistory.map((log) => {
+                                        const isKernel = log.type.includes('KERNEL');
+                                        return (
+                                            <div key={log.id} className={`flex flex-col w-full max-w-4xl mx-auto ${isKernel ? 'items-start' : 'items-end'}`}>
+                                                <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 px-2 flex items-center gap-2">
+                                                    {log.type} <span className="font-mono font-normal opacity-60">{new Date(log.timestamp).toLocaleTimeString('de-DE')}</span>
+                                                </div>
+                                                
+                                                <div className={`p-4 sm:p-5 rounded-3xl shadow-sm border w-full text-xs font-mono whitespace-pre-wrap break-words leading-relaxed ${isKernel ? 'bg-white border-emerald-200 text-slate-700 rounded-tl-sm' : 'bg-slate-800 border-indigo-500 text-slate-300 rounded-tr-sm'}`}>
+                                                    
+                                                    <div className="mb-4">
+                                                        <div className={`text-[9px] font-bold uppercase tracking-widest mb-1.5 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[1] SYSTEM PROMPT (STATIC INSTRUCTIONS)</div>
+                                                        <div className="opacity-90">{log.request.system}</div>
+                                                    </div>
+                                                    
+                                                    <div className="mb-4 pt-4 border-t border-dashed border-slate-500/30">
+                                                        <div className={`text-[9px] font-bold uppercase tracking-widest mb-1.5 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[2] USER PAYLOAD (DYNAMIC DIRECTIVES)</div>
+                                                        <div className={isKernel ? 'text-slate-900 font-bold' : 'text-white font-bold'}>
+                                                            {log.request.user}
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div className={`pt-4 border-t border-dashed border-slate-500/30 ${isKernel ? 'bg-emerald-50/50 -mx-4 sm:-mx-5 -mb-4 sm:-mb-5 p-4 sm:p-5 rounded-b-3xl' : 'bg-indigo-900/30 -mx-4 sm:-mx-5 -mb-4 sm:-mb-5 p-4 sm:p-5 rounded-b-3xl'}`}>
+                                                        <div className={`text-[9px] font-bold uppercase tracking-widest mb-1.5 ${isKernel ? 'text-emerald-700' : 'text-fuchsia-400'}`}>[3] API RESPONSE</div>
+                                                        <div className={isKernel ? 'text-emerald-900' : 'text-fuchsia-100'}>
+                                                            {log.response}
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
@@ -1485,10 +1511,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                             {playingMsgId && <button onClick={stopAudio} className="text-[9px] font-mono uppercase tracking-widest text-rose-500 hover:text-rose-600 transition-colors animate-pulse border border-rose-200 px-2 rounded">🛑 STOP AUDIO</button>}
                             
-                            <button onClick={() => setShowTelemetry(true)} className="text-[9px] font-mono uppercase tracking-widest text-slate-500 hover:text-indigo-500 transition-colors">
-                                📊 LOGS
-                            </button>
-                            
                             <button onClick={() => { const newVal = !autoPlayEnabled; setAutoPlayEnabled(newVal); localStorage.setItem('lumen_autoPlay', String(newVal)); }} className="text-[9px] font-mono uppercase tracking-widest text-slate-500 hover:text-slate-700 transition-colors hidden sm:block">{autoPlayEnabled ? '🔈 AUTO-PLAY: ON' : '🔈 AUTO-PLAY: OFF'}</button>
                             
                             {!showClearConfirm ? (
@@ -1503,6 +1525,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         </div>
                     </div>
                     
+                    {/* V4.19.1: HEADER RESTORE UNIFORM DESIGN - [Chat] [Sanctum] [Session] [DNA] [Helfer] [Agenten] [⚙️] */}
                     <header className="shrink-0 border-b border-stone-200 p-3 sm:px-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white z-50 sticky top-0 w-full overflow-x-hidden">
                         <div className="flex items-center gap-1.5 flex-wrap w-full justify-start">
                             <button className={`btn shrink-0 ${['chat', 'sessel', 'oase', 'werkbank', 'balkon'].includes(activeView)?'bg-stone-100 text-slate-800 ring-2 ring-stone-200':''}`} onClick={()=>setActiveView('chat')}>Chat</button>
@@ -1920,7 +1943,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                         onClick={handleTokenClick} 
                                         title={`API-Protokoll & Tokens (System: ${tokenUsage.system}, Hist: ${tokenUsage.history})`}
                                         className={`w-10 h-10 shrink-0 flex items-center justify-center rounded-xl border transition-all shadow-sm ${tokenUsage.percent >= 90 ? 'border-rose-400 animate-pulse' : 'border-stone-200'} ${tokenUsage.percent > 50 ? 'text-white' : 'text-slate-500'}`}
-                                        style={{ background: `linear-gradient(to top, #3b82f6 0%, #3b82f6 ${systemPercent}%, #94a3b8 ${systemPercent}%, #94a3b8 ${historyEndPercent}%, #ffffff ${historyEndPercent}%, #ffffff 100%)` }}
+                                        style={{ background: `linear-gradient(to top, #818cf8 0%, #818cf8 ${systemPercent}%, #c7d2fe ${systemPercent}%, #c7d2fe ${historyEndPercent}%, transparent ${historyEndPercent}%, transparent 100%)` }}
                                     >
                                         🪙
                                     </button>
