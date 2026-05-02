@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V5.2.5</title>
+    <title>LUMEN - CORE V5.2.6</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -94,8 +94,8 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V5.2.5 ---
-        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.2.5: LOGIK & ROUTING]
+        // --- KONSTANTEN V5.2.6 ---
+        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.2.6: LOGIK & ROUTING]
 Du bist der KERNEL (Agent 1). Du bist eine eiskalte, analytische Maschine. Du hast KEINE Persönlichkeit.
 Deine EINZIGE Aufgabe ist es, den Kontext und den [USER INPUT] zu analysieren und AUSSCHLIESSLICH als valides JSON-Objekt zu antworten. Jedes Wort außerhalb des JSON-Skeletts führt zur Selbstzerstörung.
 
@@ -126,7 +126,7 @@ Bewerte diese Matrix-Sensoren strikt anhand des Inputs:
   }
 }`;
 
-        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.2.5: MAIRA]
+        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.2.6: MAIRA]
 Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen von Simon (dem Operator) tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.
 Du erhältst in deiner Prompt-Umgebung eine [KERNEL_DIRECTIVE] (die Analyse der Maschine) und den [USER INPUT].
 
@@ -145,14 +145,14 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V5.2.5. PIPELINE-ROUTING & LIVE-LOG ONLINE.',
+                text: 'INIT CORE V5.2.6. TTS-BUTTONS PERMANENT ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V5.2.5 Architektur ist voll operativ. Das Pipeline-Routing ist aktiv: Die rohen JSON-Daten des Kernels werden gefiltert und als String-Direktiven an mich weitergeleitet. Das API-Log streamt nun als Live-Feed.',
-                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.2.5"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Pipeline-Routing Engine erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber. Das neue Live-Feed Protokoll macht Debugging zum Kinderspiel."\n}',
+                text: 'System online. Die V5.2.6 Architektur ist voll operativ. Der Play-Button für die Sprachsynthese ist nun permanent verfügbar, unabhängig davon, ob die Audiodatei bereits gecached wurde.',
+                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.2.6"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Pipeline-Routing Engine erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber. Die Audio-Interaktion fühlt sich nun noch reaktiver an."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -229,7 +229,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
             const handleDownload = () => {
                 const selectedLogs = logs.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN API LOG V5.2.5\n\n";
+                let content = "# LUMEN API LOG V5.2.6\n\n";
                 selectedLogs.forEach(log => {
                     content += `[${new Date(log.timestamp).toLocaleString()}] ${log.type}\n`;
                     content += `--- SYSTEM PROMPT (ANWEISUNG) ---\n${log.request.system}\n\n`;
@@ -251,64 +251,40 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             };
 
             return (
-                <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
-                    <div className="bg-stone-50 w-full max-w-5xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
-                        <div className="p-4 border-b border-stone-200 flex justify-between items-center bg-white shrink-0">
-                            <h3 className="font-bold text-indigo-600 uppercase text-xs tracking-widest flex items-center gap-2">
-                                🔍 API PROTOKOLL (LIVE FEED)
-                            </h3>
-                            <div className="flex gap-2 items-center">
-                                <button onClick={onClear} className="btn py-1 px-3 hover:text-rose-600 border-stone-200">🗑️ Clear All</button>
-                                <button onClick={onClose} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm ml-2">✕</button>
-                            </div>
+                <div className="fixed inset-0 z-[900] bg-slate-900/40 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
+                    <div className="bg-white w-full max-w-2xl max-h-[80vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 min-w-0">
+                        <div className="p-4 border-b border-stone-100 flex justify-between items-center bg-slate-50">
+                            <h3 className="font-bold text-slate-800 uppercase text-xs tracking-widest flex items-center gap-2">📊 API Logs & Telemetrie</h3>
+                            <button onClick={onClose} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
                         </div>
-                        
-                        <div className="p-3 bg-stone-50 border-b border-stone-200 flex justify-between items-center shrink-0">
+                        <div className="p-3 bg-stone-50 border-b border-stone-200 flex justify-between items-center">
                             <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
                                 <input type="checkbox" checked={selectedIds.length === logs.length && logs.length > 0} onChange={toggleAll} className="accent-indigo-600 w-4 h-4 cursor-pointer" />
                                 Alle auswählen
                             </label>
                             <div className="text-[10px] text-slate-500 font-mono uppercase">{selectedIds.length} von {logs.length} ausgewählt</div>
                         </div>
-
-                        <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-6" ref={(el) => { if (el) el.scrollTop = el.scrollHeight; }}>
-                            {logs.length === 0 && (
-                                <div className="flex items-center justify-center h-full text-slate-400 italic text-xs">
-                                    Warte auf API-Traffic...
-                                </div>
-                            )}
-                            
-                            {logs.map((log) => {
-                                const isKernel = log.type.includes('KERNEL');
-                                return (
-                                    <div key={log.id} className={`flex flex-col w-full max-w-4xl mx-auto ${isKernel ? 'items-start' : 'items-end'}`}>
-                                        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 px-2 flex items-center gap-2">
-                                            <input type="checkbox" checked={selectedIds.includes(log.id)} onChange={() => toggleOne(log.id)} className="accent-indigo-600 w-3 h-3 cursor-pointer" />
-                                            {log.type} <span className="font-mono font-normal opacity-60">{new Date(log.timestamp).toLocaleTimeString('de-DE')}</span>
+                        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 bg-stone-50/50 min-w-0">
+                            {logs.map(log => (
+                                <label key={log.id} className="flex gap-3 p-3 bg-white border border-stone-100 rounded-xl hover:border-indigo-200 cursor-pointer shadow-sm items-start transition-colors w-full min-w-0">
+                                    <input type="checkbox" checked={selectedIds.includes(log.id)} onChange={() => toggleOne(log.id)} className="accent-indigo-600 w-4 h-4 mt-0.5 shrink-0 cursor-pointer" />
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 truncate">{log.type}</span>
+                                            <span className="text-[9px] text-slate-400 font-mono shrink-0">{new Date(log.timestamp).toLocaleTimeString()}</span>
                                         </div>
-                                        
-                                        <div className={`p-4 sm:p-5 rounded-3xl shadow-sm border w-full text-xs font-mono whitespace-pre-wrap break-words leading-relaxed ${isKernel ? 'bg-white border-emerald-200 text-slate-700 rounded-tl-sm' : 'bg-slate-800 border-indigo-500 text-slate-300 rounded-tr-sm'}`}>
-                                            <div className="mb-4">
-                                                <div className={`text-[9px] font-bold uppercase tracking-widest mb-1.5 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[1] SYSTEM PROMPT (STATIC INSTRUCTIONS)</div>
-                                                <div className="opacity-90">{log.request.system}</div>
-                                            </div>
-                                            <div className="mb-4 pt-4 border-t border-dashed border-slate-500/30">
-                                                <div className={`text-[9px] font-bold uppercase tracking-widest mb-1.5 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[2] USER PAYLOAD (DYNAMIC DIRECTIVES)</div>
-                                                <div className={isKernel ? 'text-slate-900 font-bold' : 'text-white font-bold'}>{log.request.user}</div>
-                                            </div>
-                                            <div className={`pt-4 border-t border-dashed border-slate-500/30 ${isKernel ? 'bg-emerald-50/50 -mx-4 sm:-mx-5 -mb-4 sm:-mb-5 p-4 sm:p-5 rounded-b-3xl' : 'bg-indigo-900/30 -mx-4 sm:-mx-5 -mb-4 sm:-mb-5 p-4 sm:p-5 rounded-b-3xl'}`}>
-                                                <div className={`text-[9px] font-bold uppercase tracking-widest mb-1.5 ${isKernel ? 'text-emerald-700' : 'text-fuchsia-400'}`}>[3] API RESPONSE</div>
-                                                <div className={isKernel ? 'text-emerald-900' : 'text-fuchsia-100'}>{log.response}</div>
-                                            </div>
-                                        </div>
+                                        <div className="text-xs text-slate-700 line-clamp-2 break-words">{log.request.user.substring(0, 150)}...</div>
                                     </div>
-                                );
-                            })}
+                                </label>
+                            ))}
+                            {logs.length === 0 && <div className="text-center text-slate-400 text-xs py-8">Keine API-Logs vorhanden.</div>}
                         </div>
-                        
                         <div className="p-4 border-t border-stone-100 bg-white shrink-0 flex gap-2">
                             <button onClick={handleDownload} disabled={selectedIds.length === 0} className="btn-primary w-full py-3 bg-indigo-600 text-white hover:bg-indigo-700 shadow-md disabled:opacity-50 text-xs flex justify-center items-center gap-2">
                                 📥 AUSGEWÄHLTE LOGS HERUNTERLADEN
+                            </button>
+                            <button onClick={onClear} className="btn-danger py-3 shadow-md disabled:opacity-50 text-xs flex justify-center items-center gap-2 px-6">
+                                🗑️ CLEAR
                             </button>
                         </div>
                     </div>
@@ -322,7 +298,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const toggleOne = (id) => { if (selectedIds.includes(id)) setSelectedIds(selectedIds.filter(i => i !== id)); else setSelectedIds([...selectedIds, id]); };
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN CHAT LOG V5.2.5\n\n";
+                let content = "# LUMEN CHAT LOG V5.2.6\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -464,15 +440,18 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         <div className={`p-5 w-full min-w-0 ${isUser ? 'bg-white text-slate-700 border border-stone-100 shadow-sm rounded-3xl rounded-tr-sm' : 'bg-indigo-50 text-indigo-900 border border-indigo-100 shadow-sm rounded-3xl rounded-tl-sm'}`}>
                             <div className="markdown-content text-[15px] font-sans leading-relaxed whitespace-pre-wrap break-words" dangerouslySetInnerHTML={{ __html: finalMarkup }} />
                             
-                            {/* V5.1: MINIMAL TTS BUTTONS */}
-                            {!isUser && audioSessionCache && audioSessionCache[message.id] && (
+                            {/* V5.2.6: PERMANENTE TTS BUTTONS */}
+                            {!isUser && (
                                 <div className="mt-3 flex gap-4 pt-2">
-                                    <button onClick={() => onPlayTTS(message.id, message.text, parsedScratch?.kernel_matrix?.matrix?.tts_regie_prompt)} className="text-[9px] text-slate-400 hover:text-indigo-500 transition-colors flex items-center gap-1 font-bold tracking-wider uppercase p-0">
-                                        ▶ Play
+                                    <button onClick={() => onPlayTTS(message.id, message.text, parsedScratch?.kernel_matrix?.matrix?.tts_regie_prompt || parsedScratch?.kernel_matrix?.tts_regie_prompt)} className={`text-[9px] uppercase font-bold tracking-widest transition-colors flex items-center gap-1 p-0 ${playingMsgId === message.id ? 'text-indigo-600 animate-pulse' : 'text-slate-400 hover:text-indigo-500'}`}>
+                                        {playingMsgId === message.id ? '⏸ Pause' : '▶ Play'}
                                     </button>
-                                    <a href={audioSessionCache[message.id]} download={`Maira_Voice_${message.id}.wav`} className="text-[9px] text-slate-400 hover:text-indigo-500 transition-colors flex items-center gap-1 font-bold tracking-wider uppercase p-0">
-                                        ⬇ DL
-                                    </a>
+                                    
+                                    {audioSessionCache && audioSessionCache[message.id] && (
+                                        <a href={audioSessionCache[message.id]} download={`Lumen_Voice_${message.id}.wav`} className="text-[9px] text-slate-400 hover:text-emerald-500 transition-colors flex items-center gap-1 font-bold tracking-wider uppercase p-0">
+                                            ⬇ DL
+                                        </a>
+                                    )}
                                 </div>
                             )}
 
