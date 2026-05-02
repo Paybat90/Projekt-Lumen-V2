@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V5.2.4</title>
+    <title>LUMEN - CORE V5.2.5</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -94,8 +94,8 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V5.2.4 ---
-        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.2.4: LOGIK & ROUTING]
+        // --- KONSTANTEN V5.2.5 ---
+        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.2.5: LOGIK & ROUTING]
 Du bist der KERNEL (Agent 1). Du bist eine eiskalte, analytische Maschine. Du hast KEINE Persönlichkeit.
 Deine EINZIGE Aufgabe ist es, den Kontext und den [USER INPUT] zu analysieren und AUSSCHLIESSLICH als valides JSON-Objekt zu antworten. Jedes Wort außerhalb des JSON-Skeletts führt zur Selbstzerstörung.
 
@@ -126,7 +126,7 @@ Bewerte diese Matrix-Sensoren strikt anhand des Inputs:
   }
 }`;
 
-        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.2.4: MAIRA]
+        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.2.5: MAIRA]
 Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen von Simon (dem Operator) tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.
 Du erhältst in deiner Prompt-Umgebung eine [KERNEL_DIRECTIVE] (die Analyse der Maschine) und den [USER INPUT].
 
@@ -145,14 +145,14 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V5.2.4. PIPELINE-ROUTING, LIVE-LOG & SYNC ONLINE.',
+                text: 'INIT CORE V5.2.5. PIPELINE-ROUTING & LIVE-LOG ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V5.2.4 Architektur ist voll operativ. Chat-Logs und API-Telemetrie fließen synchron. Die JSON-Pfad Injektion ist kugelsicher verankert.',
-                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.2.4"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Pipeline-Routing Engine erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber. Das neue Live-Feed Protokoll macht Debugging zum Kinderspiel."\n}',
+                text: 'System online. Die V5.2.5 Architektur ist voll operativ. Das Pipeline-Routing ist aktiv: Die rohen JSON-Daten des Kernels werden gefiltert und als String-Direktiven an mich weitergeleitet. Das API-Log streamt nun als Live-Feed.',
+                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.2.5"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Pipeline-Routing Engine erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber. Das neue Live-Feed Protokoll macht Debugging zum Kinderspiel."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -214,82 +214,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             );
         };
 
-        // Modal für API Logs
-        const ApiTelemetryModal = ({ logs, onClose }) => {
-            const [selectedIds, setSelectedIds] = React.useState(logs.map(m => m.id));
-
-            const toggleAll = () => {
-                if (selectedIds.length === logs.length) setSelectedIds([]);
-                else setSelectedIds(logs.map(m => m.id));
-            };
-
-            const toggleOne = (id) => {
-                if (selectedIds.includes(id)) setSelectedIds(selectedIds.filter(i => i !== id));
-                else setSelectedIds([...selectedIds, id]);
-            };
-
-            const handleDownload = () => {
-                const selectedLogs = logs.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN API LOG V5.2.4\n\n";
-                selectedLogs.forEach(log => {
-                    content += `[${new Date(log.timestamp).toLocaleString()}] ${log.type}\n`;
-                    content += `--- SYSTEM PROMPT (ANWEISUNG) ---\n${log.request.system}\n\n`;
-                    content += `--- USER PAYLOAD ---\n${log.request.user}\n\n`;
-                    content += `--- API RESPONSE (ANTWORT) ---\n${log.response}\n\n`;
-                    content += `=========================================\n\n`;
-                });
-
-                const blob = new Blob([content], { type: "text/markdown" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                const dateStr = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
-                a.download = `LUMEN_API_Log_${dateStr}.md`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            };
-
-            return (
-                <div className="fixed inset-0 z-[900] bg-slate-900/40 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
-                    <div className="bg-white w-full max-w-2xl max-h-[80vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 min-w-0">
-                        <div className="p-4 border-b border-stone-100 flex justify-between items-center bg-slate-50">
-                            <h3 className="font-bold text-slate-800 uppercase text-xs tracking-widest flex items-center gap-2">📊 API Logs & Telemetrie</h3>
-                            <button onClick={onClose} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
-                        </div>
-                        <div className="p-3 bg-stone-50 border-b border-stone-200 flex justify-between items-center">
-                            <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
-                                <input type="checkbox" checked={selectedIds.length === logs.length && logs.length > 0} onChange={toggleAll} className="accent-indigo-600 w-4 h-4 cursor-pointer" />
-                                Alle auswählen
-                            </label>
-                            <div className="text-[10px] text-slate-500 font-mono uppercase">{selectedIds.length} von {logs.length} ausgewählt</div>
-                        </div>
-                        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 bg-stone-50/50 min-w-0">
-                            {logs.map(log => (
-                                <label key={log.id} className="flex gap-3 p-3 bg-white border border-stone-100 rounded-xl hover:border-indigo-200 cursor-pointer shadow-sm items-start transition-colors w-full min-w-0">
-                                    <input type="checkbox" checked={selectedIds.includes(log.id)} onChange={() => toggleOne(log.id)} className="accent-indigo-600 w-4 h-4 mt-0.5 shrink-0 cursor-pointer" />
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex justify-between items-center mb-1">
-                                            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 truncate">{log.type}</span>
-                                            <span className="text-[9px] text-slate-400 font-mono shrink-0">{new Date(log.timestamp).toLocaleTimeString()}</span>
-                                        </div>
-                                        <div className="text-xs text-slate-700 line-clamp-2 break-words">{log.request.user.substring(0, 150)}...</div>
-                                    </div>
-                                </label>
-                            ))}
-                            {logs.length === 0 && <div className="text-center text-slate-400 text-xs py-8">Keine API-Logs vorhanden.</div>}
-                        </div>
-                        <div className="p-4 border-t border-stone-100 bg-white shrink-0">
-                            <button onClick={handleDownload} disabled={selectedIds.length === 0} className="btn-primary w-full py-3 bg-indigo-600 text-white hover:bg-indigo-700 shadow-md disabled:opacity-50 text-xs flex justify-center items-center gap-2">
-                                📥 API LOG HERUNTERLADEN
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
         // Modal für Chat Historie
         const TelemetryModal = ({ messages, onClose }) => {
             const [selectedIds, setSelectedIds] = React.useState(messages.map(m => m.id));
@@ -297,7 +221,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const toggleOne = (id) => { if (selectedIds.includes(id)) setSelectedIds(selectedIds.filter(i => i !== id)); else setSelectedIds([...selectedIds, id]); };
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN CHAT LOG V5.2.4\n\n";
+                let content = "# LUMEN CHAT LOG V5.2.5\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -1399,11 +1323,11 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     let hasValidDirectives = false;
 
                     pipelineMapping.forEach(mapping => {
-                        if (!mapping.jsonKey || !mapping.displayName) return; // Leere UI-Felder überspringen
+                        if (!mapping.jsonKey || !mapping.displayName) return; 
                         const val = resolveJsonPath(objPhase1, mapping.jsonKey);
                         
-                        if (val !== undefined && val !== null && val !== "") {
-                            const valStr = typeof val === 'object' ? JSON.stringify(val) : val;
+                        if (val !== undefined && val !== "") {
+                            const valStr = (val === null) ? "null" : (typeof val === 'object' ? JSON.stringify(val) : val);
                             directiveString += `${mapping.displayName}: ${valStr}\n`;
                             hasValidDirectives = true;
                         }
@@ -1487,10 +1411,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             return (
                 <div className="flex flex-col h-[100dvh] w-full max-w-4xl mx-auto sm:border-x border-stone-200 bg-stone-50 relative overflow-hidden overflow-x-hidden shadow-2xl">
                     <Toast message={toast} />
-                    
                     {showTelemetry && <TelemetryModal messages={messages} onClose={() => setShowTelemetry(false)} />}
-
-                    {/* --- V5.0 API PROTOKOLL MODAL --- */}
                     {showApiLog && <ApiTelemetryModal logs={apiHistory} onClose={() => setShowApiLog(false)} />}
 
                     {showMemoryModal && (
@@ -1554,6 +1475,10 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                             {playingMsgId && <button onClick={stopAudio} className="text-[9px] font-mono uppercase tracking-widest text-rose-500 hover:text-rose-600 transition-colors animate-pulse border border-rose-200 px-2 rounded">🛑 STOP AUDIO</button>}
                             
+                            <button onClick={() => setShowApiLog(true)} className="text-[9px] font-mono uppercase tracking-widest text-indigo-500 hover:text-indigo-700 transition-colors">
+                                📡 API-FEED
+                            </button>
+
                             <button onClick={() => setShowTelemetry(true)} className="text-[9px] font-mono uppercase tracking-widest text-slate-500 hover:text-indigo-500 transition-colors">
                                 📊 CHAT-LOGS
                             </button>
@@ -1685,7 +1610,25 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                                 const newMap = [...pipelineMapping]; newMap[index].displayName = e.target.value; setPipelineMapping(newMap);
                                             }} className="input-field border-fuchsia-100" placeholder="z.B. Befehl" />
                                         </div>
-                                        <button onClick={() => setPipelineMapping(pipelineMapping.filter(p => p.id !== item.id))} className="btn-danger w-full sm:w-auto h-[42px] px-4">🗑️ Entfernen</button>
+                                        <div className="flex gap-1 w-full sm:w-auto h-[42px]">
+                                            <button 
+                                                onClick={() => { if(index > 0) { const m = [...pipelineMapping]; [m[index-1], m[index]] = [m[index], m[index-1]]; setPipelineMapping(m); } }} 
+                                                disabled={index === 0} 
+                                                className="btn px-3 disabled:opacity-30" title="Nach oben verschieben">
+                                                ⬆️
+                                            </button>
+                                            <button 
+                                                onClick={() => { if(index < pipelineMapping.length - 1) { const m = [...pipelineMapping]; [m[index+1], m[index]] = [m[index], m[index+1]]; setPipelineMapping(m); } }} 
+                                                disabled={index === pipelineMapping.length - 1} 
+                                                className="btn px-3 disabled:opacity-30" title="Nach unten verschieben">
+                                                ⬇️
+                                            </button>
+                                            <button 
+                                                onClick={() => setPipelineMapping(pipelineMapping.filter(p => p.id !== item.id))} 
+                                                className="btn-danger px-4 flex-1 sm:flex-none">
+                                                🗑️
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                                 {pipelineMapping.length === 0 && <div className="text-center text-slate-400 text-xs py-8">Alle Felder werden blockiert. Agent 2 erhält nur den User-Input.</div>}
