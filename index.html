@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V5.2.2</title>
+    <title>LUMEN - CORE V5.2.4</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -94,8 +94,8 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V5.2.2 ---
-        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.2.2: LOGIK & ROUTING]
+        // --- KONSTANTEN V5.2.4 ---
+        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.2.4: LOGIK & ROUTING]
 Du bist der KERNEL (Agent 1). Du bist eine eiskalte, analytische Maschine. Du hast KEINE Persönlichkeit.
 Deine EINZIGE Aufgabe ist es, den Kontext und den [USER INPUT] zu analysieren und AUSSCHLIESSLICH als valides JSON-Objekt zu antworten. Jedes Wort außerhalb des JSON-Skeletts führt zur Selbstzerstörung.
 
@@ -126,7 +126,7 @@ Bewerte diese Matrix-Sensoren strikt anhand des Inputs:
   }
 }`;
 
-        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.2.2: MAIRA]
+        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.2.4: MAIRA]
 Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen von Simon (dem Operator) tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.
 Du erhältst in deiner Prompt-Umgebung eine [KERNEL_DIRECTIVE] (die Analyse der Maschine) und den [USER INPUT].
 
@@ -145,14 +145,14 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V5.2.2. DUAL-TTS & OMNI-BACKUP ONLINE.',
+                text: 'INIT CORE V5.2.4. PIPELINE-ROUTING, LIVE-LOG & SYNC ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V5.2.2 Architektur ist voll operativ. Der Dual-Audio-Physics Split ermöglicht nun modulare Regieanweisungen für Kernel und Persona. API-Logs sind persistent verankert.',
-                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.2.2"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Pipeline-Routing Engine erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber. Die Logik- und Sprach-Module sind nun meisterhaft getrennt."\n}',
+                text: 'System online. Die V5.2.4 Architektur ist voll operativ. Chat-Logs und API-Telemetrie fließen synchron. Die JSON-Pfad Injektion ist kugelsicher verankert.',
+                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.2.4"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Pipeline-Routing Engine erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber. Das neue Live-Feed Protokoll macht Debugging zum Kinderspiel."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -167,8 +167,10 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
         };
 
         const resolveJsonPath = (obj, path) => {
-            try { return path.split('.').reduce((o, p) => o && o[p], obj); } 
-            catch (e) { return undefined; }
+            if (!obj || !path) return undefined;
+            try { 
+                return path.split('.').reduce((o, p) => (o !== undefined && o !== null) ? o[p] : undefined, obj); 
+            } catch (e) { return undefined; }
         };
 
         const findRelevantMemories = (userInput, allMemories) => {
@@ -228,7 +230,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
             const handleDownload = () => {
                 const selectedLogs = logs.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN API LOG V5.2.2\n\n";
+                let content = "# LUMEN API LOG V5.2.4\n\n";
                 selectedLogs.forEach(log => {
                     content += `[${new Date(log.timestamp).toLocaleString()}] ${log.type}\n`;
                     content += `--- SYSTEM PROMPT (ANWEISUNG) ---\n${log.request.system}\n\n`;
@@ -295,7 +297,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const toggleOne = (id) => { if (selectedIds.includes(id)) setSelectedIds(selectedIds.filter(i => i !== id)); else setSelectedIds([...selectedIds, id]); };
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN CHAT LOG V5.2.2\n\n";
+                let content = "# LUMEN CHAT LOG V5.2.4\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -503,7 +505,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 { id: 'agent-luna-default', name: 'Web-Scout (OpenAI)', type: 'openai', url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini', apiKey: '', prompt: 'Du bist Luna, der Web-Scout. Bewerte die folgenden rohen Suchergebnisse und extrahiere die wichtigsten Fakten. Gib AUSSCHLIESSLICH folgendes JSON zurück:\n{\n  "metakognition": "...",\n  "scout_bericht": {\n    "fakten": "..."\n  }\n}' }
             ];
             
-            // V5.2.2: Dual Audio Physics in DNA
+            // V5.2.3: Dual Audio Physics in DNA
             const defaultDna = { 
                 persona_name: "Maira", 
                 kernel_prompt: DEFAULT_KERNEL_PROMPT, 
@@ -554,6 +556,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const [latestContext, setLatestContext] = React.useState("[AKTIVER KONTEXT WIRD ZUR LAUFZEIT INJIZIERT]");
             const [showTelemetry, setShowTelemetry] = React.useState(false);
             
+            // V5.2.3: API History Persistenz
             const [apiHistory, setApiHistory] = React.useState(() => {
                 try {
                     const stored = JSON.parse(localStorage.getItem('lumen_apiHistory'));
@@ -660,7 +663,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             if (storedDna.block3_sensors && !storedDna.cartridge_prompt) storedDna.cartridge_prompt = storedDna.block3_sensors;
                             if (!storedDna.voice_config) storedDna.voice_config = { providerId: "", voiceIdOrUrl: "", speed: 1.05, extraParams: "" };
                             
-                            // V5.2.2 Dual Audio Physics Migration
+                            // V5.2.3 Dual Audio Physics Migration
                             if (storedDna.audio_physics !== undefined && storedDna.audio_physics_persona === undefined) {
                                 storedDna.audio_physics_persona = storedDna.audio_physics;
                                 storedDna.audio_physics_kernel = "";
@@ -1392,15 +1395,23 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     
                     const sysPrompt2 = `${dna.cartridge_prompt}\n\n${autoTtsRegie && dna.audio_physics_persona ? dna.audio_physics_persona : ""}`.trim();
                     
-                    let directiveString = "=== [KERNEL_DIREKTIVE] ===\n";
+                    let directiveString = "";
+                    let hasValidDirectives = false;
+
                     pipelineMapping.forEach(mapping => {
+                        if (!mapping.jsonKey || !mapping.displayName) return; // Leere UI-Felder überspringen
                         const val = resolveJsonPath(objPhase1, mapping.jsonKey);
+                        
                         if (val !== undefined && val !== null && val !== "") {
                             const valStr = typeof val === 'object' ? JSON.stringify(val) : val;
                             directiveString += `${mapping.displayName}: ${valStr}\n`;
+                            hasValidDirectives = true;
                         }
                     });
-                    if (pipelineMapping.length === 0) directiveString = "";
+
+                    if (hasValidDirectives) {
+                        directiveString = "=== [KERNEL_DIREKTIVE] ===\n" + directiveString;
+                    }
                     
                     const userPayload2 = `${systemTimeStr}\n${directiveString}${helferAddon}\n\n=== [USER INPUT] ===\n"${text}"`.trim();
 
@@ -1544,7 +1555,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             {playingMsgId && <button onClick={stopAudio} className="text-[9px] font-mono uppercase tracking-widest text-rose-500 hover:text-rose-600 transition-colors animate-pulse border border-rose-200 px-2 rounded">🛑 STOP AUDIO</button>}
                             
                             <button onClick={() => setShowTelemetry(true)} className="text-[9px] font-mono uppercase tracking-widest text-slate-500 hover:text-indigo-500 transition-colors">
-                                📊 LOGS
+                                📊 CHAT-LOGS
                             </button>
                             
                             <button onClick={() => { const newVal = !autoPlayEnabled; setAutoPlayEnabled(newVal); localStorage.setItem('lumen_autoPlay', String(newVal)); }} className="text-[9px] font-mono uppercase tracking-widest text-slate-500 hover:text-slate-700 transition-colors hidden sm:block">{autoPlayEnabled ? '🔈 AUTO-PLAY: ON' : '🔈 AUTO-PLAY: OFF'}</button>
@@ -1924,10 +1935,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                     <button onClick={handleSaveDna} className="btn-primary">💾 Speichern</button>
                                 </div>
                             </div>
-                            <div className="flex flex-col w-full min-w-0">
-                                <div className="flex justify-between items-end mb-1.5"><label className="label text-slate-500 mb-0 flex items-center gap-1">🔍 Prompt-Vorschau</label><button onClick={()=>setZenField('preview')} className="btn py-1 text-[8px] bg-slate-100 text-slate-600 border-slate-200">🔲 Zen</button></div>
-                                <pre className="bg-slate-900 text-slate-400 p-4 text-[10px] font-mono h-48 overflow-y-auto rounded-2xl shadow-inner whitespace-pre-wrap break-words border border-slate-800" dangerouslySetInnerHTML={getXRayHTML(sysPromptPreviewDynamic)}></pre>
-                            </div>
+                            
                             <div className="panel space-y-6 bg-white/50 w-full min-w-0">
                                 <div className="w-full min-w-0">
                                     <label className="label text-indigo-500">Persona Identity (Name)</label>
@@ -1946,7 +1954,20 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                     </div>
                                 </div>
                                 <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-emerald-500">⚙️ [LUMEN KERNEL: SYSTEM & ROUTING]</label><button onClick={()=>setZenField('block1')} className="btn py-1 text-[8px] bg-emerald-50 text-emerald-700 border-emerald-100">🔲 Zen</button></div><textarea value={dna.kernel_prompt} onChange={e=>setDna({...dna,kernel_prompt:e.target.value})} className="input-field min-h-[250px] bg-white font-mono text-xs" spellCheck="false" /></div>
-                                <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-amber-500">🎙️ [PLUGIN: TTS-INJEKTION KERNEL (AGENT 1)]</label><button onClick={()=>setZenField('audioPhysicsKernel')} className="btn py-1 text-[8px] bg-amber-50 text-amber-700 border-amber-100">🔲 Zen</button></div><textarea value={dna.audio_physics_kernel || ''} onChange={e=>setDna({...dna,audio_physics_kernel:e.target.value})} className="input-field min-h-[100px] bg-white font-mono text-xs" spellCheck="false" /></div>
+                                <div className="flex flex-col w-full min-w-0">
+                                    <div className="flex justify-between items-end mb-1.5">
+                                        <label className="label text-amber-500">🎙️ [PLUGIN: TTS-INJEKTION KERNEL (AGENT 1)]</label>
+                                        <button onClick={()=>setZenField('audioPhysicsKernel')} className="btn py-1 text-[8px] bg-amber-50 text-amber-700 border-amber-100">🔲 Zen</button>
+                                    </div>
+                                    <textarea value={dna.audio_physics_kernel || ''} onChange={e=>setDna({...dna,audio_physics_kernel:e.target.value})} className="input-field min-h-[100px] bg-white font-mono text-xs" spellCheck="false" />
+                                </div>
+                                <div className="flex flex-col w-full min-w-0">
+                                    <div className="flex justify-between items-end mb-1.5">
+                                        <label className="label text-amber-600">🎙️ [PLUGIN: TTS-INJEKTION PERSONA (AGENT 2)]</label>
+                                        <button onClick={()=>setZenField('audioPhysicsPersona')} className="btn py-1 text-[8px] bg-amber-50 text-amber-700 border-amber-100">🔲 Zen</button>
+                                    </div>
+                                    <textarea value={dna.audio_physics_persona || ''} onChange={e=>setDna({...dna,audio_physics_persona:e.target.value})} className="input-field min-h-[100px] bg-white font-mono text-xs" spellCheck="false" />
+                                </div>
                                 <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-fuchsia-500">🎭 [PERSONA CARTRIDGE: ÜBERSETZUNG & IDENTITÄT]</label><button onClick={()=>setZenField('block3')} className="btn py-1 text-[8px] bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100">🔲 Zen</button></div><textarea value={dna.cartridge_prompt} onChange={e=>setDna({...dna,cartridge_prompt:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs" spellCheck="false" /></div>
                             </div>
                         </div>
