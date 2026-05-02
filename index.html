@@ -212,8 +212,8 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             );
         };
 
-        // V5.2.2 API Log Telemetry Modal
-        const TelemetryModal = ({ logs, onClose }) => {
+        // Modal für API Logs
+        const ApiTelemetryModal = ({ logs, onClose }) => {
             const [selectedIds, setSelectedIds] = React.useState(logs.map(m => m.id));
 
             const toggleAll = () => {
@@ -253,7 +253,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 <div className="fixed inset-0 z-[900] bg-slate-900/40 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
                     <div className="bg-white w-full max-w-2xl max-h-[80vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 min-w-0">
                         <div className="p-4 border-b border-stone-100 flex justify-between items-center bg-slate-50">
-                            <h3 className="font-bold text-slate-800 uppercase text-xs tracking-widest flex items-center gap-2">📊 Telemetrie & API Logs</h3>
+                            <h3 className="font-bold text-slate-800 uppercase text-xs tracking-widest flex items-center gap-2">📊 API Logs & Telemetrie</h3>
                             <button onClick={onClose} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
                         </div>
                         <div className="p-3 bg-stone-50 border-b border-stone-200 flex justify-between items-center">
@@ -282,6 +282,57 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             <button onClick={handleDownload} disabled={selectedIds.length === 0} className="btn-primary w-full py-3 bg-indigo-600 text-white hover:bg-indigo-700 shadow-md disabled:opacity-50 text-xs flex justify-center items-center gap-2">
                                 📥 API LOG HERUNTERLADEN
                             </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Modal für Chat Historie
+        const TelemetryModal = ({ messages, onClose }) => {
+            const [selectedIds, setSelectedIds] = React.useState(messages.map(m => m.id));
+            const toggleAll = () => { if (selectedIds.length === messages.length) setSelectedIds([]); else setSelectedIds(messages.map(m => m.id)); };
+            const toggleOne = (id) => { if (selectedIds.includes(id)) setSelectedIds(selectedIds.filter(i => i !== id)); else setSelectedIds([...selectedIds, id]); };
+            const handleDownload = () => {
+                const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
+                let content = "# LUMEN CHAT LOG V5.2.2\n\n";
+                selectedMsgs.forEach(m => {
+                    content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
+                    content += `${m.text}\n`;
+                    if (m.scratchpad) content += `\n--- X-RAY (JSON+XML) ---\n${m.scratchpad}\n--------------------\n`;
+                    content += `\n\n`;
+                });
+                const blob = new Blob([content], { type: "text/markdown" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a"); a.href = url; a.download = `LUMEN_Chat_Log_${new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19)}.md`;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            };
+
+            return (
+                <div className="fixed inset-0 z-[900] bg-slate-900/40 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
+                    <div className="bg-white w-full max-w-2xl max-h-[80vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 min-w-0">
+                        <div className="p-4 border-b border-stone-100 flex justify-between items-center bg-slate-50">
+                            <h3 className="font-bold text-slate-800 uppercase text-xs tracking-widest flex items-center gap-2">📊 Chat Telemetrie</h3>
+                            <button onClick={onClose} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
+                        </div>
+                        <div className="p-3 bg-stone-50 border-b border-stone-200 flex justify-between items-center">
+                            <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer"><input type="checkbox" checked={selectedIds.length === messages.length && messages.length > 0} onChange={toggleAll} className="accent-indigo-600 w-4 h-4 cursor-pointer" /> Alle auswählen</label>
+                            <div className="text-[10px] text-slate-500 font-mono uppercase">{selectedIds.length} von {messages.length} ausgewählt</div>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 bg-stone-50/50 min-w-0">
+                            {messages.map(m => (
+                                <label key={m.id} className="flex gap-3 p-3 bg-white border border-stone-100 rounded-xl hover:border-indigo-200 cursor-pointer shadow-sm items-start transition-colors w-full min-w-0">
+                                    <input type="checkbox" checked={selectedIds.includes(m.id)} onChange={() => toggleOne(m.id)} className="accent-indigo-600 w-4 h-4 mt-0.5 shrink-0 cursor-pointer" />
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-center mb-1"><span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 truncate">{m.sender}</span><span className="text-[9px] text-slate-400 font-mono shrink-0">{new Date(m.timestamp).toLocaleTimeString()}</span></div>
+                                        <div className="text-xs text-slate-700 line-clamp-2 break-words">{cleanVisibleText(m.text)}</div>
+                                    </div>
+                                </label>
+                            ))}
+                            {messages.length === 0 && <div className="text-center text-slate-400 text-xs py-8">Keine Nachrichten vorhanden.</div>}
+                        </div>
+                        <div className="p-4 border-t border-stone-100 bg-white shrink-0">
+                            <button onClick={handleDownload} disabled={selectedIds.length === 0} className="btn-primary w-full py-3 bg-indigo-600 text-white hover:bg-indigo-700 shadow-md disabled:opacity-50 text-xs flex justify-center items-center gap-2">📥 CHAT LOG HERUNTERLADEN</button>
                         </div>
                     </div>
                 </div>
@@ -357,6 +408,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 }
             }
             
+            // V5.0: JSON vs XML Parsing im X-Ray
             let parsedScratch = null;
             if (!isUser && message.scratchpad) {
                 try { parsedScratch = JSON.parse(message.scratchpad); } catch(e){}
@@ -385,6 +437,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         <div className={`p-5 w-full min-w-0 ${isUser ? 'bg-white text-slate-700 border border-stone-100 shadow-sm rounded-3xl rounded-tr-sm' : 'bg-indigo-50 text-indigo-900 border border-indigo-100 shadow-sm rounded-3xl rounded-tl-sm'}`}>
                             <div className="markdown-content text-[15px] font-sans leading-relaxed whitespace-pre-wrap break-words" dangerouslySetInnerHTML={{ __html: finalMarkup }} />
                             
+                            {/* V5.1: MINIMAL TTS BUTTONS */}
                             {!isUser && audioSessionCache && audioSessionCache[message.id] && (
                                 <div className="mt-3 flex gap-4 pt-2">
                                     <button onClick={() => onPlayTTS(message.id, message.text, parsedScratch?.kernel_matrix?.matrix?.tts_regie_prompt)} className="text-[9px] text-slate-400 hover:text-indigo-500 transition-colors flex items-center gap-1 font-bold tracking-wider uppercase p-0">
@@ -396,6 +449,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                 </div>
                             )}
 
+                            {/* V5.0: 2-Level X-Ray */}
                             {!isUser && showScratchpad && parsedScratch && (
                                 <div className="mt-4 pt-3 border-t border-indigo-200/50 flex flex-col gap-3 animate-fade-in w-full min-w-0">
                                     {parsedScratch.persona_gedanken && (
@@ -406,6 +460,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                     {parsedScratch.kernel_matrix && (
                                         <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(JSON.stringify(parsedScratch.kernel_matrix, null, 2))}></pre>
                                     )}
+                                    {/* Fallback für alte V4 Daten */}
                                     {!parsedScratch.kernel_matrix && !parsedScratch.persona_gedanken && (
                                          <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(message.scratchpad)}></pre>
                                     )}
@@ -564,6 +619,11 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const fileInputRefOmni = React.useRef(null);
             const apiAbortControllerRef = React.useRef(null);
 
+            const handleDeleteMessage = (id) => {
+                setMessages(prev => prev.filter(m => m.id !== id));
+                setApiHistory(prev => prev.filter(log => log.linkedMsgId !== id));
+            };
+
             React.useEffect(() => {
                 const bootSystem = async () => {
                     try {
@@ -650,6 +710,16 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const handleSaveDna = () => {
                 localStorage.setItem('lumen_dna_layers', JSON.stringify(dna));
                 showToast('DNA gespeichert');
+            };
+
+            const handleBeautifyJSON = () => {
+                try {
+                    const formatted = JSON.stringify(JSON.parse(dna.block4_skeleton), null, 2);
+                    setDna({...dna, block4_skeleton: formatted.replace(/,\n/g, ',\n\n')});
+                    showToast('JSON formatiert');
+                } catch(e) {
+                    alert(`Syntax-Fehler im JSON. Bitte vor dem Formatieren korrigieren.\n\nDetails: ${e.message}`);
+                }
             };
 
             const loadMemories = async () => { const data = await db.memories.toArray(); setMemories(data.sort((a,b)=>b.timestamp-a.timestamp)); };
@@ -1111,6 +1181,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 if (!kernelProvider || !personaProvider) { setActiveView('settings'); return showToast('Fehler: Chat-Provider fehlen.'); }
 
                 const userMsgId = generateId();
+                const newAiMsgId = generateId();
                 setMessages(prev => [...prev.filter(m=>m.sender!=='system-error'), {id: userMsgId, sender:'user', text, timestamp: new Date().toISOString()}]);
                 
                 setInputText('');
@@ -1191,7 +1262,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         agentContext += `--- LETZTER WEB-SCOUT BERICHT (LUNA) ---\nSuchauftrag: ${helferArchiv.suchauftrag}\nErgebnis: ${helferArchiv.rohdaten.substring(0, 1500)}\n\n`;
                     }
                     
-                    const dynamicContext = `${systemTimeStr}\n${agentContext}${deskContext}`.trim() || "Kein aktiver Kontext geladen.";
+                    const dynamicContext = `${agentContext}${deskContext}`.trim() || "Kein aktiver Kontext geladen.";
                     setLatestContext(dynamicContext);
                     
                     const telemetryBlock = `[RAW_DATA]\nSTID: ${activeStateRef.current}\nUTC_TS: ${new Date().toISOString()}\nMEM_S: ${sessionMemory || '0'}\n[/RAW_DATA]`;
@@ -1206,7 +1277,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     const userPayload1 = `${telemetryBlock}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`.trim();
 
                     let resText1 = await fetchTextFromAPI(sysPrompt1, userPayload1, hist, kernelProvider, false, signal);
-                    setApiHistory(prev => [...prev, { id: generateId(), type: 'AGENT 1 (KERNEL)', timestamp: Date.now(), request: { system: sysPrompt1, user: userPayload1 }, response: resText1 }].slice(-30));
+                    setApiHistory(prev => [...prev, { id: generateId(), linkedMsgId: newAiMsgId, type: 'AGENT 1 (KERNEL)', timestamp: Date.now(), request: { system: sysPrompt1, user: userPayload1 }, response: resText1 }].slice(-30));
                     
                     let objPhase1 = null;
                     try {
@@ -1334,7 +1405,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     const userPayload2 = `${systemTimeStr}\n${directiveString}${helferAddon}\n\n=== [USER INPUT] ===\n"${text}"`.trim();
 
                     let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, personaProvider, true, signal); // forceTextMode = true!
-                    setApiHistory(prev => [...prev, { id: generateId(), type: 'AGENT 2 (PERSONA)', timestamp: Date.now(), request: { system: sysPrompt2, user: userPayload2 }, response: resText2 }].slice(-30));
+                    setApiHistory(prev => [...prev, { id: generateId(), linkedMsgId: newAiMsgId, type: 'AGENT 2 (PERSONA)', timestamp: Date.now(), request: { system: sysPrompt2, user: userPayload2 }, response: resText2 }].slice(-30));
 
                     const xmlMatch = resText2.match(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i);
                     const gedanken = xmlMatch ? xmlMatch[1].trim() : "";
@@ -1345,7 +1416,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     const ttsRegie = objPhase1.matrix?.tts_regie_prompt || null;
                     const finalScratch = JSON.stringify({ kernel_matrix: objPhase1, persona_gedanken: gedanken }, null, 2);
 
-                    const newAiMsgId = generateId();
                     setMessages(p=>[...p, {id:newAiMsgId, sender:'ai', text:finalAnswer, scratchpad:finalScratch, ttsRegie: ttsRegie, timestamp: new Date().toISOString()}]);
                     
                     if(autoPlayEnabled && finalAnswer) playMessageTTS(newAiMsgId, finalAnswer, ttsRegie);
@@ -1407,7 +1477,10 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 <div className="flex flex-col h-[100dvh] w-full max-w-4xl mx-auto sm:border-x border-stone-200 bg-stone-50 relative overflow-hidden overflow-x-hidden shadow-2xl">
                     <Toast message={toast} />
                     
-                    {showTelemetry && <TelemetryModal logs={apiHistory} onClose={() => setShowTelemetry(false)} />}
+                    {showTelemetry && <TelemetryModal messages={messages} onClose={() => setShowTelemetry(false)} />}
+
+                    {/* --- V5.0 API PROTOKOLL MODAL --- */}
+                    {showApiLog && <ApiTelemetryModal logs={apiHistory} onClose={() => setShowApiLog(false)} />}
 
                     {showMemoryModal && (
                         <SafePurgeModal warning={archivarWarning} snippets={archivarSnippets} selectedIds={selectedSnippetIds} onToggle={toggleSnippetSelection} onApprove={executeSafePurge} onCancel={() => { setShowMemoryModal(false); setArchivarSnippets([]); setSelectedSnippetIds(new Set()); setArchivarWarning(null); }} />
@@ -1481,7 +1554,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             ) : (
                                 <div className="flex gap-2 items-center">
                                     <span className="text-[9px] font-bold text-rose-500 uppercase">Sicher?</span>
-                                    <button onClick={() => { setMessages([]); localStorage.removeItem('lumen_chat'); stopAudio(); setShowClearConfirm(false); }} className="text-[9px] font-mono uppercase tracking-widest text-rose-500 hover:text-rose-600 transition-colors font-bold">JA</button>
+                                    <button onClick={() => { setMessages([]); setApiHistory([]); localStorage.removeItem('lumen_chat'); localStorage.removeItem('lumen_apiHistory'); stopAudio(); setShowClearConfirm(false); }} className="text-[9px] font-mono uppercase tracking-widest text-rose-500 hover:text-rose-600 transition-colors font-bold">JA</button>
                                     <button onClick={() => setShowClearConfirm(false)} className="text-[9px] font-mono uppercase tracking-widest text-slate-500 hover:text-slate-700 transition-colors">NEIN</button>
                                 </div>
                             )}
@@ -1530,7 +1603,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                         </button>
                                     </div>
                                 )}
-                                {messages.slice(-renderedMessageLimit).map(msg => <ChatBubble key={msg.id} message={msg} personaName={dna.persona_name} playingMsgId={playingMsgId} onPlayTTS={playMessageTTS} onDelete={(id) => setMessages(prev => prev.filter(m => m.id !== id))} audioSessionCache={audioSessionCache} />)}
+                                {messages.slice(-renderedMessageLimit).map(msg => <ChatBubble key={msg.id} message={msg} personaName={dna.persona_name} playingMsgId={playingMsgId} onPlayTTS={playMessageTTS} onDelete={handleDeleteMessage} audioSessionCache={audioSessionCache} />)}
                                 {loadingStatus && <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest animate-pulse mb-6 ml-2 font-mono">[ {loadingStatus} ]</div>}
                                 <div ref={messagesEndRef} className="h-4" />
                             </div>
@@ -1874,7 +1947,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                 </div>
                                 <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-emerald-500">⚙️ [LUMEN KERNEL: SYSTEM & ROUTING]</label><button onClick={()=>setZenField('block1')} className="btn py-1 text-[8px] bg-emerald-50 text-emerald-700 border-emerald-100">🔲 Zen</button></div><textarea value={dna.kernel_prompt} onChange={e=>setDna({...dna,kernel_prompt:e.target.value})} className="input-field min-h-[250px] bg-white font-mono text-xs" spellCheck="false" /></div>
                                 <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-amber-500">🎙️ [PLUGIN: TTS-INJEKTION KERNEL (AGENT 1)]</label><button onClick={()=>setZenField('audioPhysicsKernel')} className="btn py-1 text-[8px] bg-amber-50 text-amber-700 border-amber-100">🔲 Zen</button></div><textarea value={dna.audio_physics_kernel || ''} onChange={e=>setDna({...dna,audio_physics_kernel:e.target.value})} className="input-field min-h-[100px] bg-white font-mono text-xs" spellCheck="false" /></div>
-                                <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-amber-600">🎙️ [PLUGIN: TTS-INJEKTION PERSONA (AGENT 2)]</label><button onClick={()=>setZenField('audioPhysicsPersona')} className="btn py-1 text-[8px] bg-amber-50 text-amber-700 border-amber-100">🔲 Zen</button></div><textarea value={dna.audio_physics_persona || ''} onChange={e=>setDna({...dna,audio_physics_persona:e.target.value})} className="input-field min-h-[100px] bg-white font-mono text-xs" spellCheck="false" /></div>
                                 <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-fuchsia-500">🎭 [PERSONA CARTRIDGE: ÜBERSETZUNG & IDENTITÄT]</label><button onClick={()=>setZenField('block3')} className="btn py-1 text-[8px] bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100">🔲 Zen</button></div><textarea value={dna.cartridge_prompt} onChange={e=>setDna({...dna,cartridge_prompt:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs" spellCheck="false" /></div>
                             </div>
                         </div>
