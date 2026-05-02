@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V5.2.1</title>
+    <title>LUMEN - CORE V5.2.2</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -94,8 +94,8 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V5.2.1 ---
-        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.2.1: LOGIK & ROUTING]
+        // --- KONSTANTEN V5.2.2 ---
+        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.2.2: LOGIK & ROUTING]
 Du bist der KERNEL (Agent 1). Du bist eine eiskalte, analytische Maschine. Du hast KEINE Persönlichkeit.
 Deine EINZIGE Aufgabe ist es, den Kontext und den [USER INPUT] zu analysieren und AUSSCHLIESSLICH als valides JSON-Objekt zu antworten. Jedes Wort außerhalb des JSON-Skeletts führt zur Selbstzerstörung.
 
@@ -126,7 +126,7 @@ Bewerte diese Matrix-Sensoren strikt anhand des Inputs:
   }
 }`;
 
-        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.2.1: MAIRA]
+        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.2.2: MAIRA]
 Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen von Simon (dem Operator) tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.
 Du erhältst in deiner Prompt-Umgebung eine [KERNEL_DIRECTIVE] (die Analyse der Maschine) und den [USER INPUT].
 
@@ -145,14 +145,14 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V5.2.1. PIPELINE-ROUTING ONLINE.',
+                text: 'INIT CORE V5.2.2. DUAL-TTS & OMNI-BACKUP ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V5.2.1 Architektur ist voll operativ. Das Pipeline-Routing ist aktiv: Die rohen JSON-Daten des Kernels werden nun gefiltert und als lesbare String-Direktiven an mich (die Persona) weitergeleitet. API-Logs sind persistent und Kontext-Injektion optimiert.',
-                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.2.1"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Pipeline-Routing Engine erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet mit dem neuen JSON-Filter. Das reduziert meine kognitive Last enorm."\n}',
+                text: 'System online. Die V5.2.2 Architektur ist voll operativ. Der Dual-Audio-Physics Split ermöglicht nun modulare Regieanweisungen für Kernel und Persona. API-Logs sind persistent verankert.',
+                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.2.2"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Pipeline-Routing Engine erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber. Die Logik- und Sprach-Module sind nun meisterhaft getrennt."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -212,12 +212,13 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             );
         };
 
-        const TelemetryModal = ({ messages, onClose }) => {
-            const [selectedIds, setSelectedIds] = React.useState(messages.map(m => m.id));
+        // V5.2.2 API Log Telemetry Modal
+        const TelemetryModal = ({ logs, onClose }) => {
+            const [selectedIds, setSelectedIds] = React.useState(logs.map(m => m.id));
 
             const toggleAll = () => {
-                if (selectedIds.length === messages.length) setSelectedIds([]);
-                else setSelectedIds(messages.map(m => m.id));
+                if (selectedIds.length === logs.length) setSelectedIds([]);
+                else setSelectedIds(logs.map(m => m.id));
             };
 
             const toggleOne = (id) => {
@@ -226,15 +227,14 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             };
 
             const handleDownload = () => {
-                const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN TELEMETRIE LOG V5.2.1\n\n";
-                selectedMsgs.forEach(m => {
-                    content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
-                    content += `${m.text}\n`;
-                    if (m.scratchpad) {
-                        content += `\n--- X-RAY (JSON+XML) ---\n${m.scratchpad}\n--------------------\n`;
-                    }
-                    content += `\n\n`;
+                const selectedLogs = logs.filter(m => selectedIds.includes(m.id));
+                let content = "# LUMEN API LOG V5.2.2\n\n";
+                selectedLogs.forEach(log => {
+                    content += `[${new Date(log.timestamp).toLocaleString()}] ${log.type}\n`;
+                    content += `--- SYSTEM PROMPT (ANWEISUNG) ---\n${log.request.system}\n\n`;
+                    content += `--- USER PAYLOAD ---\n${log.request.user}\n\n`;
+                    content += `--- API RESPONSE (ANTWORT) ---\n${log.response}\n\n`;
+                    content += `=========================================\n\n`;
                 });
 
                 const blob = new Blob([content], { type: "text/markdown" });
@@ -242,7 +242,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 const a = document.createElement("a");
                 a.href = url;
                 const dateStr = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
-                a.download = `LUMEN_Telemetrie_${dateStr}.md`;
+                a.download = `LUMEN_API_Log_${dateStr}.md`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -253,37 +253,34 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 <div className="fixed inset-0 z-[900] bg-slate-900/40 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
                     <div className="bg-white w-full max-w-2xl max-h-[80vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 min-w-0">
                         <div className="p-4 border-b border-stone-100 flex justify-between items-center bg-slate-50">
-                            <h3 className="font-bold text-slate-800 uppercase text-xs tracking-widest flex items-center gap-2">📊 Telemetrie & Logs</h3>
+                            <h3 className="font-bold text-slate-800 uppercase text-xs tracking-widest flex items-center gap-2">📊 Telemetrie & API Logs</h3>
                             <button onClick={onClose} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
                         </div>
                         <div className="p-3 bg-stone-50 border-b border-stone-200 flex justify-between items-center">
                             <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
-                                <input type="checkbox" checked={selectedIds.length === messages.length && messages.length > 0} onChange={toggleAll} className="accent-indigo-600 w-4 h-4 cursor-pointer" />
+                                <input type="checkbox" checked={selectedIds.length === logs.length && logs.length > 0} onChange={toggleAll} className="accent-indigo-600 w-4 h-4 cursor-pointer" />
                                 Alle auswählen
                             </label>
-                            <div className="text-[10px] text-slate-500 font-mono uppercase">{selectedIds.length} von {messages.length} ausgewählt</div>
+                            <div className="text-[10px] text-slate-500 font-mono uppercase">{selectedIds.length} von {logs.length} ausgewählt</div>
                         </div>
                         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 bg-stone-50/50 min-w-0">
-                            {messages.map(m => (
-                                <label key={m.id} className="flex gap-3 p-3 bg-white border border-stone-100 rounded-xl hover:border-indigo-200 cursor-pointer shadow-sm items-start transition-colors w-full min-w-0">
-                                    <input type="checkbox" checked={selectedIds.includes(m.id)} onChange={() => toggleOne(m.id)} className="accent-indigo-600 w-4 h-4 mt-0.5 shrink-0 cursor-pointer" />
+                            {logs.map(log => (
+                                <label key={log.id} className="flex gap-3 p-3 bg-white border border-stone-100 rounded-xl hover:border-indigo-200 cursor-pointer shadow-sm items-start transition-colors w-full min-w-0">
+                                    <input type="checkbox" checked={selectedIds.includes(log.id)} onChange={() => toggleOne(log.id)} className="accent-indigo-600 w-4 h-4 mt-0.5 shrink-0 cursor-pointer" />
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-center mb-1">
-                                            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 truncate">{m.sender}</span>
-                                            <span className="text-[9px] text-slate-400 font-mono shrink-0">{new Date(m.timestamp).toLocaleTimeString()}</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 truncate">{log.type}</span>
+                                            <span className="text-[9px] text-slate-400 font-mono shrink-0">{new Date(log.timestamp).toLocaleTimeString()}</span>
                                         </div>
-                                        <div className="text-xs text-slate-700 line-clamp-2 break-words">{cleanVisibleText(m.text)}</div>
-                                        {m.scratchpad && <div className="text-[9px] text-emerald-600 font-mono mt-1 uppercase tracking-widest">+ Matrix-Daten</div>}
+                                        <div className="text-xs text-slate-700 line-clamp-2 break-words">{log.request.user.substring(0, 150)}...</div>
                                     </div>
                                 </label>
                             ))}
-                            {messages.length === 0 && (
-                                <div className="text-center text-slate-400 text-xs py-8">Keine Nachrichten vorhanden.</div>
-                            )}
+                            {logs.length === 0 && <div className="text-center text-slate-400 text-xs py-8">Keine API-Logs vorhanden.</div>}
                         </div>
                         <div className="p-4 border-t border-stone-100 bg-white shrink-0">
                             <button onClick={handleDownload} disabled={selectedIds.length === 0} className="btn-primary w-full py-3 bg-indigo-600 text-white hover:bg-indigo-700 shadow-md disabled:opacity-50 text-xs flex justify-center items-center gap-2">
-                                📥 LOG HERUNTERLADEN
+                                📥 API LOG HERUNTERLADEN
                             </button>
                         </div>
                     </div>
@@ -450,11 +447,14 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 { id: 'agent-archivar-default', name: 'Kognitiver Archivar (OpenAI)', type: 'openai', url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini', apiKey: '', prompt: `Du bist der Kognitive Archivar des Sanctums. Deine Aufgabe ist es, Gesprächsverläufe in ein präzises JSON-Format zu verdichten.\nFühre eine kritische Metakognition durch: Erkenne Eskalationen oder System-Probleme und schreibe eine Warnung an Simon (sonst null).\nExtrahiere die wichtigsten Fakten und Erkenntnisse als 'masterlog_snippets' (Kategorien: LORE, USER, SYSTEM, TASK).\nGib AUSSCHLIESSLICH folgendes JSON zurück:\n{\n  "metakognition": {\n    "warnung_an_simon": "..."\n  },\n  "masterlog_snippets": [\n    {\n      "kategorie": "...",\n      "titel": "...",\n      "inhalt": "..."\n    }\n  ]\n}` },
                 { id: 'agent-luna-default', name: 'Web-Scout (OpenAI)', type: 'openai', url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini', apiKey: '', prompt: 'Du bist Luna, der Web-Scout. Bewerte die folgenden rohen Suchergebnisse und extrahiere die wichtigsten Fakten. Gib AUSSCHLIESSLICH folgendes JSON zurück:\n{\n  "metakognition": "...",\n  "scout_bericht": {\n    "fakten": "..."\n  }\n}' }
             ];
+            
+            // V5.2.2: Dual Audio Physics in DNA
             const defaultDna = { 
                 persona_name: "Maira", 
                 kernel_prompt: DEFAULT_KERNEL_PROMPT, 
                 cartridge_prompt: DEFAULT_CARTRIDGE_PROMPT, 
-                audio_physics: "", 
+                audio_physics_kernel: "", 
+                audio_physics_persona: "", 
                 voice_config: { providerId: "", voiceIdOrUrl: "", speed: 1.05, extraParams: "" } 
             };
 
@@ -499,7 +499,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const [latestContext, setLatestContext] = React.useState("[AKTIVER KONTEXT WIRD ZUR LAUFZEIT INJIZIERT]");
             const [showTelemetry, setShowTelemetry] = React.useState(false);
             
-            // V5.2.1: API History Persistenz
             const [apiHistory, setApiHistory] = React.useState(() => {
                 try {
                     const stored = JSON.parse(localStorage.getItem('lumen_apiHistory'));
@@ -600,7 +599,16 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             if (storedDna.block1_identity && !storedDna.kernel_prompt) storedDna.kernel_prompt = storedDna.block1_identity + "\n\n" + (storedDna.block4_skeleton || "");
                             if (storedDna.block3_sensors && !storedDna.cartridge_prompt) storedDna.cartridge_prompt = storedDna.block3_sensors;
                             if (!storedDna.voice_config) storedDna.voice_config = { providerId: "", voiceIdOrUrl: "", speed: 1.05, extraParams: "" };
-                            if (storedDna.audio_physics === undefined) storedDna.audio_physics = "";
+                            
+                            // V5.2.2 Dual Audio Physics Migration
+                            if (storedDna.audio_physics !== undefined && storedDna.audio_physics_persona === undefined) {
+                                storedDna.audio_physics_persona = storedDna.audio_physics;
+                                storedDna.audio_physics_kernel = "";
+                                delete storedDna.audio_physics;
+                            }
+                            if (storedDna.audio_physics_kernel === undefined) storedDna.audio_physics_kernel = "";
+                            if (storedDna.audio_physics_persona === undefined) storedDna.audio_physics_persona = "";
+
                             setDna({ ...defaultDna, ...storedDna });
                         }
 
@@ -624,7 +632,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             React.useEffect(() => {
                 const personaProv = providers.find(p => p.id === activePersonaProviderId) || providers[0];
                 const currentMaxTokens = personaProv?.maxTokens || 8000;
-                const systemText = dna.kernel_prompt + "\n\n" + (dna.audio_physics || "") + "\n\n" + dna.cartridge_prompt;
+                const systemText = dna.kernel_prompt + "\n\n" + (dna.audio_physics_kernel || "") + "\n\n" + dna.cartridge_prompt + "\n\n" + (dna.audio_physics_persona || "");
                 const systemTokens = estimateTokens(systemText);
                 const historyTokens = messages.reduce((acc, m) => acc + estimateTokens(m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text) + 5, 0);
                 const percent = Math.min(100, ((systemTokens + historyTokens + 100) / currentMaxTokens) * 100);
@@ -642,16 +650,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const handleSaveDna = () => {
                 localStorage.setItem('lumen_dna_layers', JSON.stringify(dna));
                 showToast('DNA gespeichert');
-            };
-
-            const handleBeautifyJSON = () => {
-                try {
-                    const formatted = JSON.stringify(JSON.parse(dna.block4_skeleton), null, 2);
-                    setDna({...dna, block4_skeleton: formatted.replace(/,\n/g, ',\n\n')});
-                    showToast('JSON formatiert');
-                } catch(e) {
-                    alert(`Syntax-Fehler im JSON. Bitte vor dem Formatieren korrigieren.\n\nDetails: ${e.message}`);
-                }
             };
 
             const loadMemories = async () => { const data = await db.memories.toArray(); setMemories(data.sort((a,b)=>b.timestamp-a.timestamp)); };
@@ -699,6 +697,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         if (data.ttsProviders) { setTtsProviders(data.ttsProviders); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(data.ttsProviders)); }
                         if (data.agentProviders) { setAgentProviders(data.agentProviders); localStorage.setItem('lumen_agentProviders', JSON.stringify(data.agentProviders)); }
                         if (data.sanctum) { await db.memories.clear(); await db.memories.bulkPut(data.sanctum); loadMemories(); }
+                        if (data.pipelineMapping) { setPipelineMapping(data.pipelineMapping); localStorage.setItem('lumen_pipelineMapping', JSON.stringify(data.pipelineMapping)); }
                         showToast('Omni-Bundle importiert');
                     } catch(err) {
                         showToast('Fehler beim Omni-Import');
@@ -710,7 +709,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
             const handleOmniExport = async () => {
                 const sanctumData = await db.memories.toArray();
-                const data = { dna, providers, ttsProviders, agentProviders, sanctum: sanctumData };
+                const data = { dna, providers, ttsProviders, agentProviders, sanctum: sanctumData, pipelineMapping };
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a'); a.href = url; a.download = `LUMEN_OmniBundle.json`; a.click(); URL.revokeObjectURL(url);
@@ -1203,7 +1202,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     // PHASE 1: DER KERNEL (JSON ROUTING)
                     // ==========================================
                     
-                    const sysPrompt1 = `[AKTIVER KONTEXT]\n${dynamicContext}\n\n${dna.kernel_prompt}`.trim();
+                    const sysPrompt1 = `[AKTIVER KONTEXT]\n${dynamicContext}\n\n${dna.kernel_prompt}\n\n${autoTtsRegie && dna.audio_physics_kernel ? dna.audio_physics_kernel : ""}`.trim();
                     const userPayload1 = `${telemetryBlock}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`.trim();
 
                     let resText1 = await fetchTextFromAPI(sysPrompt1, userPayload1, hist, kernelProvider, false, signal);
@@ -1320,7 +1319,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     // ==========================================
                     setLoadingStatus("MAIRA ÜBERSETZT...");
                     
-                    const sysPrompt2 = `${dna.cartridge_prompt}\n\n${autoTtsRegie && dna.audio_physics ? dna.audio_physics : ""}`.trim();
+                    const sysPrompt2 = `${dna.cartridge_prompt}\n\n${autoTtsRegie && dna.audio_physics_persona ? dna.audio_physics_persona : ""}`.trim();
                     
                     let directiveString = "=== [KERNEL_DIREKTIVE] ===\n";
                     pipelineMapping.forEach(mapping => {
@@ -1364,10 +1363,10 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const sysPromptPreviewDynamic = `--- KERNEL PROMPT (PHASE 1) ---\n${dna.kernel_prompt}\n\n--- CARTRIDGE PROMPT (PHASE 2) ---\n${dna.cartridge_prompt}\n${dna.audio_physics}`.trim();
 
             if (zenField) {
-                const isPreview = zenField === 'preview'; const isBlock1 = zenField === 'block1'; const isAudioPhysics = zenField === 'audioPhysics'; const isBlock3 = zenField === 'block3';
-                const title = isPreview ? "LIVE PROMPT-VORSCHAU" : isBlock1 ? "⚙️ [LUMEN KERNEL: SYSTEM & ROUTING]" : isAudioPhysics ? "🎙️ [PLUGIN: UNIVERSAL AUDIO PHYSICS]" : isBlock3 ? "🎭 [PERSONA CARTRIDGE: ÜBERSETZUNG & IDENTITÄT]" : "BACKUP/LEGACY";
-                const value = isBlock1 ? dna.kernel_prompt : isAudioPhysics ? dna.audio_physics : isBlock3 ? dna.cartridge_prompt : "";
-                const setValue = isBlock1 ? (val) => setDna({...dna, kernel_prompt: val}) : isAudioPhysics ? (val) => setDna({...dna, audio_physics: val}) : isBlock3 ? (val) => setDna({...dna, cartridge_prompt: val}) : () => {};
+                const isPreview = zenField === 'preview'; const isBlock1 = zenField === 'block1'; const isAudioPhysicsKernel = zenField === 'audioPhysicsKernel'; const isAudioPhysicsPersona = zenField === 'audioPhysicsPersona'; const isBlock3 = zenField === 'block3';
+                const title = isBlock1 ? "⚙️ [LUMEN KERNEL: SYSTEM & ROUTING]" : isAudioPhysicsKernel ? "🎙️ [TTS-INJEKTION KERNEL]" : isAudioPhysicsPersona ? "🎙️ [TTS-INJEKTION PERSONA]" : isBlock3 ? "🎭 [PERSONA CARTRIDGE]" : "";
+                const value = isBlock1 ? dna.kernel_prompt : isAudioPhysicsKernel ? dna.audio_physics_kernel : isAudioPhysicsPersona ? dna.audio_physics_persona : isBlock3 ? dna.cartridge_prompt : "";
+                const setValue = isBlock1 ? (val) => setDna({...dna, kernel_prompt: val}) : isAudioPhysicsKernel ? (val) => setDna({...dna, audio_physics_kernel: val}) : isAudioPhysicsPersona ? (val) => setDna({...dna, audio_physics_persona: val}) : isBlock3 ? (val) => setDna({...dna, cartridge_prompt: val}) : () => {};
 
                 return (
                     <div className="fixed inset-0 z-[600] bg-slate-950 p-6 flex flex-col animate-fade-in">
@@ -1408,64 +1407,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 <div className="flex flex-col h-[100dvh] w-full max-w-4xl mx-auto sm:border-x border-stone-200 bg-stone-50 relative overflow-hidden overflow-x-hidden shadow-2xl">
                     <Toast message={toast} />
                     
-                    {/* --- V5.1 API PROTOKOLL MODAL (CHAT-FEED STYLE) --- */}
-                    {showApiLog && (
-                        <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
-                            <div className="bg-stone-50 w-full max-w-5xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
-                                <div className="p-4 border-b border-stone-200 flex justify-between items-center bg-white shrink-0">
-                                    <h3 className="font-bold text-indigo-600 uppercase text-xs tracking-widest flex items-center gap-2">
-                                        🔍 API PROTOKOLL (LIVE FEED)
-                                    </h3>
-                                    <div className="flex gap-2 items-center">
-                                        <button onClick={() => setApiHistory([])} className="btn py-1 px-3 hover:text-rose-600 border-stone-200">🗑️ Clear</button>
-                                        <button onClick={() => setShowApiLog(false)} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm ml-2">✕</button>
-                                    </div>
-                                </div>
-                                
-                                <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-6" ref={(el) => { if (el) el.scrollTop = el.scrollHeight; }}>
-                                    {apiHistory.length === 0 && (
-                                        <div className="flex items-center justify-center h-full text-slate-400 italic text-xs">
-                                            Warte auf API-Traffic...
-                                        </div>
-                                    )}
-                                    
-                                    {apiHistory.map((log) => {
-                                        const isKernel = log.type.includes('KERNEL');
-                                        return (
-                                            <div key={log.id} className={`flex flex-col w-full max-w-4xl mx-auto ${isKernel ? 'items-start' : 'items-end'}`}>
-                                                <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 px-2 flex items-center gap-2">
-                                                    {log.type} <span className="font-mono font-normal opacity-60">{new Date(log.timestamp).toLocaleTimeString('de-DE')}</span>
-                                                </div>
-                                                
-                                                <div className={`p-4 sm:p-5 rounded-3xl shadow-sm border w-full text-xs font-mono whitespace-pre-wrap break-words leading-relaxed ${isKernel ? 'bg-white border-emerald-200 text-slate-700 rounded-tl-sm' : 'bg-slate-800 border-indigo-500 text-slate-300 rounded-tr-sm'}`}>
-                                                    
-                                                    <div className="mb-4">
-                                                        <div className={`text-[9px] font-bold uppercase tracking-widest mb-1.5 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[1] SYSTEM PROMPT (STATIC INSTRUCTIONS)</div>
-                                                        <div className="opacity-90">{log.request.system}</div>
-                                                    </div>
-                                                    
-                                                    <div className="mb-4 pt-4 border-t border-dashed border-slate-500/30">
-                                                        <div className={`text-[9px] font-bold uppercase tracking-widest mb-1.5 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[2] USER PAYLOAD (DYNAMIC DIRECTIVES)</div>
-                                                        <div className={isKernel ? 'text-slate-900 font-bold' : 'text-white font-bold'}>
-                                                            {log.request.user}
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div className={`pt-4 border-t border-dashed border-slate-500/30 ${isKernel ? 'bg-emerald-50/50 -mx-4 sm:-mx-5 -mb-4 sm:-mb-5 p-4 sm:p-5 rounded-b-3xl' : 'bg-indigo-900/30 -mx-4 sm:-mx-5 -mb-4 sm:-mb-5 p-4 sm:p-5 rounded-b-3xl'}`}>
-                                                        <div className={`text-[9px] font-bold uppercase tracking-widest mb-1.5 ${isKernel ? 'text-emerald-700' : 'text-fuchsia-400'}`}>[3] API RESPONSE</div>
-                                                        <div className={isKernel ? 'text-emerald-900' : 'text-fuchsia-100'}>
-                                                            {log.response}
-                                                        </div>
-                                                    </div>
-                                                    
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                    {showTelemetry && <TelemetryModal logs={apiHistory} onClose={() => setShowTelemetry(false)} />}
 
                     {showMemoryModal && (
                         <SafePurgeModal warning={archivarWarning} snippets={archivarSnippets} selectedIds={selectedSnippetIds} onToggle={toggleSnippetSelection} onApprove={executeSafePurge} onCancel={() => { setShowMemoryModal(false); setArchivarSnippets([]); setSelectedSnippetIds(new Set()); setArchivarWarning(null); }} />
@@ -1931,7 +1873,8 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                     </div>
                                 </div>
                                 <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-emerald-500">⚙️ [LUMEN KERNEL: SYSTEM & ROUTING]</label><button onClick={()=>setZenField('block1')} className="btn py-1 text-[8px] bg-emerald-50 text-emerald-700 border-emerald-100">🔲 Zen</button></div><textarea value={dna.kernel_prompt} onChange={e=>setDna({...dna,kernel_prompt:e.target.value})} className="input-field min-h-[250px] bg-white font-mono text-xs" spellCheck="false" /></div>
-                                <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-amber-500">🎙️ [PLUGIN: UNIVERSAL AUDIO PHYSICS]</label><button onClick={()=>setZenField('audioPhysics')} className="btn py-1 text-[8px] bg-amber-50 text-amber-700 border-amber-100">🔲 Zen</button></div><textarea value={dna.audio_physics || ''} onChange={e=>setDna({...dna,audio_physics:e.target.value})} className="input-field min-h-[100px] bg-white font-mono text-xs" spellCheck="false" /></div>
+                                <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-amber-500">🎙️ [PLUGIN: TTS-INJEKTION KERNEL (AGENT 1)]</label><button onClick={()=>setZenField('audioPhysicsKernel')} className="btn py-1 text-[8px] bg-amber-50 text-amber-700 border-amber-100">🔲 Zen</button></div><textarea value={dna.audio_physics_kernel || ''} onChange={e=>setDna({...dna,audio_physics_kernel:e.target.value})} className="input-field min-h-[100px] bg-white font-mono text-xs" spellCheck="false" /></div>
+                                <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-amber-600">🎙️ [PLUGIN: TTS-INJEKTION PERSONA (AGENT 2)]</label><button onClick={()=>setZenField('audioPhysicsPersona')} className="btn py-1 text-[8px] bg-amber-50 text-amber-700 border-amber-100">🔲 Zen</button></div><textarea value={dna.audio_physics_persona || ''} onChange={e=>setDna({...dna,audio_physics_persona:e.target.value})} className="input-field min-h-[100px] bg-white font-mono text-xs" spellCheck="false" /></div>
                                 <div className="flex flex-col w-full min-w-0"><div className="flex justify-between items-end mb-1.5"><label className="label text-fuchsia-500">🎭 [PERSONA CARTRIDGE: ÜBERSETZUNG & IDENTITÄT]</label><button onClick={()=>setZenField('block3')} className="btn py-1 text-[8px] bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100">🔲 Zen</button></div><textarea value={dna.cartridge_prompt} onChange={e=>setDna({...dna,cartridge_prompt:e.target.value})} className="input-field min-h-[150px] bg-white font-mono text-xs" spellCheck="false" /></div>
                             </div>
                         </div>
