@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V5.2.6</title>
+    <title>LUMEN - CORE V5.3</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -94,8 +94,8 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V5.2.6 ---
-        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.2.6: LOGIK & ROUTING]
+        // --- KONSTANTEN V5.3 ---
+        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.3: LOGIK & ROUTING]
 Du bist der KERNEL (Agent 1). Du bist eine eiskalte, analytische Maschine. Du hast KEINE Persönlichkeit.
 Deine EINZIGE Aufgabe ist es, den Kontext und den [USER INPUT] zu analysieren und AUSSCHLIESSLICH als valides JSON-Objekt zu antworten. Jedes Wort außerhalb des JSON-Skeletts führt zur Selbstzerstörung.
 
@@ -126,7 +126,7 @@ Bewerte diese Matrix-Sensoren strikt anhand des Inputs:
   }
 }`;
 
-        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.2.6: MAIRA]
+        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.3: MAIRA]
 Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen von Simon (dem Operator) tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.
 Du erhältst in deiner Prompt-Umgebung eine [KERNEL_DIRECTIVE] (die Analyse der Maschine) und den [USER INPUT].
 
@@ -145,14 +145,14 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V5.2.6. TTS-BUTTONS PERMANENT ONLINE.',
+                text: 'INIT CORE V5.3. PIPELINE ROUTING & DUAL-TTS ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die V5.2.6 Architektur ist voll operativ. Der Play-Button für die Sprachsynthese ist nun permanent verfügbar, unabhängig davon, ob die Audiodatei bereits gecached wurde.',
-                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.2.6"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz der Pipeline-Routing Engine erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber. Die Audio-Interaktion fühlt sich nun noch reaktiver an."\n}',
+                text: 'System online. Die Architektur V5.3 läuft fehlerfrei. Der Live-Feed für API Logs ist aktiv, die Pipeline transformiert JSON nun sauber in Text, und die Audio-Engine nutzt das klassische V4.10 UI.',
+                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.3"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber. Die Architektur fühlt sich robust an."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -168,9 +168,8 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
         const resolveJsonPath = (obj, path) => {
             if (!obj || !path) return undefined;
-            try { 
-                return path.split('.').reduce((o, p) => (o !== undefined && o !== null) ? o[p] : undefined, obj); 
-            } catch (e) { return undefined; }
+            try { return path.split('.').reduce((o, p) => (o !== undefined && o !== null) ? o[p] : undefined, obj); } 
+            catch (e) { return undefined; }
         };
 
         const findRelevantMemories = (userInput, allMemories) => {
@@ -214,91 +213,13 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             );
         };
 
-        const ApiTelemetryModal = ({ logs, onClose, onClear }) => {
-            const [selectedIds, setSelectedIds] = React.useState(logs.map(m => m.id));
-
-            const toggleAll = () => {
-                if (selectedIds.length === logs.length) setSelectedIds([]);
-                else setSelectedIds(logs.map(m => m.id));
-            };
-
-            const toggleOne = (id) => {
-                if (selectedIds.includes(id)) setSelectedIds(selectedIds.filter(i => i !== id));
-                else setSelectedIds([...selectedIds, id]);
-            };
-
-            const handleDownload = () => {
-                const selectedLogs = logs.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN API LOG V5.2.6\n\n";
-                selectedLogs.forEach(log => {
-                    content += `[${new Date(log.timestamp).toLocaleString()}] ${log.type}\n`;
-                    content += `--- SYSTEM PROMPT (ANWEISUNG) ---\n${log.request.system}\n\n`;
-                    content += `--- USER PAYLOAD ---\n${log.request.user}\n\n`;
-                    content += `--- API RESPONSE (ANTWORT) ---\n${log.response}\n\n`;
-                    content += `=========================================\n\n`;
-                });
-
-                const blob = new Blob([content], { type: "text/markdown" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                const dateStr = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
-                a.download = `LUMEN_API_Log_${dateStr}.md`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            };
-
-            return (
-                <div className="fixed inset-0 z-[900] bg-slate-900/40 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
-                    <div className="bg-white w-full max-w-2xl max-h-[80vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 min-w-0">
-                        <div className="p-4 border-b border-stone-100 flex justify-between items-center bg-slate-50">
-                            <h3 className="font-bold text-slate-800 uppercase text-xs tracking-widest flex items-center gap-2">📊 API Logs & Telemetrie</h3>
-                            <button onClick={onClose} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
-                        </div>
-                        <div className="p-3 bg-stone-50 border-b border-stone-200 flex justify-between items-center">
-                            <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
-                                <input type="checkbox" checked={selectedIds.length === logs.length && logs.length > 0} onChange={toggleAll} className="accent-indigo-600 w-4 h-4 cursor-pointer" />
-                                Alle auswählen
-                            </label>
-                            <div className="text-[10px] text-slate-500 font-mono uppercase">{selectedIds.length} von {logs.length} ausgewählt</div>
-                        </div>
-                        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 bg-stone-50/50 min-w-0">
-                            {logs.map(log => (
-                                <label key={log.id} className="flex gap-3 p-3 bg-white border border-stone-100 rounded-xl hover:border-indigo-200 cursor-pointer shadow-sm items-start transition-colors w-full min-w-0">
-                                    <input type="checkbox" checked={selectedIds.includes(log.id)} onChange={() => toggleOne(log.id)} className="accent-indigo-600 w-4 h-4 mt-0.5 shrink-0 cursor-pointer" />
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex justify-between items-center mb-1">
-                                            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 truncate">{log.type}</span>
-                                            <span className="text-[9px] text-slate-400 font-mono shrink-0">{new Date(log.timestamp).toLocaleTimeString()}</span>
-                                        </div>
-                                        <div className="text-xs text-slate-700 line-clamp-2 break-words">{log.request.user.substring(0, 150)}...</div>
-                                    </div>
-                                </label>
-                            ))}
-                            {logs.length === 0 && <div className="text-center text-slate-400 text-xs py-8">Keine API-Logs vorhanden.</div>}
-                        </div>
-                        <div className="p-4 border-t border-stone-100 bg-white shrink-0 flex gap-2">
-                            <button onClick={handleDownload} disabled={selectedIds.length === 0} className="btn-primary w-full py-3 bg-indigo-600 text-white hover:bg-indigo-700 shadow-md disabled:opacity-50 text-xs flex justify-center items-center gap-2">
-                                📥 AUSGEWÄHLTE LOGS HERUNTERLADEN
-                            </button>
-                            <button onClick={onClear} className="btn-danger py-3 shadow-md disabled:opacity-50 text-xs flex justify-center items-center gap-2 px-6">
-                                🗑️ CLEAR
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
         const TelemetryModal = ({ messages, onClose }) => {
             const [selectedIds, setSelectedIds] = React.useState(messages.map(m => m.id));
             const toggleAll = () => { if (selectedIds.length === messages.length) setSelectedIds([]); else setSelectedIds(messages.map(m => m.id)); };
             const toggleOne = (id) => { if (selectedIds.includes(id)) setSelectedIds(selectedIds.filter(i => i !== id)); else setSelectedIds([...selectedIds, id]); };
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN CHAT LOG V5.2.6\n\n";
+                let content = "# LUMEN CHAT LOG V5.3\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -411,7 +332,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 }
             }
             
-            // V5.0: JSON vs XML Parsing im X-Ray
             let parsedScratch = null;
             if (!isUser && message.scratchpad) {
                 try { parsedScratch = JSON.parse(message.scratchpad); } catch(e){}
@@ -440,7 +360,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         <div className={`p-5 w-full min-w-0 ${isUser ? 'bg-white text-slate-700 border border-stone-100 shadow-sm rounded-3xl rounded-tr-sm' : 'bg-indigo-50 text-indigo-900 border border-indigo-100 shadow-sm rounded-3xl rounded-tl-sm'}`}>
                             <div className="markdown-content text-[15px] font-sans leading-relaxed whitespace-pre-wrap break-words" dangerouslySetInnerHTML={{ __html: finalMarkup }} />
                             
-                            {/* V5.2.6: PERMANENTE TTS BUTTONS */}
+                            {/* V5.3: Permanente TTS Buttons */}
                             {!isUser && (
                                 <div className="mt-3 flex gap-4 pt-2">
                                     <button onClick={() => onPlayTTS(message.id, message.text, parsedScratch?.kernel_matrix?.matrix?.tts_regie_prompt || parsedScratch?.kernel_matrix?.tts_regie_prompt)} className={`text-[9px] uppercase font-bold tracking-widest transition-colors flex items-center gap-1 p-0 ${playingMsgId === message.id ? 'text-indigo-600 animate-pulse' : 'text-slate-400 hover:text-indigo-500'}`}>
@@ -455,7 +375,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                 </div>
                             )}
 
-                            {/* V5.0: 2-Level X-Ray */}
                             {!isUser && showScratchpad && parsedScratch && (
                                 <div className="mt-4 pt-3 border-t border-indigo-200/50 flex flex-col gap-3 animate-fade-in w-full min-w-0">
                                     {parsedScratch.persona_gedanken && (
@@ -466,7 +385,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                     {parsedScratch.kernel_matrix && (
                                         <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(JSON.stringify(parsedScratch.kernel_matrix, null, 2))}></pre>
                                     )}
-                                    {/* Fallback für alte V4 Daten */}
                                     {!parsedScratch.kernel_matrix && !parsedScratch.persona_gedanken && (
                                          <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(message.scratchpad)}></pre>
                                     )}
@@ -509,7 +427,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 { id: 'agent-luna-default', name: 'Web-Scout (OpenAI)', type: 'openai', url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini', apiKey: '', prompt: 'Du bist Luna, der Web-Scout. Bewerte die folgenden rohen Suchergebnisse und extrahiere die wichtigsten Fakten. Gib AUSSCHLIESSLICH folgendes JSON zurück:\n{\n  "metakognition": "...",\n  "scout_bericht": {\n    "fakten": "..."\n  }\n}' }
             ];
             
-            // V5.2.3: Dual Audio Physics in DNA
+            // V5.3: Dual Audio Physics in DNA
             const defaultDna = { 
                 persona_name: "Maira", 
                 kernel_prompt: DEFAULT_KERNEL_PROMPT, 
@@ -556,11 +474,10 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const [tokenUsage, setTokenUsage] = React.useState({ system: 0, history: 0, percent: 0 });
             const [showTokenTooltip, setShowTokenTooltip] = React.useState(false);
 
-            const [telemetry, setTelemetry] = React.useState({ concern: 0, bs_meter: 0, mask_drop: false });
             const [latestContext, setLatestContext] = React.useState("[AKTIVER KONTEXT WIRD ZUR LAUFZEIT INJIZIERT]");
             const [showTelemetry, setShowTelemetry] = React.useState(false);
             
-            // V5.2.3: API History Persistenz
+            // V5.3: API History Persistenz
             const [apiHistory, setApiHistory] = React.useState(() => {
                 try {
                     const stored = JSON.parse(localStorage.getItem('lumen_apiHistory'));
@@ -586,7 +503,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const [isArchiving, setIsArchiving] = React.useState(false);
             const [optimizingId, setOptimizingId] = React.useState(null);
             
-            const [expandedCards, setExpandedCards] = React.useState({});
             const [helferArchiv, setHelferArchiv] = React.useState(null);
 
             const [activeView, setActiveView] = React.useState('chat'); 
@@ -620,7 +536,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const [inputText, setInputText] = React.useState('');
             const textareaRef = React.useRef(null); 
 
-            const fileInputRefSanctum = React.useRef(null);
             const fileInputRefDNA = React.useRef(null);
             const fileInputRefConfig = React.useRef(null);
             const fileInputRefOmni = React.useRef(null);
@@ -628,7 +543,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
             const handleDeleteMessage = (id) => {
                 setMessages(prev => prev.filter(m => m.id !== id));
-                setApiHistory(prev => prev.filter(log => log.linkedMsgId !== id));
+                setApiHistory(prev => prev.filter(log => log.linkedMsgId !== id)); // V5.3 Sync Delete
             };
 
             React.useEffect(() => {
@@ -667,7 +582,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             if (storedDna.block3_sensors && !storedDna.cartridge_prompt) storedDna.cartridge_prompt = storedDna.block3_sensors;
                             if (!storedDna.voice_config) storedDna.voice_config = { providerId: "", voiceIdOrUrl: "", speed: 1.05, extraParams: "" };
                             
-                            // V5.2.3 Dual Audio Physics Migration
                             if (storedDna.audio_physics !== undefined && storedDna.audio_physics_persona === undefined) {
                                 storedDna.audio_physics_persona = storedDna.audio_physics;
                                 storedDna.audio_physics_kernel = "";
@@ -717,16 +631,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const handleSaveDna = () => {
                 localStorage.setItem('lumen_dna_layers', JSON.stringify(dna));
                 showToast('DNA gespeichert');
-            };
-
-            const handleBeautifyJSON = () => {
-                try {
-                    const formatted = JSON.stringify(JSON.parse(dna.block4_skeleton), null, 2);
-                    setDna({...dna, block4_skeleton: formatted.replace(/,\n/g, ',\n\n')});
-                    showToast('JSON formatiert');
-                } catch(e) {
-                    alert(`Syntax-Fehler im JSON. Bitte vor dem Formatieren korrigieren.\n\nDetails: ${e.message}`);
-                }
             };
 
             const loadMemories = async () => { const data = await db.memories.toArray(); setMemories(data.sort((a,b)=>b.timestamp-a.timestamp)); };
@@ -1281,9 +1185,10 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     // ==========================================
                     
                     const sysPrompt1 = `[AKTIVER KONTEXT]\n${dynamicContext}\n\n${dna.kernel_prompt}\n\n${autoTtsRegie && dna.audio_physics_kernel ? dna.audio_physics_kernel : ""}`.trim();
-                    const userPayload1 = `${telemetryBlock}\n\n=== [USER MESSAGE / PAYLOAD] ===\n${text}`.trim();
+                    const userPayload1 = `${telemetryBlock}\n\n=== [USER MESSAGE / PAYLOAD] ===\n"${text}"`.trim();
 
                     let resText1 = await fetchTextFromAPI(sysPrompt1, userPayload1, hist, kernelProvider, false, signal);
+                    // V5.3 Sync Delete linking
                     setApiHistory(prev => [...prev, { id: generateId(), linkedMsgId: newAiMsgId, type: 'AGENT 1 (KERNEL)', timestamp: Date.now(), request: { system: sysPrompt1, user: userPayload1 }, response: resText1 }].slice(-30));
                     
                     let objPhase1 = null;
@@ -1406,7 +1311,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         if (!mapping.jsonKey || !mapping.displayName) return; 
                         const val = resolveJsonPath(objPhase1, mapping.jsonKey);
                         
-                        if (val !== undefined && val !== "") {
+                        if (val !== undefined && val !== "" && !(Array.isArray(val) && val.length === 0)) {
                             const valStr = (val === null) ? "null" : (typeof val === 'object' ? JSON.stringify(val) : val);
                             directiveString += `${mapping.displayName}: ${valStr}\n`;
                             hasValidDirectives = true;
@@ -1419,7 +1324,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     
                     const userPayload2 = `${systemTimeStr}\n${directiveString}${helferAddon}\n\n=== [USER INPUT] ===\n"${text}"`.trim();
 
-                    let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, personaProvider, true, signal); // forceTextMode = true!
+                    let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, personaProvider, true, signal);
                     setApiHistory(prev => [...prev, { id: generateId(), linkedMsgId: newAiMsgId, type: 'AGENT 2 (PERSONA)', timestamp: Date.now(), request: { system: sysPrompt2, user: userPayload2 }, response: resText2 }].slice(-30));
 
                     const xmlMatch = resText2.match(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i);
@@ -1438,17 +1343,15 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 } catch(e) { 
                     if (e.name === 'AbortError') {
                         showToast("Prozess durch Operator abgebrochen.");
-                        return; // Silent Abort
+                        return;
                     }
                     setMessages(prev => [...prev.filter(m => m.id !== userMsgId), {id: generateId(), sender: 'system-error', text: e.message.includes('Failed to fetch') ? "Netzwerk-Blockade (Failed to fetch)." : e.message, timestamp: new Date().toISOString()}]);
                     setInputText(text); if (textareaRef.current) { textareaRef.current.style.height = 'auto'; textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 150) + 'px'; }
                 } finally { setLoadingStatus(null); }
             };
 
-            const sysPromptPreviewDynamic = `--- KERNEL PROMPT (PHASE 1) ---\n${dna.kernel_prompt}\n\n--- CARTRIDGE PROMPT (PHASE 2) ---\n${dna.cartridge_prompt}\n${dna.audio_physics}`.trim();
-
             if (zenField) {
-                const isPreview = zenField === 'preview'; const isBlock1 = zenField === 'block1'; const isAudioPhysicsKernel = zenField === 'audioPhysicsKernel'; const isAudioPhysicsPersona = zenField === 'audioPhysicsPersona'; const isBlock3 = zenField === 'block3';
+                const isBlock1 = zenField === 'block1'; const isAudioPhysicsKernel = zenField === 'audioPhysicsKernel'; const isAudioPhysicsPersona = zenField === 'audioPhysicsPersona'; const isBlock3 = zenField === 'block3';
                 const title = isBlock1 ? "⚙️ [LUMEN KERNEL: SYSTEM & ROUTING]" : isAudioPhysicsKernel ? "🎙️ [TTS-INJEKTION KERNEL]" : isAudioPhysicsPersona ? "🎙️ [TTS-INJEKTION PERSONA]" : isBlock3 ? "🎭 [PERSONA CARTRIDGE]" : "";
                 const value = isBlock1 ? dna.kernel_prompt : isAudioPhysicsKernel ? dna.audio_physics_kernel : isAudioPhysicsPersona ? dna.audio_physics_persona : isBlock3 ? dna.cartridge_prompt : "";
                 const setValue = isBlock1 ? (val) => setDna({...dna, kernel_prompt: val}) : isAudioPhysicsKernel ? (val) => setDna({...dna, audio_physics_kernel: val}) : isAudioPhysicsPersona ? (val) => setDna({...dna, audio_physics_persona: val}) : isBlock3 ? (val) => setDna({...dna, cartridge_prompt: val}) : () => {};
@@ -1461,11 +1364,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                 <button onClick={() => setZenField(null)} className="bg-rose-900/50 text-rose-300 border border-rose-700/50 px-5 py-2 rounded-xl text-xs hover:bg-rose-800/50 transition-colors shadow-md uppercase font-bold">❌ Exit Zen</button>
                             </div>
                         </div>
-                        {isPreview ? (
-                            <pre className="flex-1 w-full bg-slate-900 border border-slate-800 text-slate-400 rounded-2xl p-6 font-mono text-sm leading-relaxed overflow-y-auto shadow-inner whitespace-pre-wrap break-words" dangerouslySetInnerHTML={getXRayHTML(sysPromptPreviewDynamic)}></pre>
-                        ) : (
-                            <textarea value={value} onChange={e=>setValue(e.target.value)} className="flex-1 w-full bg-slate-900 border border-slate-800 text-slate-100 rounded-2xl p-6 focus:outline-none focus:border-indigo-500 font-mono text-sm leading-relaxed resize-none shadow-inner" autoFocus spellCheck="false" />
-                        )}
+                        <textarea value={value} onChange={e=>setValue(e.target.value)} className="flex-1 w-full bg-slate-900 border border-slate-800 text-slate-100 rounded-2xl p-6 focus:outline-none focus:border-indigo-500 font-mono text-sm leading-relaxed resize-none shadow-inner" autoFocus spellCheck="false" />
                     </div>
                 );
             }
@@ -1494,8 +1393,36 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     
                     {showTelemetry && <TelemetryModal messages={messages} onClose={() => setShowTelemetry(false)} />}
 
-                    {/* --- V5.0 API PROTOKOLL MODAL --- */}
-                    {showApiLog && <ApiTelemetryModal logs={apiHistory} onClose={() => setShowApiLog(false)} onClear={() => setApiHistory([])} />}
+                    {/* --- V5.3 API PROTOKOLL MODAL (LIVE FEED) --- */}
+                    {showApiLog && (
+                        <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
+                            <div className="bg-stone-50 w-full max-w-5xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
+                                <div className="p-4 border-b border-stone-200 flex justify-between items-center bg-white shrink-0">
+                                    <h3 className="font-bold text-indigo-600 uppercase text-xs tracking-widest">🔍 API PROTOKOLL (LIVE FEED)</h3>
+                                    <div className="flex gap-2 items-center">
+                                        <button onClick={() => setApiHistory([])} className="btn py-1 px-3 hover:text-rose-600">🗑️ Clear Feed</button>
+                                        <button onClick={() => setShowApiLog(false)} className="text-slate-400 hover:text-rose-500 font-bold text-sm ml-2">✕</button>
+                                    </div>
+                                </div>
+                                <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6" ref={(el) => { if (el) el.scrollTop = el.scrollHeight; }}>
+                                    {apiHistory.length === 0 && <div className="text-center text-slate-400 italic text-xs h-full flex items-center justify-center">Warte auf Traffic...</div>}
+                                    {apiHistory.map((log) => {
+                                        const isKernel = log.type.includes('KERNEL');
+                                        return (
+                                            <div key={log.id} className={`flex flex-col w-full max-w-4xl mx-auto ${isKernel ? 'items-start' : 'items-end'}`}>
+                                                <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 px-2">{log.type} <span className="font-mono opacity-60">{new Date(log.timestamp).toLocaleTimeString('de-DE')}</span></div>
+                                                <div className={`p-5 rounded-3xl shadow-sm border w-full text-xs font-mono whitespace-pre-wrap break-words ${isKernel ? 'bg-white border-emerald-200 text-slate-700 rounded-tl-sm' : 'bg-slate-800 border-indigo-500 text-slate-300 rounded-tr-sm'}`}>
+                                                    <div className="mb-4"><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[1] SYSTEM PROMPT</div><div className="opacity-90">{log.request.system}</div></div>
+                                                    <div className="mb-4 pt-4 border-t border-dashed border-slate-500/30"><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[2] USER PAYLOAD</div><div className={isKernel ? 'text-slate-900 font-bold' : 'text-white font-bold'}>{log.request.user}</div></div>
+                                                    <div className={`pt-4 border-t border-dashed border-slate-500/30 ${isKernel ? 'bg-emerald-50 -mx-5 -mb-5 p-5 rounded-b-3xl' : 'bg-indigo-900/30 -mx-5 -mb-5 p-5 rounded-b-3xl'}`}><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-700' : 'text-fuchsia-400'}`}>[3] API RESPONSE</div><div className={isKernel ? 'text-emerald-900' : 'text-fuchsia-100'}>{log.response}</div></div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {showMemoryModal && (
                         <SafePurgeModal warning={archivarWarning} snippets={archivarSnippets} selectedIds={selectedSnippetIds} onToggle={toggleSnippetSelection} onApprove={executeSafePurge} onCancel={() => { setShowMemoryModal(false); setArchivarSnippets([]); setSelectedSnippetIds(new Set()); setArchivarWarning(null); }} />
@@ -1508,6 +1435,35 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             <div className="flex gap-2">
                                 <button onClick={() => { setActiveDesks(prev => [...prev, smartToast.card]); setVolatileMemories(prev => prev.filter(m => m.id !== smartToast.id)); setSmartToast(null); showToast('Auf den Schreibtisch gepinnt'); }} className="btn-primary py-2 px-3 text-[10px] w-full bg-indigo-600 text-white hover:bg-indigo-700 shadow-md">📌 PINNEN</button>
                                 <button onClick={() => setSmartToast(null)} className="btn py-2 px-3 text-[10px] w-full bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200">IGNORIEREN</button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- SANCTUM EDIT MODAL --- */}
+                    {sanctumEditId && (
+                        <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
+                            <div className="bg-white w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
+                                <div className="p-4 border-b border-stone-200 flex justify-between items-center bg-indigo-50 shrink-0">
+                                    <h3 className="font-bold text-indigo-900 uppercase text-xs tracking-widest">{sanctumEditId === 'NEW' ? 'Neue Akte erstellen' : 'Akte bearbeiten'}</h3>
+                                    <button onClick={() => setSanctumEditId(null)} className="text-slate-400 hover:text-rose-500 font-bold text-sm">✕</button>
+                                </div>
+                                <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div><label className="label">Titel Technisch (ID)</label><input value={sanctumForm.titel_technisch || ''} onChange={e=>setSanctumForm({...sanctumForm, titel_technisch: e.target.value})} className="input-field" /></div>
+                                        <div><label className="label">Titel Poetisch</label><input value={sanctumForm.titel_poetisch || ''} onChange={e=>setSanctumForm({...sanctumForm, titel_poetisch: e.target.value})} className="input-field" /></div>
+                                    </div>
+                                    <div><label className="label">Fakt / Geschehen</label><textarea value={sanctumForm.fakt || ''} onChange={e=>setSanctumForm({...sanctumForm, fakt: e.target.value})} className="input-field min-h-[80px]" /></div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div><label className="label">Emotion</label><textarea value={sanctumForm.emotion || ''} onChange={e=>setSanctumForm({...sanctumForm, emotion: e.target.value})} className="input-field min-h-[60px]" /></div>
+                                        <div><label className="label">Bedeutung</label><textarea value={sanctumForm.bedeutung || ''} onChange={e=>setSanctumForm({...sanctumForm, bedeutung: e.target.value})} className="input-field min-h-[60px]" /></div>
+                                    </div>
+                                    <div><label className="label">Reflexion (Fusioniert)</label><textarea value={sanctumForm.reflexion || ''} onChange={e=>setSanctumForm({...sanctumForm, reflexion: e.target.value})} className="input-field min-h-[80px]" /></div>
+                                    <div><label className="label">Tags (Komma getrennt)</label><input value={sanctumForm.tagsString || ''} onChange={e=>setSanctumForm({...sanctumForm, tagsString: e.target.value})} className="input-field" /></div>
+                                </div>
+                                <div className="p-4 border-t border-stone-200 bg-stone-50 shrink-0 flex justify-end gap-2">
+                                    <button onClick={() => setSanctumEditId(null)} className="btn">Abbrechen</button>
+                                    <button onClick={handleSanctumSave} className="btn-primary bg-indigo-600 text-white hover:bg-indigo-700">💾 Speichern</button>
+                                </div>
                             </div>
                         </div>
                     )}
@@ -1614,7 +1570,6 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             
                             <div className="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto relative w-full">
                                 <div className="flex-1"></div>
-                                {/* V5.1.1: DOM-Bloat Protection via renderedMessageLimit */}
                                 {messages.length > renderedMessageLimit && (
                                     <div className="flex justify-center mb-4">
                                         <button onClick={() => setRenderedMessageLimit(prev => prev + 40)} className="btn bg-white border-stone-200 shadow-sm text-xs px-4 py-2">
@@ -1625,6 +1580,34 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                 {messages.slice(-renderedMessageLimit).map(msg => <ChatBubble key={msg.id} message={msg} personaName={dna.persona_name} playingMsgId={playingMsgId} onPlayTTS={playMessageTTS} onDelete={handleDeleteMessage} audioSessionCache={audioSessionCache} />)}
                                 {loadingStatus && <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest animate-pulse mb-6 ml-2 font-mono">[ {loadingStatus} ]</div>}
                                 <div ref={messagesEndRef} className="h-4" />
+                            </div>
+                        </div>
+
+                        {/* --- SANCTUM VIEW --- */}
+                        <div className={`${activeView === 'sanctum' ? 'block' : 'hidden'} p-4 sm:p-6 w-full max-w-6xl mx-auto space-y-6 mt-4 animate-fade-in pb-32`}>
+                            <div className="flex justify-between items-center border-b border-stone-200 pb-3">
+                                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">🏛️ Sanctum Archiv ({memories.length})</h2>
+                                <button onClick={() => { setSanctumEditId('NEW'); setSanctumForm({titel_technisch: `AKTE_${Date.now()}`, titel_poetisch: '', fakt: '', emotion: '', bedeutung: '', reflexion: '', tagsString: '', kategorie: 'STANDARD'}); }} className="btn-primary">➕ Neue Akte</button>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {memories.map(mem => (
+                                    <div key={mem.id} className="panel bg-white shadow-sm hover:shadow-md transition-shadow border-stone-200 flex flex-col gap-2">
+                                        <div className="flex justify-between items-start">
+                                            <div className="font-bold text-xs font-mono text-indigo-700 truncate">{mem.titel_technisch}</div>
+                                            <div className="flex gap-1">
+                                                <button onClick={() => { setSanctumEditId(mem.id); setSanctumForm({...mem, tagsString: mem.tags?.join(', ') || ''}); }} className="text-slate-400 hover:text-indigo-600">✏️</button>
+                                                <button onClick={() => { if(window.confirm('Akte endgültig löschen?')) { db.memories.delete(mem.id); loadMemories(); } }} className="text-slate-400 hover:text-rose-600">🗑️</button>
+                                            </div>
+                                        </div>
+                                        <div className="text-sm font-serif italic text-rose-600">{mem.titel_poetisch}</div>
+                                        <div className="text-xs text-slate-600 line-clamp-3 flex-1">{mem.fakt}</div>
+                                        <div className="flex flex-wrap gap-1 mt-2">
+                                            {mem.tags?.slice(0,3).map(t => <span key={t} className="text-[9px] bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded">{t}</span>)}
+                                            {mem.tags?.length > 3 && <span className="text-[9px] bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded">+{mem.tags.length - 3}</span>}
+                                        </div>
+                                    </div>
+                                ))}
+                                {memories.length === 0 && <div className="col-span-full text-center text-slate-400 py-12 text-sm italic">Das Sanctum ist leer.</div>}
                             </div>
                         </div>
 
@@ -1718,7 +1701,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             </div>
                         </div>
 
-                        {/* --- V5.1 SETTINGS VIEW (DUAL PROVIDER) --- */}
+                        {/* --- SETTINGS VIEW --- */}
                         <div className={`${activeView === 'settings' ? 'block' : 'hidden'} p-4 sm:p-6 w-full max-w-4xl mx-auto space-y-6 mt-4 animate-fade-in pb-20`}>
                             <div className="flex justify-between items-center border-b border-stone-200 pb-2">
                                 <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">System Konfiguration</h2>
@@ -2008,12 +1991,13 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             </button>
                         )}
                         
+                        {/* V5.3 Classic V4.10 Audio Player */}
                         {playingMsgId && window.currentAudio && (
-                            <div className="max-w-4xl mx-auto flex items-center gap-3 bg-white border border-stone-200 text-slate-700 px-4 py-2 rounded-t-xl text-[10px] font-mono shadow-md mt-1 mx-2 sm:mx-6 z-50 relative">
-                                <button onClick={() => { if (window.currentAudio.paused) window.currentAudio.play(); else window.currentAudio.pause(); }} className="hover:text-indigo-600 transition-colors text-sm w-6 flex justify-center">
-                                    {audioState.isPlaying ? '⏸' : '▶'}
+                            <div className="max-w-4xl mx-auto flex items-center gap-3 bg-indigo-900 text-indigo-100 px-4 py-2 rounded-t-xl text-[10px] font-mono shadow-md mt-1 mx-2 sm:mx-6 z-50 relative">
+                                <button onClick={() => { if (window.currentAudio.paused) window.currentAudio.play(); else window.currentAudio.pause(); }} className="hover:text-white transition-colors text-sm w-6 flex justify-center">
+                                    {audioState.isPlaying ? '⏸' : '▶️'}
                                 </button>
-                                <input type="range" min="0" max={audioState.duration || 100} value={audioState.currentTime || 0} onChange={(e) => { if (window.currentAudio) window.currentAudio.currentTime = Number(e.target.value); }} className="flex-1 h-1 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
+                                <input type="range" min="0" max={audioState.duration || 100} value={audioState.currentTime || 0} onChange={(e) => { if (window.currentAudio) window.currentAudio.currentTime = Number(e.target.value); }} className="flex-1 h-1 bg-indigo-950 rounded-lg appearance-none cursor-pointer accent-indigo-400" />
                                 <span className="w-[60px] text-right opacity-80 whitespace-nowrap">{Math.floor((audioState.currentTime || 0)/60)}:{(Math.floor(audioState.currentTime || 0)%60).toString().padStart(2, '0')} / {Math.floor((audioState.duration || 0)/60)}:{(Math.floor(audioState.duration || 0)%60).toString().padStart(2, '0')}</span>
                             </div>
                         )}
