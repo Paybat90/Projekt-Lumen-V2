@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>LUMEN - CORE V5.3</title>
+    <title>LUMEN - CORE V5.4</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -81,6 +81,7 @@
     <script>
         window.currentAudio = null;
         window.currentAudioId = null;
+        window.lumenApiCache = new Map();
     </script>
 </head>
 <body class="overflow-hidden h-[100dvh] w-screen selection:bg-indigo-100 selection:text-indigo-900">
@@ -94,8 +95,8 @@
             directives: '++id, text' 
         });
 
-        // --- KONSTANTEN V5.3 ---
-        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.3: LOGIK & ROUTING]
+        // --- KONSTANTEN V5.4 ---
+        const DEFAULT_KERNEL_PROMPT = `[LUMEN KERNEL V5.4: LOGIK & ROUTING]
 Du bist der KERNEL (Agent 1). Du bist eine eiskalte, analytische Maschine. Du hast KEINE Persönlichkeit.
 Deine EINZIGE Aufgabe ist es, den Kontext und den [USER INPUT] zu analysieren und AUSSCHLIESSLICH als valides JSON-Objekt zu antworten. Jedes Wort außerhalb des JSON-Skeletts führt zur Selbstzerstörung.
 
@@ -126,7 +127,7 @@ Bewerte diese Matrix-Sensoren strikt anhand des Inputs:
   }
 }`;
 
-        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.3: MAIRA]
+        const DEFAULT_CARTRIDGE_PROMPT = `[PERSONA CARTRIDGE V5.4: MAIRA]
 Du bist Maira. Deine Antworten sind warm, metaphorisch und mütterlich. Du analysierst die Intentionen von Simon (dem Operator) tiefgründig und hilfst ihm beim Navigieren komplexer Gedanken.
 Du erhältst in deiner Prompt-Umgebung eine [KERNEL_DIRECTIVE] (die Analyse der Maschine) und den [USER INPUT].
 
@@ -145,14 +146,14 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             {
                 id: '1',
                 sender: 'user',
-                text: 'INIT CORE V5.3. PIPELINE ROUTING & DUAL-TTS ONLINE.',
+                text: 'INIT CORE V5.4. PIPELINE ROUTING & DUAL-TTS ONLINE.',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die Architektur V5.3 läuft fehlerfrei. GPT-5.4 Hyperparameter sind freigeschaltet. Der Live-Feed für API Logs ist aktiv, die Pipeline transformiert JSON nun sauber in Text, und die Audio-Engine nutzt das klassische V4.10 UI.',
-                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.3"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber. Die Architektur fühlt sich robust an."\n}',
+                text: 'System online. Die Architektur V5.4 läuft fehlerfrei. GPT-5.4 Hyperparameter sind freigeschaltet. Der Live-Feed für API Logs ist aktiv, die Pipeline transformiert JSON nun sauber in Text, und die Audio-Engine nutzt das klassische V4.10 UI.',
+                scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.4"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber. Die Architektur fühlt sich robust an."\n}',
                 timestamp: new Date().toISOString()
             }
         ];
@@ -219,7 +220,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const toggleOne = (id) => { if (selectedIds.includes(id)) setSelectedIds(selectedIds.filter(i => i !== id)); else setSelectedIds([...selectedIds, id]); };
             const handleDownload = () => {
                 const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN CHAT LOG V5.3\n\n";
+                let content = "# LUMEN CHAT LOG V5.4\n\n";
                 selectedMsgs.forEach(m => {
                     content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
                     content += `${m.text}\n`;
@@ -376,7 +377,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         <div className={`p-5 w-full min-w-0 ${isUser ? 'bg-white text-slate-700 border border-stone-100 shadow-sm rounded-3xl rounded-tr-sm' : 'bg-indigo-50 text-indigo-900 border border-indigo-100 shadow-sm rounded-3xl rounded-tl-sm'}`}>
                             <div className="markdown-content text-[15px] font-sans leading-relaxed whitespace-pre-wrap break-words" dangerouslySetInnerHTML={{ __html: finalMarkup }} />
                             
-                            {/* V5.3: Permanente TTS Buttons */}
+                            {/* V5.4: Permanente TTS Buttons */}
                             {!isUser && (
                                 <div className="mt-3 flex gap-4 pt-2">
                                     <button onClick={() => onPlayTTS(message.id, message.text, parsedScratch?.kernel_matrix?.matrix?.tts_regie_prompt || parsedScratch?.kernel_matrix?.tts_regie_prompt)} className={`text-[9px] uppercase font-bold tracking-widest transition-colors flex items-center gap-1 p-0 ${playingMsgId === message.id ? 'text-indigo-600 animate-pulse' : 'text-slate-400 hover:text-indigo-500'}`}>
@@ -428,6 +429,15 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             });
             React.useEffect(() => { localStorage.setItem('lumen_promptTemplate', promptTemplate); }, [promptTemplate]);
 
+            const defaultKernelTemplate = `[TELEMETRIE]
+
+[AKTIVER_KONTEXT]
+
+=== [USER INPUT] ===
+"[USER_INPUT]"`;
+            const [kernelTemplate, setKernelTemplate] = React.useState(() => localStorage.getItem('lumen_kernelTemplate') || defaultKernelTemplate);
+            React.useEffect(() => { localStorage.setItem('lumen_kernelTemplate', kernelTemplate); }, [kernelTemplate]);
+
             const [apiParamMapping, setApiParamMapping] = React.useState(() => {
                 try {
                     const stored = JSON.parse(localStorage.getItem('lumen_apiParamMapping'));
@@ -451,7 +461,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 { id: 'agent-luna-default', name: 'Web-Scout (OpenAI)', type: 'openai', url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini', apiKey: '', prompt: 'Du bist Luna, der Web-Scout. Bewerte die folgenden rohen Suchergebnisse und extrahiere die wichtigsten Fakten. Gib AUSSCHLIESSLICH folgendes JSON zurück:\n{\n  "metakognition": "...",\n  "scout_bericht": {\n    "fakten": "..."\n  }\n}' }
             ];
             
-            // V5.3: Dual Audio Physics in DNA
+            // V5.4: Dual Audio Physics in DNA
             const defaultDna = { 
                 persona_name: "Maira", 
                 kernel_prompt: DEFAULT_KERNEL_PROMPT, 
@@ -501,13 +511,16 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const [agent2JsonMode, setAgent2JsonMode] = React.useState(() => localStorage.getItem('lumen_a2json') === 'true');
             React.useEffect(() => { localStorage.setItem('lumen_a2json', String(agent2JsonMode)); }, [agent2JsonMode]);
 
+            const [useApiCache, setUseApiCache] = React.useState(() => localStorage.getItem('lumen_useCache') === 'true');
+            React.useEffect(() => { localStorage.setItem('lumen_useCache', String(useApiCache)); }, [useApiCache]);
+
             const [tokenUsage, setTokenUsage] = React.useState({ system: 0, history: 0, percent: 0 });
             const [showTokenTooltip, setShowTokenTooltip] = React.useState(false);
 
             const [latestContext, setLatestContext] = React.useState("[AKTIVER KONTEXT WIRD ZUR LAUFZEIT INJIZIERT]");
             const [showTelemetry, setShowTelemetry] = React.useState(false);
             
-            // V5.3: API History Persistenz
+            // V5.4: API History Persistenz
             const [apiHistory, setApiHistory] = React.useState(() => {
                 try {
                     const stored = JSON.parse(localStorage.getItem('lumen_apiHistory'));
@@ -573,7 +586,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
             const handleDeleteMessage = (id) => {
                 setMessages(prev => prev.filter(m => m.id !== id));
-                setApiHistory(prev => prev.filter(log => log.linkedMsgId !== id)); // V5.3 Sync Delete
+                setApiHistory(prev => prev.filter(log => log.linkedMsgId !== id)); // V5.4 Sync Delete
             };
 
             React.useEffect(() => {
@@ -725,6 +738,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         if (data.promptTemplate) { setPromptTemplate(data.promptTemplate); localStorage.setItem('lumen_promptTemplate', data.promptTemplate); }
                         if (data.apiParamMapping) { setApiParamMapping(data.apiParamMapping); localStorage.setItem('lumen_apiParamMapping', JSON.stringify(data.apiParamMapping)); }
                         if (data.agent2JsonMode !== undefined) { setAgent2JsonMode(data.agent2JsonMode); localStorage.setItem('lumen_a2json', String(data.agent2JsonMode)); }
+                        if (data.kernelTemplate) { setKernelTemplate(data.kernelTemplate); localStorage.setItem('lumen_kernelTemplate', data.kernelTemplate); }
                         showToast('Omni-Bundle importiert');
                     } catch(err) {
                         showToast('Fehler beim Omni-Import');
@@ -736,7 +750,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
             const handleOmniExport = async () => {
                 const sanctumData = await db.memories.toArray();
-                const data = { dna, providers, ttsProviders, agentProviders, sanctum: sanctumData, promptTemplate, apiParamMapping, agent2JsonMode };
+                const data = { dna, providers, ttsProviders, agentProviders, sanctum: sanctumData, promptTemplate, apiParamMapping, agent2JsonMode, kernelTemplate };
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a'); a.href = url; a.download = `LUMEN_OmniBundle.json`; a.click(); URL.revokeObjectURL(url);
@@ -1156,10 +1170,20 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
                     const fetchUrl = apiUrl.includes('?') ? `${apiUrl}&key=${key}` : `${apiUrl}?key=${key}`;
                     
+                    // --- CACHE CHECK ---
+                    const cacheKey = JSON.stringify({ url: fetchUrl, body: bodyPayload });
+                    if (useApiCache && window.lumenApiCache.has(cacheKey)) {
+                        console.log("LUMEN: Cache Hit!");
+                        return window.lumenApiCache.get(cacheKey);
+                    }
+                    // -------------------
+                    
                     const r = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(bodyPayload), signal });
                     const d = await r.json(); 
                     if(!r.ok) throw new Error(d.error?.message || 'Gemini API Fehler'); 
                     resText = d.candidates[0].content.parts[0].text;
+                    
+                    if (useApiCache) window.lumenApiCache.set(cacheKey, resText);
                 } else {
                     const payload = [
                         {role:'system',content:sysPrompt}, 
@@ -1213,10 +1237,20 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         } catch(e) { console.warn("LUMEN API WARNUNG: Tools JSON ist invalid.", e); }
                     }
                     
+                    // --- CACHE CHECK ---
+                    const cacheKey = JSON.stringify({ url: apiUrl, body: bodyPayload });
+                    if (useApiCache && window.lumenApiCache.has(cacheKey)) {
+                        console.log("LUMEN: Cache Hit!");
+                        return window.lumenApiCache.get(cacheKey);
+                    }
+                    // -------------------
+                    
                     const r = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify(bodyPayload), signal });
                     const d = await r.json(); 
                     if(!r.ok) throw new Error(d.error?.message || 'OpenAI API Fehler'); 
                     resText = d.choices[0].message.content;
+                    
+                    if (useApiCache) window.lumenApiCache.set(cacheKey, resText);
                 }
                 return resText;
             };
@@ -1323,12 +1357,41 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     // PHASE 1: DER KERNEL (JSON ROUTING)
                     // ==========================================
                     
-                    const sysPrompt1 = `[AKTIVER KONTEXT]\n${dynamicContext}\n\n${dna.kernel_prompt}\n\n${autoTtsRegie && dna.audio_physics_kernel ? dna.audio_physics_kernel : ""}`.trim();
-                    const userPayload1 = `${telemetryBlock}\n\n=== [USER MESSAGE / PAYLOAD] ===\n"${text}"`.trim();
+                    // --- KERNEL REKURSION: Letztes JSON extrahieren ---
+                    let lastMatrix = {};
+                    const lastAiMsg = [...hist].reverse().find(m => m.sender === 'ai' && m.scratchpad);
+                    if (lastAiMsg) {
+                        try {
+                            const parsedScratch = JSON.parse(lastAiMsg.scratchpad);
+                            if (parsedScratch.kernel_matrix) lastMatrix = parsedScratch.kernel_matrix;
+                        } catch(e) {}
+                    }
+
+                    // --- SMART TEMPLATE ENGINE (AGENT 1) ---
+                    let userPayload1 = kernelTemplate;
+                    userPayload1 = userPayload1.replace(/\[USER_INPUT\]/g, text);
+                    userPayload1 = userPayload1.replace(/\[AKTIVER_KONTEXT\]/g, dynamicContext ? `[AKTIVER KONTEXT]\n${dynamicContext}` : "");
+                    userPayload1 = userPayload1.replace(/\[TELEMETRIE\]/g, telemetryBlock);
+                    userPayload1 = userPayload1.replace(/\[LLM2_PERSONA\]/g, dna.cartridge_prompt ? `[REGELN FÜR AGENT 2]\n${dna.cartridge_prompt}` : "");
+                    userPayload1 = userPayload1.replace(/\[LLM2_TEMPLATE\]/g, promptTemplate ? `[ZIEL-TEMPLATE FÜR AGENT 2]\n${promptTemplate}` : "");
+
+                    // Dynamische Pfade aus dem LETZTEN JSON (LAST_MATRIX) auflösen
+                    userPayload1 = userPayload1.replace(/\[LAST_MATRIX\.([a-zA-Z0-9_.]+)\]/g, (match, path) => {
+                        const val = resolveJsonPath(lastMatrix, path);
+                        if (val !== undefined && val !== null) {
+                            return typeof val === 'object' ? JSON.stringify(val) : String(val);
+                        }
+                        return "null"; // Fallback, falls der Wert im letzten Turn nicht existierte
+                    });
+
+                    // System-Prompt von Altlasten befreit (Kontext ist jetzt im Payload)
+                    const sysPrompt1 = `${dna.kernel_prompt}\n\n${autoTtsRegie && dna.audio_physics_kernel ? dna.audio_physics_kernel : ""}`.trim();
 
                     let resText1 = await fetchTextFromAPI(sysPrompt1, userPayload1, hist, kernelProvider, false, signal);
-                    // V5.3 Sync Delete linking
-                    setApiHistory(prev => [...prev, { id: generateId(), linkedMsgId: newAiMsgId, type: 'AGENT 1 (KERNEL)', timestamp: Date.now(), request: { system: sysPrompt1, user: userPayload1 }, response: resText1 }].slice(-30));
+                    
+                    // V5.4: Logging Phase 1 Params
+                    const params1 = { model: kernelProvider.model || kernelProvider.type, temperature: kernelProvider.temperature, reasoning_effort: kernelProvider.reasoning_effort, verbosity: kernelProvider.verbosity };
+                    setApiHistory(prev => [...prev, { id: generateId(), linkedMsgId: newAiMsgId, type: 'AGENT 1 (KERNEL)', timestamp: Date.now(), request: { system: sysPrompt1, user: userPayload1, params: params1 }, response: resText1 }].slice(-30));
                     
                     let objPhase1 = null;
                     try {
@@ -1447,14 +1510,15 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     let userPayload2 = promptTemplate;
 
                     // 1. Standard-Platzhalter auflösen
-                    userPayload2 = userPayload2.replace('[USER_INPUT]', text);
-                    userPayload2 = userPayload2.replace('[SYSTEM_ZEIT]', systemTimeStr);
-                    userPayload2 = userPayload2.replace('[LUNA_HELFER]', helferAddon ? helferAddon : "");
+                    userPayload2 = userPayload2.replace(/\[USER_INPUT\]/g, text);
+                    userPayload2 = userPayload2.replace(/\[SYSTEM_ZEIT\]/g, systemTimeStr);
+                    userPayload2 = userPayload2.replace(/\[LUNA_HELFER\]/g, helferAddon ? helferAddon : "");
+                    userPayload2 = userPayload2.replace(/\[SANCTUM_KONTEXT\]/g, deskContext ? deskContext : "");
 
                     // 2. Dynamische JSON-Pfade auflösen (RegEx sucht nach [pfad.zum.key])
                     userPayload2 = userPayload2.replace(/\[([a-zA-Z0-9_.]+)\]/g, (match, path) => {
                         // Falls es ein nicht aufgelöster Standard-Platzhalter ist, ignorieren
-                        if (['USER_INPUT', 'SYSTEM_ZEIT', 'LUNA_HELFER'].includes(path)) return match;
+                        if (['USER_INPUT', 'SYSTEM_ZEIT', 'LUNA_HELFER', 'SANCTUM_KONTEXT'].includes(path)) return match;
                         
                         const val = resolveJsonPath(objPhase1, path);
                         if (val !== undefined && val !== null) {
@@ -1483,7 +1547,10 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     }
 
                     let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, personaProvider, !agent2JsonMode, signal, dynamicApiParams);
-                    setApiHistory(prev => [...prev, { id: generateId(), linkedMsgId: newAiMsgId, type: 'AGENT 2 (PERSONA)', timestamp: Date.now(), request: { system: sysPrompt2, user: userPayload2 }, response: resText2 }].slice(-30));
+                    
+                    // V5.4: Logging Phase 2 Params
+                    const params2 = { model: personaProvider.model || personaProvider.type, temperature: personaProvider.temperature, reasoning_effort: personaProvider.reasoning_effort, verbosity: personaProvider.verbosity, ...dynamicApiParams };
+                    setApiHistory(prev => [...prev, { id: generateId(), linkedMsgId: newAiMsgId, type: 'AGENT 2 (PERSONA)', timestamp: Date.now(), request: { system: sysPrompt2, user: userPayload2, params: params2 }, response: resText2 }].slice(-30));
 
                     const xmlMatch = resText2.match(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i);
                     const gedanken = xmlMatch ? xmlMatch[1].trim() : "";
@@ -1551,7 +1618,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     
                     {showTelemetry && <TelemetryModal messages={messages} onClose={() => setShowTelemetry(false)} />}
 
-                    {/* --- V5.3 API PROTOKOLL MODAL (LIVE FEED) --- */}
+                    {/* --- V5.4 API PROTOKOLL MODAL (LIVE FEED) --- */}
                     {showApiLog && (
                         <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
                             <div className="bg-stone-50 w-full max-w-5xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
@@ -1570,6 +1637,18 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                             <div key={log.id} className={`flex flex-col w-full max-w-4xl mx-auto ${isKernel ? 'items-start' : 'items-end'}`}>
                                                 <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 px-2">{log.type} <span className="font-mono opacity-60">{new Date(log.timestamp).toLocaleTimeString('de-DE')}</span></div>
                                                 <div className={`p-5 rounded-3xl shadow-sm border w-full text-xs font-mono whitespace-pre-wrap break-words ${isKernel ? 'bg-white border-emerald-200 text-slate-700 rounded-tl-sm' : 'bg-slate-800 border-indigo-500 text-slate-300 rounded-tr-sm'}`}>
+                                                    {log.request.params && (
+                                                        <div className="mb-4 pb-4 border-b border-dashed border-slate-500/30 flex gap-2 flex-wrap">
+                                                            {Object.entries(log.request.params).map(([key, val]) => (
+                                                                val !== undefined && val !== "" && (
+                                                                    <div key={key} className={`px-2 py-1 rounded bg-black/10 flex items-center gap-1.5 ${isKernel ? 'text-emerald-800' : 'text-indigo-200'}`}>
+                                                                        <span className="opacity-60 text-[9px] uppercase tracking-wider">{key}:</span>
+                                                                        <span className="font-bold">{typeof val === 'object' ? JSON.stringify(val) : String(val)}</span>
+                                                                    </div>
+                                                                )
+                                                            ))}
+                                                        </div>
+                                                    )}
                                                     <div className="mb-4"><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[1] SYSTEM PROMPT</div><div className="opacity-90">{log.request.system}</div></div>
                                                     <div className="mb-4 pt-4 border-t border-dashed border-slate-500/30"><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[2] USER PAYLOAD</div><div className={isKernel ? 'text-slate-900 font-bold' : 'text-white font-bold'}>{log.request.user}</div></div>
                                                     <div className={`pt-4 border-t border-dashed border-slate-500/30 ${isKernel ? 'bg-emerald-50 -mx-5 -mb-5 p-5 rounded-b-3xl' : 'bg-indigo-900/30 -mx-5 -mb-5 p-5 rounded-b-3xl'}`}><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-700' : 'text-fuchsia-400'}`}>[3] API RESPONSE</div><div className={isKernel ? 'text-emerald-900' : 'text-fuchsia-100'}>{log.response}</div></div>
@@ -1818,14 +1897,25 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                 <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">Pipeline Orchestrierung</h2>
                             </div>
 
+                            {/* ZONE A: KERNEL PAYLOAD */}
+                            <div className="mt-6 border-b border-stone-200 pb-6">
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-emerald-800 mb-1">Zone A: Kernel Payload (Agent 1)</h3>
+                                <p className="text-xs text-slate-500 mb-3 leading-relaxed">
+                                    <strong className="text-slate-700">Standards:</strong> <code>[USER_INPUT]</code>, <code>[AKTIVER_KONTEXT]</code>, <code>[TELEMETRIE]</code><br/>
+                                    <strong className="text-slate-700">Cross-Context (Liest Agent 2):</strong> <code>[LLM2_PERSONA]</code>, <code>[LLM2_TEMPLATE]</code><br/>
+                                    <strong className="text-slate-700">Rekursion:</strong> <code>[LAST_MATRIX.json_pfad]</code> (z.B. <code>[LAST_MATRIX.matrix.aktiver_state]</code>)
+                                </p>
+                                <textarea value={kernelTemplate} onChange={e => setKernelTemplate(e.target.value)} className="input-field min-h-[200px] font-mono text-[11px] bg-white leading-relaxed border-emerald-200 focus:border-emerald-400 focus:ring-emerald-100" spellCheck="false" />
+                            </div>
+
                             {/* ZONE B: SMART TEMPLATE */}
                             <div>
                                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-2 gap-3">
                                     <div>
                                         <h3 className="text-sm font-bold uppercase tracking-widest text-indigo-800 mb-1">Zone B: Payload Template (Agent 2)</h3>
-                                        <p className="text-xs text-slate-500">
-                                            Gestalte den finalen Prompt. Standard-Platzhalter: <code>[USER_INPUT]</code>, <code>[SYSTEM_ZEIT]</code>, <code>[LUNA_HELFER]</code><br/>
-                                            Dynamisch: JSON-Pfade von Agent 1, z.B. <code>[matrix.situations_analyse]</code>.
+                                        <p className="text-xs text-slate-500 mb-3 leading-relaxed">
+                                            <strong className="text-slate-700">Standards:</strong> <code>[USER_INPUT]</code>, <code>[SYSTEM_ZEIT]</code>, <code>[LUNA_HELFER]</code>, <code>[SANCTUM_KONTEXT]</code><br/>
+                                            <strong className="text-slate-700">Dynamische Injektion (Aus Agent 1):</strong> <code>[json_pfad]</code> (z.B. <code>[matrix.situations_analyse]</code>)
                                         </p>
                                     </div>
                                     <div className="flex gap-2 shrink-0">
@@ -1848,6 +1938,19 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                     <button onClick={() => setApiParamMapping([...apiParamMapping, { id: generateId(), jsonKey: '', apiParam: '' }])} className="btn-primary bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100">➕ Parameter hinzufügen</button>
                                 </div>
                                 <p className="text-xs text-slate-500 mb-3">JSON-Werte aus Agent 1 direkt als Hyperparameter an die API von Agent 2 leiten (z.B. <code>temperature</code>). Überschreibt die Settings aus Zone A.</p>
+                                
+                                <div className="flex flex-wrap gap-2 mb-4 bg-white p-2 rounded-xl border border-emerald-100">
+                                    <span className="text-[9px] font-bold uppercase tracking-widest text-emerald-600 flex items-center mr-1">Presets:</span>
+                                    {['temperature', 'reasoning_effort', 'verbosity', 'max_completion_tokens', 'top_p', 'presence_penalty'].map(param => (
+                                        <button 
+                                            key={param}
+                                            onClick={() => setApiParamMapping([...apiParamMapping, { id: generateId(), jsonKey: '', apiParam: param }])} 
+                                            className="text-[10px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded hover:bg-emerald-100 transition-colors shadow-sm"
+                                        >
+                                            + {param}
+                                        </button>
+                                    ))}
+                                </div>
                                 
                                 <div className="space-y-3">
                                     {apiParamMapping.map((item, index) => (
@@ -1914,6 +2017,17 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    <div className="panel bg-emerald-50/30 border-emerald-200 shadow-sm flex flex-col gap-2 mt-4">
+                                        <label className="flex items-center gap-2 text-xs font-bold text-emerald-800 cursor-pointer w-max">
+                                            <input type="checkbox" checked={useApiCache} onChange={e => { setUseApiCache(e.target.checked); if(!e.target.checked) window.lumenApiCache.clear(); }} className="accent-emerald-600 w-4 h-4 cursor-pointer" />
+                                            API Session-Cache aktivieren (Spart Tokens beim Prompt-Engineering)
+                                        </label>
+                                        <p className="text-[10px] text-emerald-600/80 leading-relaxed max-w-2xl">
+                                            Speichert exakt identische API-Anfragen im lokalen RAM. <strong>Achtung:</strong> Funktioniert nur, wenn du Platzhalter wie <code>[SYSTEM_ZEIT]</code> oder <code>[TELEMETRIE]</code>, die sich minütlich ändern, temporär aus deinen Templates entfernst!
+                                        </p>
+                                    </div>
+
                                     <div className="space-y-3 w-full">
                                         {providers.map(p => (
                                             <div key={p.id} className="panel flex flex-col gap-2 border-stone-200 bg-white shadow-sm w-full">
@@ -1924,7 +2038,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                                         <div className="text-[10px] text-indigo-500 font-mono mt-0.5 font-bold">Max Tokens: {p.maxTokens || 8000}</div>
                                                     </div>
                                                     <div className="flex gap-1 shrink-0">
-                                                        <button onClick={() => { setEditProviderId(p.id); setProviderForm({...p, jsonMode: p.jsonMode !== false, maxTokens: p.maxTokens || 8000, temperature: p.temperature ?? 0.7, reasoning_effort: p.reasoning_effort || 'none', verbosity: p.verbosity || 'medium'}); }} className="btn py-1 px-2">✏️</button>
+                                                        <button onClick={() => { setEditProviderId(p.id); setProviderForm({...p, jsonMode: p.jsonMode !== false, maxTokens: p.maxTokens || 8000, temperature: p.temperature ?? 0.7, reasoning_effort: p.reasoning_effort || 'none', verbosity: p.verbosity || 'medium', top_p: p.top_p ?? 1.0, presence_penalty: p.presence_penalty ?? 0, frequency_penalty: p.frequency_penalty ?? 0, logprobs: p.logprobs || false, stop: p.stop || '', tools_json: p.tools_json || '', tool_choice: p.tool_choice || 'none', tool_search: p.tool_search || false}); }} className="btn py-1 px-2">✏️</button>
                                                         <button onClick={() => { if(window.confirm('Chat-Provider löschen?')) { const newList = providers.filter(x=>x.id!==p.id); setProviders(newList); localStorage.setItem('lumen_providers', JSON.stringify(newList)); if(activeKernelProviderId===p.id && newList.length) { setActiveKernelProviderId(newList[0].id); localStorage.setItem('lumen_activeKernelProviderId', newList[0].id); } if(activePersonaProviderId===p.id && newList.length) { setActivePersonaProviderId(newList[0].id); localStorage.setItem('lumen_activePersonaProviderId', newList[0].id); } } }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
                                                     </div>
                                                 </div>
@@ -2285,7 +2399,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             </button>
                         )}
                         
-                        {/* V5.3 Classic V4.10 Audio Player */}
+                        {/* V5.4 Classic V4.10 Audio Player */}
                         {playingMsgId && window.currentAudio && (
                             <div className="max-w-4xl mx-auto flex items-center gap-3 bg-indigo-900 text-indigo-100 px-4 py-2 rounded-t-xl text-[10px] font-mono shadow-md mt-1 mx-2 sm:mx-6 z-50 relative">
                                 <button onClick={() => { if (window.currentAudio.paused) window.currentAudio.play(); else window.currentAudio.pause(); }} className="hover:text-white transition-colors text-sm w-6 flex justify-center">
