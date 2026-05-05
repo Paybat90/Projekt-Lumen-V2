@@ -151,7 +151,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             {
                 id: '2',
                 sender: 'ai',
-                text: 'System online. Die Architektur V5.3 läuft fehlerfrei. Der Live-Feed für API Logs ist aktiv, die Pipeline transformiert JSON nun sauber in Text, und die Audio-Engine nutzt das klassische V4.10 UI.',
+                text: 'System online. Die Architektur V5.3 läuft fehlerfrei. GPT-5.4 Hyperparameter sind freigeschaltet. Der Live-Feed für API Logs ist aktiv, die Pipeline transformiert JSON nun sauber in Text, und die Audio-Engine nutzt das klassische V4.10 UI.',
                 scratchpad: '{\n  "kernel_matrix": {\n    "wahrnehmung": {\n      "ohr_roh": "INIT CORE V5.3"\n    },\n    "matrix": {\n      "situations_analyse": "Boot-Sequenz erfolgreich."\n    }\n  },\n  "persona_gedanken": "Das System bootet sauber. Die Architektur fühlt sich robust an."\n}',
                 timestamp: new Date().toISOString()
             }
@@ -307,6 +307,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const isUser = message.sender === 'user';
             const isError = message.sender === 'system-error';
             const isSystemScout = message.sender === 'system';
+            const isSystemDebug = message.sender === 'system-debug';
             const [showScratchpad, setShowScratchpad] = React.useState(false);
 
             if (isError) return (
@@ -320,6 +321,21 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             );
             
             if (isSystemScout) return null;
+
+            if (isSystemDebug) return (
+                <div className="flex w-full mb-6 justify-center animate-fade-in group relative">
+                    <div className="bg-sky-50 border-2 border-sky-200 text-sky-800 px-6 py-4 rounded-3xl shadow-sm text-xs w-full max-w-[85%] relative min-w-0">
+                        <button onClick={() => onDelete(message.id)} className="absolute top-2 right-4 text-sky-400 hover:text-sky-700 font-bold text-sm">✕</button>
+                        <div className="font-bold uppercase tracking-widest mb-2 text-[10px] flex items-center gap-2 pr-6">🛠️ SYSTEM-DEBUG: DRY-RUN PAYLOAD</div>
+                        <div className="font-mono whitespace-pre-wrap break-words leading-relaxed">{message.text}</div>
+                        {message.scratchpad && (
+                            <div className="mt-4 pt-3 border-t border-sky-200/50 flex flex-col gap-3 animate-fade-in w-full min-w-0">
+                                <pre className="text-[10px] font-mono text-sky-900/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-sky-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(message.scratchpad)}></pre>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
 
             const cleanedText = cleanVisibleText(message.text);
             let finalMarkup = cleanedText;
@@ -400,22 +416,30 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
         const App = () => {
             const [isBooting, setIsBooting] = React.useState(true);
 
-            // Pipeline Mapping State
-            const [pipelineMapping, setPipelineMapping] = React.useState(() => {
+            const defaultTemplate = `[SYSTEM_ZEIT]
+[LUNA_HELFER]
+[KERNEL_DIREKTIVEN]
+
+=== [USER INPUT] ===
+"[USER_INPUT]"`;
+
+            const [promptTemplate, setPromptTemplate] = React.useState(() => {
+                return localStorage.getItem('lumen_promptTemplate') || defaultTemplate;
+            });
+            React.useEffect(() => { localStorage.setItem('lumen_promptTemplate', promptTemplate); }, [promptTemplate]);
+
+            const [apiParamMapping, setApiParamMapping] = React.useState(() => {
                 try {
-                    const stored = JSON.parse(localStorage.getItem('lumen_pipelineMapping'));
+                    const stored = JSON.parse(localStorage.getItem('lumen_apiParamMapping'));
                     if (stored && stored.length > 0) return stored;
                 } catch {}
-                return [
-                    { id: generateId(), jsonKey: 'matrix.situations_analyse', displayName: 'Befehl/Strategie' },
-                    { id: generateId(), jsonKey: 'matrix.tts_regie_prompt', displayName: 'Emotion' }
-                ];
+                return []; // Format: { id, jsonKey, apiParam }
             });
-            React.useEffect(() => { localStorage.setItem('lumen_pipelineMapping', JSON.stringify(pipelineMapping)); }, [pipelineMapping]);
+            React.useEffect(() => { localStorage.setItem('lumen_apiParamMapping', JSON.stringify(apiParamMapping)); }, [apiParamMapping]);
 
             const defaultProviders = [
-                { id: 'gemini-3-flash', name: 'Google Gemini (3 Flash)', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent', type: 'gemini', model: '', apiKey: '', jsonMode: true, maxTokens: 8000 },
-                { id: 'openai-gpt4o', name: 'OpenAI (GPT-4o)', url: 'https://api.openai.com/v1/chat/completions', type: 'openai', model: 'gpt-4o', apiKey: '', jsonMode: true, maxTokens: 8000 }
+                { id: 'gemini-3-flash', name: 'Google Gemini (3 Flash)', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent', type: 'gemini', model: '', apiKey: '', jsonMode: true, maxTokens: 8000, temperature: 0.7, reasoning_effort: 'none', verbosity: 'medium', top_p: 1.0, presence_penalty: 0, frequency_penalty: 0, logprobs: false, stop: '', tools_json: '', tool_choice: 'none', tool_search: false },
+                { id: 'openai-gpt54', name: 'GPT-5.4 Nano', url: 'https://api.openai.com/v1/chat/completions', type: 'openai', model: 'gpt-5.4-nano', apiKey: '', jsonMode: true, maxTokens: 8000, temperature: 0.7, reasoning_effort: 'none', verbosity: 'medium', top_p: 1.0, presence_penalty: 0, frequency_penalty: 0, logprobs: false, stop: '', tools_json: '', tool_choice: 'none', tool_search: false }
             ];
             const defaultTtsProviders = [
                 { id: 'tts-gemini-default', name: 'Google Gemini Account', type: 'gemini', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent', apiKey: '', model: '' },
@@ -439,9 +463,9 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
             const [providers, setProviders] = React.useState(defaultProviders);
             const [activeKernelProviderId, setActiveKernelProviderId] = React.useState('gemini-3-flash');
-            const [activePersonaProviderId, setActivePersonaProviderId] = React.useState('openai-gpt4o');
+            const [activePersonaProviderId, setActivePersonaProviderId] = React.useState('openai-gpt54');
             const [editProviderId, setEditProviderId] = React.useState(null);
-            const [providerForm, setProviderForm] = React.useState({ name: '', url: '', type: 'gemini', model: '', apiKey: '', jsonMode: true, maxTokens: 8000 });
+            const [providerForm, setProviderForm] = React.useState({ name: '', url: '', type: 'gemini', model: '', apiKey: '', jsonMode: true, maxTokens: 8000, temperature: 0.7, reasoning_effort: 'none', verbosity: 'medium', top_p: 1.0, presence_penalty: 0, frequency_penalty: 0, logprobs: false, stop: '', tools_json: '', tool_choice: 'none', tool_search: false });
 
             const [ttsProviders, setTtsProviders] = React.useState(defaultTtsProviders);
             const [activeTtsProviderId, setActiveTtsProviderId] = React.useState('tts-gemini-default');
@@ -470,6 +494,12 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
             const [autoTtsRegie, setAutoTtsRegie] = React.useState(false);
             const [autoPlayEnabled, setAutoPlayEnabled] = React.useState(false);
             const [isMemoryLocked, setIsMemoryLocked] = React.useState(false);
+
+            const [dryRunMode, setDryRunMode] = React.useState(() => localStorage.getItem('lumen_dryRun') === 'true');
+            React.useEffect(() => { localStorage.setItem('lumen_dryRun', String(dryRunMode)); }, [dryRunMode]);
+
+            const [agent2JsonMode, setAgent2JsonMode] = React.useState(() => localStorage.getItem('lumen_a2json') === 'true');
+            React.useEffect(() => { localStorage.setItem('lumen_a2json', String(agent2JsonMode)); }, [agent2JsonMode]);
 
             const [tokenUsage, setTokenUsage] = React.useState({ system: 0, history: 0, percent: 0 });
             const [showTokenTooltip, setShowTokenTooltip] = React.useState(false);
@@ -557,12 +587,12 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         const initProviders = load('lumen_providers', defaultProviders).map(p => {
                             if (p.id === 'gemini-3-flash' && !p.apiKey) p.apiKey = oldKeys.gemini || '';
                             if (p.id === 'openai-gpt4o' && !p.apiKey) p.apiKey = oldKeys.openai || '';
-                            return { ...p, maxTokens: p.maxTokens || 8000 };
+                            return { ...p, maxTokens: p.maxTokens || 8000, temperature: p.temperature ?? 0.7, reasoning_effort: p.reasoning_effort || 'none', verbosity: p.verbosity || 'medium', top_p: p.top_p ?? 1.0, presence_penalty: p.presence_penalty ?? 0, frequency_penalty: p.frequency_penalty ?? 0, logprobs: p.logprobs || false, stop: p.stop || '', tools_json: p.tools_json || '', tool_choice: p.tool_choice || 'none', tool_search: p.tool_search || false };
                         });
                         setProviders(initProviders);
 
                         setActiveKernelProviderId(loadStr('lumen_activeKernelProviderId', loadStr('lumen_activeProviderId', 'gemini-3-flash')));
-                        setActivePersonaProviderId(loadStr('lumen_activePersonaProviderId', loadStr('lumen_activeProviderId', 'openai-gpt4o')));
+                        setActivePersonaProviderId(loadStr('lumen_activePersonaProviderId', loadStr('lumen_activeProviderId', 'openai-gpt54')));
                         setTtsProviders(load('lumen_ttsProvidersAccounts', defaultTtsProviders));
                         setActiveTtsProviderId(loadStr('lumen_activeTtsProviderId', 'tts-gemini-default'));
                         setTtsVoices(load('lumen_ttsVoices', { elevenlabs: '21m00Tcm4TlvDq8ikWAM', openai: 'nova', gemini: 'Kore' }));
@@ -666,6 +696,20 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 const a = document.createElement('a'); a.href = url; a.download = `LUMEN_Config.json`; a.click(); URL.revokeObjectURL(url);
             };
 
+            const validateTemplateJson = () => {
+                try {
+                    // Ersetze alle Platzhalter durch einen sicheren Dummy-String, um die JSON-Struktur zu testen
+                    let testString = promptTemplate.replace(/\[([a-zA-Z0-9_.]+)\]/g, "dummy_value");
+                    // Säubere eventuelle versteckte Zeilenumbrüche, die das Parsing stören
+                    testString = testString.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
+                    JSON.parse(testString);
+                    showToast("✅ Template ist valides JSON!");
+                } catch (e) {
+                    showToast(`❌ JSON Syntax-Fehler: ${e.message}`);
+                    console.error("JSON Syntax-Fehler im Template! Stelle sicher, dass alle Kommata und Anführungszeichen korrekt gesetzt sind.", e);
+                }
+            };
+
             const handleOmniImport = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -678,7 +722,9 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         if (data.ttsProviders) { setTtsProviders(data.ttsProviders); localStorage.setItem('lumen_ttsProvidersAccounts', JSON.stringify(data.ttsProviders)); }
                         if (data.agentProviders) { setAgentProviders(data.agentProviders); localStorage.setItem('lumen_agentProviders', JSON.stringify(data.agentProviders)); }
                         if (data.sanctum) { await db.memories.clear(); await db.memories.bulkPut(data.sanctum); loadMemories(); }
-                        if (data.pipelineMapping) { setPipelineMapping(data.pipelineMapping); localStorage.setItem('lumen_pipelineMapping', JSON.stringify(data.pipelineMapping)); }
+                        if (data.promptTemplate) { setPromptTemplate(data.promptTemplate); localStorage.setItem('lumen_promptTemplate', data.promptTemplate); }
+                        if (data.apiParamMapping) { setApiParamMapping(data.apiParamMapping); localStorage.setItem('lumen_apiParamMapping', JSON.stringify(data.apiParamMapping)); }
+                        if (data.agent2JsonMode !== undefined) { setAgent2JsonMode(data.agent2JsonMode); localStorage.setItem('lumen_a2json', String(data.agent2JsonMode)); }
                         showToast('Omni-Bundle importiert');
                     } catch(err) {
                         showToast('Fehler beim Omni-Import');
@@ -690,7 +736,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
 
             const handleOmniExport = async () => {
                 const sanctumData = await db.memories.toArray();
-                const data = { dna, providers, ttsProviders, agentProviders, sanctum: sanctumData, pipelineMapping };
+                const data = { dna, providers, ttsProviders, agentProviders, sanctum: sanctumData, promptTemplate, apiParamMapping, agent2JsonMode };
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a'); a.href = url; a.download = `LUMEN_OmniBundle.json`; a.click(); URL.revokeObjectURL(url);
@@ -1038,11 +1084,27 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                 } catch (e) { showToast("STT Fehler: " + e.message); setLoadingStatus(null); }
             };
 
-            const fetchTextFromAPI = async (sysPrompt, userPayloadStr, historyMessages, provider, forceTextMode = false, signal = null) => {
+            const fetchTextFromAPI = async (sysPrompt, userPayloadStr, historyMessages, provider, forceTextMode = false, signal = null, extraParams = {}) => {
                 let resText = "";
                 const useJsonMode = provider.jsonMode !== false && !forceTextMode;
                 const key = provider.apiKey;
                 const apiUrl = provider.url;
+
+                // Globale Parameter-Fusion (Pipeline überschreibt Provider-Defaults)
+                const mergedParams = {
+                    temperature: extraParams.temperature ?? provider.temperature,
+                    top_p: extraParams.top_p ?? provider.top_p,
+                    presence_penalty: extraParams.presence_penalty ?? provider.presence_penalty,
+                    frequency_penalty: extraParams.frequency_penalty ?? provider.frequency_penalty,
+                    reasoning_effort: extraParams.reasoning_effort ?? provider.reasoning_effort,
+                    verbosity: extraParams.verbosity ?? provider.verbosity,
+                    maxTokens: extraParams.max_completion_tokens ?? extraParams.maxTokens ?? provider.maxTokens,
+                    logprobs: extraParams.logprobs ?? provider.logprobs,
+                    stop: extraParams.stop ?? provider.stop,
+                    tool_choice: extraParams.tool_choice ?? provider.tool_choice,
+                    tool_search: extraParams.tool_search ?? provider.tool_search,
+                    tools_json: extraParams.tools ?? provider.tools_json
+                };
 
                 if(provider.type === 'gemini') {
                     const rawRoles = [...historyMessages.map(m => ({ role: m.sender==='user'?'user':'model', text: m.scratchpad ? m.scratchpad + '\n\n' + m.text : m.text })), {role:'user', text: userPayloadStr}];
@@ -1057,7 +1119,41 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     if (currentRole) contents.push({ role: currentRole, parts: [{ text: currentText.join('\n\n---\n\n') }] });
 
                     const bodyPayload = { systemInstruction: {parts:[{text:sysPrompt}]}, contents };
-                    if (useJsonMode) bodyPayload.generationConfig = { responseMimeType: "application/json" };
+                    bodyPayload.generationConfig = {};
+                    
+                    // 1. Kontext & Mapping
+                    if (mergedParams.maxTokens) bodyPayload.generationConfig.maxOutputTokens = mergedParams.maxTokens;
+                    
+                    // 2. Reasoning (Mapping auf Googles thinkingLevel) vs Sampling
+                    if (mergedParams.reasoning_effort && mergedParams.reasoning_effort !== 'none') {
+                        bodyPayload.generationConfig.thinkingConfig = { thinkingLevel: mergedParams.reasoning_effort.toUpperCase() };
+                    } else {
+                        if (mergedParams.temperature !== undefined) bodyPayload.generationConfig.temperature = mergedParams.temperature;
+                        if (mergedParams.top_p !== undefined) bodyPayload.generationConfig.topP = mergedParams.top_p;
+                        if (mergedParams.presence_penalty !== undefined) bodyPayload.generationConfig.presencePenalty = mergedParams.presence_penalty;
+                        if (mergedParams.frequency_penalty !== undefined) bodyPayload.generationConfig.frequencyPenalty = mergedParams.frequency_penalty;
+                    }
+                    
+                    // 3. Formatierung & Stop
+                    if (mergedParams.stop && mergedParams.stop.trim() !== '') {
+                        bodyPayload.generationConfig.stopSequences = mergedParams.stop.split(',').map(s => s.trim()).slice(0, 4);
+                    }
+                    
+                    if (useJsonMode && !extraParams.response_format) {
+                        bodyPayload.generationConfig.responseMimeType = "application/json";
+                    } else if (extraParams.response_format && extraParams.response_format.type === "json_schema") {
+                        bodyPayload.generationConfig.responseMimeType = "application/json";
+                        bodyPayload.generationConfig.responseSchema = extraParams.response_format.json_schema || extraParams.response_format.schema;
+                    }
+                    
+                    // 4. Tools (Gemini Schema)
+                    if (mergedParams.tools_json && mergedParams.tools_json.trim() !== '') {
+                        try {
+                            bodyPayload.tools = typeof mergedParams.tools_json === 'string' ? JSON.parse(mergedParams.tools_json) : mergedParams.tools_json;
+                            // Proprietäre OpenAI tool_search wird hier ignoriert.
+                        } catch(e) { console.warn("LUMEN API WARNUNG: Gemini Tools JSON ist invalid.", e); }
+                    }
+
                     const fetchUrl = apiUrl.includes('?') ? `${apiUrl}&key=${key}` : `${apiUrl}?key=${key}`;
                     
                     const r = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(bodyPayload), signal });
@@ -1071,8 +1167,51 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                         {role:'user',content:userPayloadStr}
                     ];
                     const headers = { 'Content-Type': 'application/json' }; if (key) headers['Authorization'] = `Bearer ${key}`;
-                    const bodyPayload = { model: provider.model || 'gpt-4o', messages: payload };
-                    if (useJsonMode) bodyPayload.response_format = { type: "json_object" };
+                    
+                    const bodyPayload = { 
+                        model: provider.model || 'gpt-4o', 
+                        messages: payload 
+                    };
+                    
+                    // 1. Kontext-Limits
+                    if (mergedParams.maxTokens) bodyPayload.max_completion_tokens = mergedParams.maxTokens;
+                    if (mergedParams.verbosity) bodyPayload.verbosity = mergedParams.verbosity;
+                    
+                    // 2. Reasoning vs. Sampling
+                    if (mergedParams.reasoning_effort && mergedParams.reasoning_effort !== 'none') {
+                        bodyPayload.reasoning = { effort: mergedParams.reasoning_effort };
+                    } else {
+                        // Sampling Parameter nur wenn Reasoning inaktiv ist
+                        if (mergedParams.temperature !== undefined) bodyPayload.temperature = mergedParams.temperature;
+                        if (mergedParams.top_p !== undefined) bodyPayload.top_p = mergedParams.top_p;
+                        if (mergedParams.presence_penalty !== undefined) bodyPayload.presence_penalty = mergedParams.presence_penalty;
+                        if (mergedParams.frequency_penalty !== undefined) bodyPayload.frequency_penalty = mergedParams.frequency_penalty;
+                    }
+                    
+                    // 3. Formatierung
+                    if (useJsonMode && !extraParams.response_format) {
+                        bodyPayload.response_format = { type: "json_object" };
+                    } else if (extraParams.response_format) {
+                        bodyPayload.response_format = extraParams.response_format;
+                    }
+                    
+                    if (mergedParams.logprobs) bodyPayload.logprobs = true;
+                    if (mergedParams.stop && mergedParams.stop.trim() !== '') {
+                        bodyPayload.stop = mergedParams.stop.split(',').map(s => s.trim()).slice(0, 4);
+                    }
+                    
+                    // 4. Tools & Agenten
+                    if (mergedParams.tools_json && mergedParams.tools_json.trim() !== '') {
+                        try {
+                            bodyPayload.tools = typeof mergedParams.tools_json === 'string' ? JSON.parse(mergedParams.tools_json) : mergedParams.tools_json;
+                            if (mergedParams.tool_choice && mergedParams.tool_choice !== 'none') {
+                                bodyPayload.tool_choice = mergedParams.tool_choice;
+                            }
+                            if (mergedParams.tool_search) {
+                                bodyPayload.tool_search = { enabled: true };
+                            }
+                        } catch(e) { console.warn("LUMEN API WARNUNG: Tools JSON ist invalid.", e); }
+                    }
                     
                     const r = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify(bodyPayload), signal });
                     const d = await r.json(); 
@@ -1304,27 +1443,46 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                     
                     const sysPrompt2 = `${dna.cartridge_prompt}\n\n${autoTtsRegie && dna.audio_physics_persona ? dna.audio_physics_persona : ""}`.trim();
                     
-                    let directiveString = "";
-                    let hasValidDirectives = false;
+                    // --- SMART TEMPLATE ENGINE ---
+                    let userPayload2 = promptTemplate;
 
-                    pipelineMapping.forEach(mapping => {
-                        if (!mapping.jsonKey || !mapping.displayName) return; 
-                        const val = resolveJsonPath(objPhase1, mapping.jsonKey);
+                    // 1. Standard-Platzhalter auflösen
+                    userPayload2 = userPayload2.replace('[USER_INPUT]', text);
+                    userPayload2 = userPayload2.replace('[SYSTEM_ZEIT]', systemTimeStr);
+                    userPayload2 = userPayload2.replace('[LUNA_HELFER]', helferAddon ? helferAddon : "");
+
+                    // 2. Dynamische JSON-Pfade auflösen (RegEx sucht nach [pfad.zum.key])
+                    userPayload2 = userPayload2.replace(/\[([a-zA-Z0-9_.]+)\]/g, (match, path) => {
+                        // Falls es ein nicht aufgelöster Standard-Platzhalter ist, ignorieren
+                        if (['USER_INPUT', 'SYSTEM_ZEIT', 'LUNA_HELFER'].includes(path)) return match;
                         
-                        if (val !== undefined && val !== "" && !(Array.isArray(val) && val.length === 0)) {
-                            const valStr = (val === null) ? "null" : (typeof val === 'object' ? JSON.stringify(val) : val);
-                            directiveString += `${mapping.displayName}: ${valStr}\n`;
-                            hasValidDirectives = true;
+                        const val = resolveJsonPath(objPhase1, path);
+                        if (val !== undefined && val !== null) {
+                            return typeof val === 'object' ? JSON.stringify(val) : String(val);
+                        }
+                        return ""; // Leert den Platzhalter, wenn der JSON-Pfad nicht existiert
+                    });
+
+                    // --- VEKTOR MAPPING (API-PARAMETER) ---
+                    let dynamicApiParams = {};
+                    apiParamMapping.forEach(mapping => {
+                        if (!mapping.jsonKey || !mapping.apiParam) return;
+                        const val = resolveJsonPath(objPhase1, mapping.jsonKey);
+                        if (val !== undefined && val !== null) {
+                            const numVal = Number(val);
+                            dynamicApiParams[mapping.apiParam] = isNaN(numVal) ? val : numVal;
                         }
                     });
 
-                    if (hasValidDirectives) {
-                        directiveString = "=== [KERNEL_DIREKTIVE] ===\n" + directiveString;
+                    if (dryRunMode) {
+                        setLoadingStatus(null);
+                        const dryRunPayloadMsg = `=== GENERIERTER LLM2 PAYLOAD ===\n\n${userPayload2}\n\n=== EXTRAHIERTE API-PARAMETER ===\n${JSON.stringify(dynamicApiParams, null, 2)}`;
+                        setMessages(p => [...p, { id: newAiMsgId, sender: 'system-debug', text: dryRunPayloadMsg, scratchpad: JSON.stringify({ kernel_matrix: objPhase1 }, null, 2), timestamp: new Date().toISOString() }]);
+                        showToast('Dry-Run: Pipeline nach Agent 1 gestoppt');
+                        return;
                     }
-                    
-                    const userPayload2 = `${systemTimeStr}\n${directiveString}${helferAddon}\n\n=== [USER INPUT] ===\n"${text}"`.trim();
 
-                    let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, personaProvider, true, signal);
+                    let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, personaProvider, !agent2JsonMode, signal, dynamicApiParams);
                     setApiHistory(prev => [...prev, { id: generateId(), linkedMsgId: newAiMsgId, type: 'AGENT 2 (PERSONA)', timestamp: Date.now(), request: { system: sysPrompt2, user: userPayload2 }, response: resText2 }].slice(-30));
 
                     const xmlMatch = resText2.match(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i);
@@ -1653,51 +1811,75 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                             </div>
                         </div>
 
-                        {/* --- PIPELINE MAPPING VIEW --- */}
-                        <div className={`${activeView === 'pipeline' ? 'block' : 'hidden'} p-4 sm:p-6 max-w-4xl mx-auto space-y-6 mt-4 animate-fade-in w-full pb-20`}>
-                            <div className="flex justify-between items-center border-b border-stone-200 pb-2">
-                                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">Pipeline Routing (Agent 1 ➔ Agent 2)</h2>
-                                <button onClick={() => setPipelineMapping([...pipelineMapping, { id: generateId(), jsonKey: '', displayName: '' }])} className="btn-primary">➕ Feld hinzufügen</button>
-                            </div>
-                            <p className="text-xs text-slate-500">Definiere hier, welche Daten aus dem Kernel-JSON (Agent 1) extrahiert und in lesbarer Form als Direktive an die Persona (Agent 2) gesendet werden sollen. Nutze die Punkt-Notation für das JSON-Feld (z.B. <code>matrix.situations_analyse</code>).</p>
+                        {/* --- PIPELINE & PAYLOAD MANAGER --- */}
+                        <div className={`${activeView === 'pipeline' ? 'block' : 'hidden'} p-4 sm:p-6 max-w-4xl mx-auto space-y-8 mt-4 animate-fade-in w-full pb-20`}>
                             
-                            <div className="space-y-3">
-                                {pipelineMapping.map((item, index) => (
-                                    <div key={item.id} className="panel flex flex-col sm:flex-row gap-3 items-start sm:items-end bg-white border-stone-200 shadow-sm">
-                                        <div className="flex-1 w-full">
-                                            <label className="label text-indigo-600">JSON-Key (Pfad)</label>
-                                            <input value={item.jsonKey} onChange={(e) => {
-                                                const newMap = [...pipelineMapping]; newMap[index].jsonKey = e.target.value; setPipelineMapping(newMap);
-                                            }} className="input-field border-indigo-100" placeholder="z.B. matrix.situations_analyse" />
-                                        </div>
-                                        <div className="flex-1 w-full">
-                                            <label className="label text-fuchsia-600">Klarname für Agent 2</label>
-                                            <input value={item.displayName} onChange={(e) => {
-                                                const newMap = [...pipelineMapping]; newMap[index].displayName = e.target.value; setPipelineMapping(newMap);
-                                            }} className="input-field border-fuchsia-100" placeholder="z.B. Befehl" />
-                                        </div>
-                                        <div className="flex gap-1 w-full sm:w-auto h-[42px]">
-                                            <button 
-                                                onClick={() => { if(index > 0) { const m = [...pipelineMapping]; [m[index-1], m[index]] = [m[index], m[index-1]]; setPipelineMapping(m); } }} 
-                                                disabled={index === 0} 
-                                                className="btn px-3 disabled:opacity-30" title="Nach oben verschieben">
-                                                ⬆️
-                                            </button>
-                                            <button 
-                                                onClick={() => { if(index < pipelineMapping.length - 1) { const m = [...pipelineMapping]; [m[index+1], m[index]] = [m[index], m[index+1]]; setPipelineMapping(m); } }} 
-                                                disabled={index === pipelineMapping.length - 1} 
-                                                className="btn px-3 disabled:opacity-30" title="Nach unten verschieben">
-                                                ⬇️
-                                            </button>
-                                            <button 
-                                                onClick={() => setPipelineMapping(pipelineMapping.filter(p => p.id !== item.id))} 
-                                                className="btn-danger px-4 flex-1 sm:flex-none">
-                                                🗑️
-                                            </button>
-                                        </div>
+                            <div className="border-b border-stone-200 pb-2">
+                                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-800">Pipeline Orchestrierung</h2>
+                            </div>
+
+                            {/* ZONE B: SMART TEMPLATE */}
+                            <div>
+                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-2 gap-3">
+                                    <div>
+                                        <h3 className="text-sm font-bold uppercase tracking-widest text-indigo-800 mb-1">Zone B: Payload Template (Agent 2)</h3>
+                                        <p className="text-xs text-slate-500">
+                                            Gestalte den finalen Prompt. Standard-Platzhalter: <code>[USER_INPUT]</code>, <code>[SYSTEM_ZEIT]</code>, <code>[LUNA_HELFER]</code><br/>
+                                            Dynamisch: JSON-Pfade von Agent 1, z.B. <code>[matrix.situations_analyse]</code>.
+                                        </p>
                                     </div>
-                                ))}
-                                {pipelineMapping.length === 0 && <div className="text-center text-slate-400 text-xs py-8">Alle Felder werden blockiert. Agent 2 erhält nur den User-Input.</div>}
+                                    <div className="flex gap-2 shrink-0">
+                                        <label className="flex items-center gap-2 text-[10px] font-bold text-indigo-700 cursor-pointer bg-indigo-50 px-3 py-1.5 rounded-xl border border-indigo-200">
+                                            <input type="checkbox" checked={agent2JsonMode} onChange={e => setAgent2JsonMode(e.target.checked)} className="accent-indigo-600 w-3 h-3 cursor-pointer" />
+                                            LLM2 zwingend als JSON ausgeben
+                                        </label>
+                                        <button onClick={validateTemplateJson} className="btn-primary border-indigo-200 text-indigo-700 bg-white hover:bg-indigo-50" title="Prüft, ob dein Template valides JSON ist">
+                                            🧹 Format prüfen
+                                        </button>
+                                    </div>
+                                </div>
+                                <textarea value={promptTemplate} onChange={e => setPromptTemplate(e.target.value)} className="input-field min-h-[250px] font-mono text-[11px] bg-white leading-relaxed" spellCheck="false" />
+                            </div>
+
+                            {/* ZONE C: VEKTOR MAPPING */}
+                            <div className="border-t border-stone-200 pt-6">
+                                <div className="flex justify-between items-center mb-2">
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-emerald-700">Zone C: API Parameter Vektor-Mapping</h3>
+                                    <button onClick={() => setApiParamMapping([...apiParamMapping, { id: generateId(), jsonKey: '', apiParam: '' }])} className="btn-primary bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100">➕ Parameter hinzufügen</button>
+                                </div>
+                                <p className="text-xs text-slate-500 mb-3">JSON-Werte aus Agent 1 direkt als Hyperparameter an die API von Agent 2 leiten (z.B. <code>temperature</code>). Überschreibt die Settings aus Zone A.</p>
+                                
+                                <div className="space-y-3">
+                                    {apiParamMapping.map((item, index) => (
+                                        <div key={item.id} className="panel flex flex-col sm:flex-row gap-3 items-start sm:items-end bg-emerald-50/30 border-emerald-200 shadow-sm">
+                                            <div className="flex-1 w-full">
+                                                <label className="label text-emerald-700">JSON-Key (Agent 1 Output)</label>
+                                                <input value={item.jsonKey} onChange={(e) => { const newMap = [...apiParamMapping]; newMap[index].jsonKey = e.target.value; setApiParamMapping(newMap); }} className="input-field border-emerald-200 bg-white" placeholder="z.B. matrix.temperatur_vektor" />
+                                            </div>
+                                            <div className="flex-1 w-full">
+                                                <label className="label text-indigo-600">LLM2 API Parameter</label>
+                                                <input value={item.apiParam} onChange={(e) => { const newMap = [...apiParamMapping]; newMap[index].apiParam = e.target.value; setApiParamMapping(newMap); }} className="input-field border-indigo-200 bg-white" placeholder="z.B. temperature" />
+                                            </div>
+                                            <button onClick={() => setApiParamMapping(apiParamMapping.filter(p => p.id !== item.id))} className="btn-danger w-full sm:w-auto h-[42px] px-4 border-rose-200 bg-white">🗑️</button>
+                                        </div>
+                                    ))}
+                                    {apiParamMapping.length === 0 && <div className="text-center text-slate-400 text-xs py-4">Keine Vektor-Overrides definiert. Es gelten die Standard-Settings der Provider.</div>}
+                                </div>
+                            </div>
+
+                            {/* ZONE D: DRY RUN */}
+                            <div className="border-t border-stone-200 pt-6">
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-sky-700 mb-2">Zone D: Debugging & Dry-Run</h3>
+                                <p className="text-xs text-slate-500 mb-3">Teste deine Template-Architektur, ohne Token für Agent 2 zu verschwenden.</p>
+                                <div className="panel bg-sky-50/50 border-sky-200 shadow-sm flex flex-col gap-2">
+                                    <label className="flex items-center gap-2 text-xs font-bold text-sky-800 cursor-pointer w-max">
+                                        <input type="checkbox" checked={dryRunMode} onChange={e => setDryRunMode(e.target.checked)} className="accent-sky-600 w-4 h-4 cursor-pointer" />
+                                        Nur Kernel (Agent 1) ausführen (Dry-Run Modus)
+                                    </label>
+                                    <p className="text-[10px] text-sky-600/80 leading-relaxed max-w-2xl">
+                                        Stoppt die Pipeline nach LLM1 und wirft den assemblierten Text für LLM2 als System-Nachricht in den Chat. Der Call zu LLM2 wird blockiert.
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
@@ -1742,7 +1924,7 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                                         <div className="text-[10px] text-indigo-500 font-mono mt-0.5 font-bold">Max Tokens: {p.maxTokens || 8000}</div>
                                                     </div>
                                                     <div className="flex gap-1 shrink-0">
-                                                        <button onClick={() => { setEditProviderId(p.id); setProviderForm({...p, jsonMode: p.jsonMode !== false, maxTokens: p.maxTokens || 8000}); }} className="btn py-1 px-2">✏️</button>
+                                                        <button onClick={() => { setEditProviderId(p.id); setProviderForm({...p, jsonMode: p.jsonMode !== false, maxTokens: p.maxTokens || 8000, temperature: p.temperature ?? 0.7, reasoning_effort: p.reasoning_effort || 'none', verbosity: p.verbosity || 'medium'}); }} className="btn py-1 px-2">✏️</button>
                                                         <button onClick={() => { if(window.confirm('Chat-Provider löschen?')) { const newList = providers.filter(x=>x.id!==p.id); setProviders(newList); localStorage.setItem('lumen_providers', JSON.stringify(newList)); if(activeKernelProviderId===p.id && newList.length) { setActiveKernelProviderId(newList[0].id); localStorage.setItem('lumen_activeKernelProviderId', newList[0].id); } if(activePersonaProviderId===p.id && newList.length) { setActivePersonaProviderId(newList[0].id); localStorage.setItem('lumen_activePersonaProviderId', newList[0].id); } } }} className="btn py-1 px-2 hover:text-rose-600">🗑️</button>
                                                     </div>
                                                 </div>
@@ -1752,19 +1934,131 @@ Lieber Simon, ich habe deine Gedanken sicher für uns auf dem Schreibtisch abgel
                                         <div className="panel border-indigo-200 bg-indigo-50/30 flex flex-col gap-3 shadow-sm mt-4 w-full">
                                             <h3 className="font-bold text-xs uppercase tracking-widest text-indigo-800">{editProviderId ? 'Chat-Provider bearbeiten' : 'Neuen Chat-Provider anlegen'}</h3>
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-                                                <div className="min-w-0"><label className="label text-indigo-600">Anzeigename</label><input value={providerForm.name} onChange={e=>setProviderForm({...providerForm, name: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="z.B. GPT-4o" /></div>
+                                                <div className="min-w-0"><label className="label text-indigo-600">Anzeigename</label><input value={providerForm.name} onChange={e=>setProviderForm({...providerForm, name: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="z.B. GPT-5.4 Nano" /></div>
                                                 <div className="min-w-0"><label className="label text-indigo-600">API Format (Payload)</label><select value={providerForm.type} onChange={e=>setProviderForm({...providerForm, type: e.target.value})} className="input-field bg-white border-indigo-100"><option value="gemini">Google Gemini Format</option><option value="openai">OpenAI Format (GPT, LM Studio, etc.)</option></select></div>
                                             </div>
                                             <div className="w-full min-w-0"><label className="label text-indigo-600">API Endpoint URL</label><input value={providerForm.url} onChange={e=>setProviderForm({...providerForm, url: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="z.B. https://api.openai.com/v1/chat/completions" /></div>
-                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
-                                                <div className="min-w-0"><label className="label text-indigo-600">Modell-ID</label><input value={providerForm.model} onChange={e=>setProviderForm({...providerForm, model: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="z.B. gpt-4o" disabled={providerForm.type === 'gemini'} /></div>
-                                                <div className="min-w-0"><label className="label text-indigo-600">Token-Limit</label><input type="number" value={providerForm.maxTokens} onChange={e=>setProviderForm({...providerForm, maxTokens: Number(e.target.value)})} className="input-field bg-white border-indigo-100 font-bold text-indigo-700" placeholder="8000" /></div>
-                                                <div className="min-w-0"><label className="label text-indigo-600">API Key</label><input type="password" value={providerForm.apiKey} onChange={e=>setProviderForm({...providerForm, apiKey: e.target.value})} className="input-field bg-white border-indigo-100" placeholder="Schlüssel" /></div>
+                                            
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full border-b border-indigo-100 pb-4 mb-2">
+                                                <div className="min-w-0">
+                                                    <label className="label text-indigo-600 mb-0">Modell-ID</label>
+                                                    <p className="text-[9px] text-slate-400 mb-1 leading-tight">Identifier (z.B. gpt-5.4-nano)</p>
+                                                    <input value={providerForm.model} onChange={e=>setProviderForm({...providerForm, model: e.target.value})} className="input-field bg-white border-indigo-100 py-2" placeholder="z.B. gpt-5.4-nano" disabled={providerForm.type === 'gemini'} />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <label className="label text-indigo-600 mb-0">Max Tokens</label>
+                                                    <p className="text-[9px] text-slate-400 mb-1 leading-tight">Output-Limit (max_completion_tokens)</p>
+                                                    <input type="number" value={providerForm.maxTokens} onChange={e=>setProviderForm({...providerForm, maxTokens: Number(e.target.value)})} className="input-field bg-white border-indigo-100 font-bold text-indigo-700 py-2" placeholder="8000" />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <label className="label text-indigo-600 mb-0">API Key</label>
+                                                    <p className="text-[9px] text-slate-400 mb-1 leading-tight">Sicherer Zugangsschlüssel</p>
+                                                    <input type="password" value={providerForm.apiKey} onChange={e=>setProviderForm({...providerForm, apiKey: e.target.value})} className="input-field bg-white border-indigo-100 py-2" placeholder="Schlüssel" />
+                                                </div>
                                             </div>
-                                            <div className="mt-2"><label className="flex items-center gap-2 text-xs font-bold text-indigo-700 cursor-pointer w-max"><input type="checkbox" checked={providerForm.jsonMode !== false} onChange={e => setProviderForm({...providerForm, jsonMode: e.target.checked})} className="accent-indigo-600 w-4 h-4 cursor-pointer"/> JSON-Mode erzwingen</label></div>
-                                            <div className="flex justify-end gap-2 mt-2 border-t border-indigo-100 pt-3">
-                                                {editProviderId && <button onClick={()=>{setEditProviderId(null); setProviderForm({name:'', url:'', type:'gemini', model:'', apiKey:'', jsonMode: true, maxTokens: 8000});}} className="btn border-indigo-200 text-indigo-600">Abbrechen</button>}
-                                                <button onClick={() => { if(!providerForm.name || !providerForm.url) return showToast('Name und URL erforderlich'); const newProviders = editProviderId ? providers.map(p => p.id === editProviderId ? {...providerForm, id: editProviderId} : p) : [...providers, {...providerForm, id: generateId()}]; setProviders(newProviders); localStorage.setItem('lumen_providers', JSON.stringify(newProviders)); setEditProviderId(null); setProviderForm({name:'', url:'', type:'gemini', model:'', apiKey:'', jsonMode: true, maxTokens: 8000}); showToast('Chat-Provider gespeichert!'); }} className="btn-primary bg-indigo-600 text-white hover:bg-indigo-700">{editProviderId ? 'Aktualisieren' : 'Hinzufügen'}</button>
+
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+                                                <div className="min-w-0">
+                                                    <label className="label text-indigo-600 mb-0">Reasoning (Effort)</label>
+                                                    <p className="text-[9px] text-slate-400 mb-1 leading-tight min-h-[22px]">
+                                                        {providerForm.type === 'openai' ? 'Steuert den Rechenaufwand/CoT. (Deaktiviert Temp!)' : 'Wird intern auf Googles thinking_level gemappt.'}
+                                                    </p>
+                                                    <select value={providerForm.reasoning_effort} onChange={e=>setProviderForm({...providerForm, reasoning_effort: e.target.value})} className="input-field bg-white border-indigo-100 py-2 font-bold text-indigo-700">
+                                                        <option value="none">None (Standard-Modus)</option>
+                                                        <option value="low">Low (Schnelles Denken)</option>
+                                                        <option value="medium">Medium (Ausbalanciert)</option>
+                                                        <option value="high">High (Tiefenanalyse)</option>
+                                                    </select>
+                                                </div>
+                                                {providerForm.type === 'openai' && (
+                                                    <div className="min-w-0">
+                                                        <label className="label text-indigo-600 mb-0">Verbosity (Länge)</label>
+                                                        <p className="text-[9px] text-slate-400 mb-1 leading-tight min-h-[22px]">Ausführlichkeit der Antwort (OpenAI exklusiv).</p>
+                                                        <select value={providerForm.verbosity} onChange={e=>setProviderForm({...providerForm, verbosity: e.target.value})} className="input-field bg-white border-indigo-100 py-2">
+                                                            <option value="low">Low (Prägnant)</option>
+                                                            <option value="medium">Medium (Standard)</option>
+                                                            <option value="high">High (Ausführlich)</option>
+                                                        </select>
+                                                    </div>
+                                                )}
+                                                <div className="min-w-0">
+                                                    <label className="label text-indigo-600 mb-0">Temperatur</label>
+                                                    <p className="text-[9px] text-slate-400 mb-1 leading-tight min-h-[22px]">Kreativität/Zufälligkeit (Nur aktiv, wenn Reasoning = None)</p>
+                                                    <div className="flex gap-2 items-center mt-2">
+                                                        <input type="range" min="0" max="2" step="0.1" value={providerForm.temperature} onChange={e=>setProviderForm({...providerForm, temperature: Number(e.target.value)})} disabled={providerForm.reasoning_effort !== 'none'} className={`flex-1 accent-indigo-600 ${providerForm.reasoning_effort !== 'none' ? 'opacity-30' : ''}`} />
+                                                        <span className={`text-xs font-bold w-8 text-right ${providerForm.reasoning_effort !== 'none' ? 'text-slate-300' : 'text-indigo-700'}`}>{providerForm.temperature}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* --- SAMPLING & FORMATIERUNG --- */}
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mt-4 border-t border-indigo-100 pt-4">
+                                                <div className="min-w-0">
+                                                    <label className="label text-indigo-600 mb-0">Top P (Nucleus Sampling)</label>
+                                                    <p className="text-[9px] text-slate-400 mb-1 leading-tight min-h-[22px]">Wahrscheinlichkeits-Masse (Alternative zur Temperatur).</p>
+                                                    <div className="flex gap-2 items-center">
+                                                        <input type="range" min="0" max="1" step="0.05" value={providerForm.top_p} onChange={e=>setProviderForm({...providerForm, top_p: Number(e.target.value)})} disabled={providerForm.reasoning_effort !== 'none'} className={`flex-1 accent-indigo-600 ${providerForm.reasoning_effort !== 'none' ? 'opacity-30' : ''}`} />
+                                                        <span className={`text-xs font-bold w-8 text-right ${providerForm.reasoning_effort !== 'none' ? 'text-slate-300' : 'text-indigo-700'}`}>{providerForm.top_p}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <label className="label text-indigo-600 mb-0">Stop-Sequenzen</label>
+                                                    <p className="text-[9px] text-slate-400 mb-1 leading-tight min-h-[22px]">Kommagetrennte Wörter, bei denen abgebrochen wird.</p>
+                                                    <input value={providerForm.stop} onChange={e=>setProviderForm({...providerForm, stop: e.target.value})} className="input-field bg-white border-indigo-100 py-2" placeholder="z.B. ENDE, STOP" />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <label className="label text-indigo-600 mb-0">Presence Penalty</label>
+                                                    <p className="text-[9px] text-slate-400 mb-1 leading-tight min-h-[22px]">Bestraft Token, falls sie bereits im Text vorkommen (-2 bis 2).</p>
+                                                    <div className="flex gap-2 items-center">
+                                                        <input type="range" min="-2" max="2" step="0.1" value={providerForm.presence_penalty} onChange={e=>setProviderForm({...providerForm, presence_penalty: Number(e.target.value)})} className="flex-1 accent-indigo-600" />
+                                                        <span className="text-xs font-bold text-indigo-700 w-8 text-right">{providerForm.presence_penalty}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <label className="label text-indigo-600 mb-0">Frequency Penalty</label>
+                                                    <p className="text-[9px] text-slate-400 mb-1 leading-tight min-h-[22px]">Bestraft Token basierend auf ihrer Häufigkeit (-2 bis 2).</p>
+                                                    <div className="flex gap-2 items-center">
+                                                        <input type="range" min="-2" max="2" step="0.1" value={providerForm.frequency_penalty} onChange={e=>setProviderForm({...providerForm, frequency_penalty: Number(e.target.value)})} className="flex-1 accent-indigo-600" />
+                                                        <span className="text-xs font-bold text-indigo-700 w-8 text-right">{providerForm.frequency_penalty}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* --- TOOLS & AGENTEN --- */}
+                                            <div className="w-full mt-4 border-t border-indigo-100 pt-4">
+                                                <h4 className="text-[10px] font-bold uppercase tracking-widest text-indigo-800 mb-3">Werkzeuge & Agenten (Tools)</h4>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                                                    <div className="min-w-0">
+                                                        <label className="label text-indigo-600 mb-0">Tool Choice</label>
+                                                        <p className="text-[9px] text-slate-400 mb-1 leading-tight min-h-[22px]">Soll das Modell Werkzeuge zwingend nutzen?</p>
+                                                        <select value={providerForm.tool_choice} onChange={e=>setProviderForm({...providerForm, tool_choice: e.target.value})} className="input-field bg-white border-indigo-100 py-2">
+                                                            <option value="none">None (Keine Tools)</option>
+                                                            <option value="auto">Auto (Modell entscheidet)</option>
+                                                            <option value="required">Required (Zwang)</option>
+                                                        </select>
+                                                    </div>
+                                                    {providerForm.type === 'openai' && (
+                                                        <div className="min-w-0 flex flex-col justify-center">
+                                                            <label className="label text-indigo-600 mb-0">Tool Search Index</label>
+                                                            <p className="text-[9px] text-slate-400 mb-1 leading-tight min-h-[22px]">Spart Token bei riesigen Tool-Katalogen (~47%).</p>
+                                                            <label className="flex items-center gap-2 text-xs font-bold text-indigo-700 cursor-pointer w-max mt-1">
+                                                                <input type="checkbox" checked={providerForm.tool_search} onChange={e=>setProviderForm({...providerForm, tool_search: e.target.checked})} className="accent-indigo-600 w-4 h-4" /> 
+                                                                Aktivieren
+                                                            </label>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <label className="label text-indigo-600 mb-0">Tools Definition (JSON Array)</label>
+                                                    <p className="text-[9px] text-slate-400 mb-1 leading-tight min-h-[22px]">Valides JSON-Array deiner Tool-Spezifikationen (z.B. function, web_search).</p>
+                                                    <textarea value={providerForm.tools_json} onChange={e=>setProviderForm({...providerForm, tools_json: e.target.value})} className="input-field bg-white border-indigo-100 min-h-[80px]" placeholder='[{"type": "function", "function": {...}}]' />
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-4 border-t border-indigo-100 pt-4"><label className="flex items-center gap-2 text-xs font-bold text-indigo-700 cursor-pointer w-max"><input type="checkbox" checked={providerForm.jsonMode !== false} onChange={e => setProviderForm({...providerForm, jsonMode: e.target.checked})} className="accent-indigo-600 w-4 h-4 cursor-pointer"/> JSON-Mode erzwingen (Format)</label></div>
+                                            <div className="flex justify-end gap-2 mt-4 pt-3">
+                                                {editProviderId && <button onClick={()=>{setEditProviderId(null); setProviderForm({name:'', url:'', type:'gemini', model:'', apiKey:'', jsonMode: true, maxTokens: 8000, temperature: 0.7, reasoning_effort: 'none', verbosity: 'medium', top_p: 1.0, presence_penalty: 0, frequency_penalty: 0, logprobs: false, stop: '', tools_json: '', tool_choice: 'none', tool_search: false});}} className="btn border-indigo-200 text-indigo-600">Abbrechen</button>}
+                                                <button onClick={() => { if(!providerForm.name || !providerForm.url) return showToast('Name und URL erforderlich'); const newProviders = editProviderId ? providers.map(p => p.id === editProviderId ? {...providerForm, id: editProviderId} : p) : [...providers, {...providerForm, id: generateId()}]; setProviders(newProviders); localStorage.setItem('lumen_providers', JSON.stringify(newProviders)); setEditProviderId(null); setProviderForm({name:'', url:'', type:'gemini', model:'', apiKey:'', jsonMode: true, maxTokens: 8000, temperature: 0.7, reasoning_effort: 'none', verbosity: 'medium', top_p: 1.0, presence_penalty: 0, frequency_penalty: 0, logprobs: false, stop: '', tools_json: '', tool_choice: 'none', tool_search: false}); showToast('Chat-Provider gespeichert!'); }} className="btn-primary bg-indigo-600 text-white hover:bg-indigo-700">{editProviderId ? 'Aktualisieren' : 'Hinzufügen'}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -2044,7 +2338,7 @@ MEM_S: ${sessionMemory ? sessionMemory.substring(0, 80) + (sessionMemory.length>
                                     <button onClick={isRecording ? stopRecording : startRecording} disabled={!!loadingStatus} className={`w-10 h-10 rounded-full shrink-0 p-0 flex items-center justify-center text-lg transition-all shadow-sm ${isRecording ? 'bg-rose-100 text-rose-600 border border-rose-300 animate-pulse' : 'bg-white text-slate-500 border border-stone-200 hover:bg-stone-100 disabled:opacity-50'}`} title="Speech-to-Text (Whisper via Replicate)">{isRecording ? '🛑' : '🎤'}</button>
                                 )}
                                 
-                                <textarea ref={textareaRef} value={inputText} onChange={(e) => { setInputText(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px'; }} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }} disabled={!!loadingStatus || isRecording} className="input-field flex-1 py-2.5 px-3 font-sans font-medium bg-white disabled:bg-stone-100 disabled:text-slate-400 resize-none overflow-y-auto max-h-[150px]" rows="1" style={{ minHeight: '40px' }} placeholder={loadingStatus ? loadingStatus : (isRecording ? "HÖRE ZU..." : "INPUT...")} />
+                                <textarea ref={textareaRef} value={inputText} onChange={(e) => { setInputText(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px'; }} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }} disabled={!!loadingStatus || isRecording} className={`input-field flex-1 py-2.5 px-3 font-sans font-medium disabled:text-slate-400 resize-none overflow-y-auto max-h-[150px] ${dryRunMode ? 'bg-sky-50 border-sky-300 text-sky-900' : 'bg-white'} disabled:bg-stone-100`} rows="1" style={{ minHeight: '40px' }} placeholder={loadingStatus ? loadingStatus : (isRecording ? "HÖRE ZU..." : (dryRunMode ? "🛠️ DRY-RUN AKTIV (NUR KERNEL)..." : "INPUT..."))} />
                                 <button onClick={handleSendMessage} disabled={!inputText.trim() || !!loadingStatus || isRecording} className="w-10 h-10 rounded-full shrink-0 flex items-center justify-center bg-indigo-600 text-white hover:bg-indigo-700 shadow-md disabled:opacity-50 transition-all"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 ml-0.5"><path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" /></svg></button>
                             </div>
                         </div>
