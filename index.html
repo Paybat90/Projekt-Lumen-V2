@@ -272,9 +272,13 @@
                                             {parsedScratch.persona_gedanken}
                                         </div>
                                     )}
-                                    {parsedScratch.kernel_matrix && (
-                                        <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(JSON.stringify(parsedScratch.kernel_matrix, null, 1))}></pre>
-                                    )}
+                                    {parsedScratch.kernel_matrix && (() => {
+                                        let mStr = JSON.stringify(parsedScratch.kernel_matrix, null, 2);
+                                        mStr = mStr.replace(/\[\s+([^\[\]\{\}]*?)\s+\]/g, (match, content) => '[' + content.replace(/\s*\n\s*/g, ' ') + ']');
+                                        return (
+                                            <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(mStr)}></pre>
+                                        );
+                                    })()}
                                     {!parsedScratch.kernel_matrix && !parsedScratch.persona_gedanken && (
                                          <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(message.scratchpad)}></pre>
                                     )}
@@ -1523,6 +1527,13 @@
                                     {apiHistory.length === 0 && <div className="text-center text-slate-400 italic text-xs h-full flex items-center justify-center">Warte auf Traffic...</div>}
                                     {apiHistory.map((log) => {
                                         const isKernel = log.type.includes('KERNEL');
+                                        let formattedResponse = log.response;
+                                        try {
+                                            const cleanRes = log.response.replace(/```json/gi, '').replace(/```/g, '').trim();
+                                            formattedResponse = JSON.stringify(JSON.parse(cleanRes), null, 2);
+                                        } catch(e) {
+                                            // Fallback: Wenn es kein reines JSON ist, behalte den rohen String
+                                        }
                                         return (
                                             <div key={log.id} className={`flex flex-col w-full max-w-4xl mx-auto ${isKernel ? 'items-start' : 'items-end'}`}>
                                                 <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 px-2">{log.type} <span className="font-mono opacity-60">{new Date(log.timestamp).toLocaleTimeString('de-DE')}</span></div>
@@ -1541,7 +1552,7 @@
                                                     )}
                                                     <div className="mb-4"><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[1] SYSTEM PROMPT</div><div className="opacity-90">{log.request.system}</div></div>
                                                     <div className="mb-4 pt-4 border-t border-dashed border-slate-500/30"><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[2] USER PAYLOAD</div><div className={isKernel ? 'text-slate-900 font-bold' : 'text-white font-bold'}>{log.request.user}</div></div>
-                                                    <div className={`pt-4 border-t border-dashed border-slate-500/30 ${isKernel ? 'bg-emerald-50 -mx-5 -mb-5 p-5 rounded-b-3xl' : 'bg-indigo-900/30 -mx-5 -mb-5 p-5 rounded-b-3xl'}`}><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-700' : 'text-fuchsia-400'}`}>[3] API RESPONSE</div><div className={isKernel ? 'text-emerald-900 whitespace-pre-wrap break-words' : 'text-fuchsia-100 whitespace-pre-wrap break-words'}>{log.response}</div></div>
+                                                    <div className={`pt-4 border-t border-dashed border-slate-500/30 ${isKernel ? 'bg-emerald-50 -mx-5 -mb-5 p-5 rounded-b-3xl' : 'bg-indigo-900/30 -mx-5 -mb-5 p-5 rounded-b-3xl'}`}><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-700' : 'text-fuchsia-400'}`}>[3] API RESPONSE</div><div className={`whitespace-pre-wrap break-words ${isKernel ? 'text-emerald-900' : 'text-fuchsia-100'}`}>{formattedResponse}</div></div>
                                                 </div>
                                             </div>
                                         );
