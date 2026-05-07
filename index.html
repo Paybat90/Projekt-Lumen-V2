@@ -35,6 +35,8 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>if(typeof marked!=='undefined') marked.setOptions({ breaks: true, gfm: true });</script>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    
     <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -90,17 +92,15 @@
     <script type="text/babel">
         // --- DATENBANK INIT ---
         const db = new Dexie('LumenSanctum');
-        db.version(13).stores({ 
+        db.version(14).stores({ 
             memories: '++id, titel_technisch, tags, image_id, fakt, emotion, bedeutung, timestamp, is_core_memory, kategorie, reflexion, audio_signatur',
-            directives: '++id, text' 
+            directives: '++id, text',
+            chat_history: 'session_id'
         });
 
         // --- KONSTANTEN V5.4 ---
-        const DEFAULT_KERNEL_PROMPT = `[System-Prompt LLM1 hier eintragen]
-`;
-
-        const DEFAULT_CARTRIDGE_PROMPT = `[System-Prompt LLM2 hier eintragen]
-`;
+        const DEFAULT_KERNEL_PROMPT = `[System-Prompt LLM1 hier eintragen]\n`;
+        const DEFAULT_CARTRIDGE_PROMPT = `[System-Prompt LLM2 hier eintragen]\n`;
 
         const INITIAL_MESSAGES = [
             {
@@ -149,6 +149,7 @@
         const getXRayHTML = (text) => {
             if(!text) return {__html:''};
             let html = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            html = html.replace(/\n{3,}/g, '\n\n');
             html = html.replace(/"wahrnehmung"/g, '<span class="text-indigo-400 font-bold">"wahrnehmung"</span>');
             html = html.replace(/"matrix"/g, '<span class="text-emerald-400 font-bold">"matrix"</span>');
             html = html.replace(/"werkbank_auge"/g, '<span class="text-blue-400 font-bold">"werkbank_auge"</span>');
@@ -162,7 +163,7 @@
             return { __html: html };
         };
 
-        // --- UI KOMPONENTEN ---
+        // --- SUB-KOMPONENTEN ---
         const Toast = ({ message }) => {
             if (!message) return null;
             return (
@@ -174,97 +175,7 @@
             );
         };
 
-        const TelemetryModal = ({ messages, onClose }) => {
-            const [selectedIds, setSelectedIds] = React.useState(messages.map(m => m.id));
-            const toggleAll = () => { if (selectedIds.length === messages.length) setSelectedIds([]); else setSelectedIds(messages.map(m => m.id)); };
-            const toggleOne = (id) => { if (selectedIds.includes(id)) setSelectedIds(selectedIds.filter(i => i !== id)); else setSelectedIds([...selectedIds, id]); };
-            const handleDownload = () => {
-                const selectedMsgs = messages.filter(m => selectedIds.includes(m.id));
-                let content = "# LUMEN CHAT LOG V5.4\n\n";
-                selectedMsgs.forEach(m => {
-                    content += `[${new Date(m.timestamp).toLocaleString()}] ${m.sender.toUpperCase()}:\n`;
-                    content += `${m.text}\n`;
-                    if (m.scratchpad) content += `\n--- X-RAY (JSON+XML) ---\n${m.scratchpad}\n--------------------\n`;
-                    content += `\n\n`;
-                });
-                const blob = new Blob([content], { type: "text/markdown" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a"); a.href = url; a.download = `LUMEN_Chat_Log_${new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19)}.md`;
-                document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-            };
-
-            return (
-                <div className="fixed inset-0 z-[900] bg-slate-900/40 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
-                    <div className="bg-white w-full max-w-2xl max-h-[80vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 min-w-0">
-                        <div className="p-4 border-b border-stone-100 flex justify-between items-center bg-slate-50">
-                            <h3 className="font-bold text-slate-800 uppercase text-xs tracking-widest flex items-center gap-2">📊 Chat Telemetrie</h3>
-                            <button onClick={onClose} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
-                        </div>
-                        <div className="p-3 bg-stone-50 border-b border-stone-200 flex justify-between items-center">
-                            <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer"><input type="checkbox" checked={selectedIds.length === messages.length && messages.length > 0} onChange={toggleAll} className="accent-indigo-600 w-4 h-4 cursor-pointer" /> Alle auswählen</label>
-                            <div className="text-[10px] text-slate-500 font-mono uppercase">{selectedIds.length} von {messages.length} ausgewählt</div>
-                        </div>
-                        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 bg-stone-50/50 min-w-0">
-                            {messages.map(m => (
-                                <label key={m.id} className="flex gap-3 p-3 bg-white border border-stone-100 rounded-xl hover:border-indigo-200 cursor-pointer shadow-sm items-start transition-colors w-full min-w-0">
-                                    <input type="checkbox" checked={selectedIds.includes(m.id)} onChange={() => toggleOne(m.id)} className="accent-indigo-600 w-4 h-4 mt-0.5 shrink-0 cursor-pointer" />
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex justify-between items-center mb-1"><span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 truncate">{m.sender}</span><span className="text-[9px] text-slate-400 font-mono shrink-0">{new Date(m.timestamp).toLocaleTimeString()}</span></div>
-                                        <div className="text-xs text-slate-700 line-clamp-2 break-words">{cleanVisibleText(m.text)}</div>
-                                    </div>
-                                </label>
-                            ))}
-                            {messages.length === 0 && <div className="text-center text-slate-400 text-xs py-8">Keine Nachrichten vorhanden.</div>}
-                        </div>
-                        <div className="p-4 border-t border-stone-100 bg-white shrink-0">
-                            <button onClick={handleDownload} disabled={selectedIds.length === 0} className="btn-primary w-full py-3 bg-indigo-600 text-white hover:bg-indigo-700 shadow-md disabled:opacity-50 text-xs flex justify-center items-center gap-2">📥 CHAT LOG HERUNTERLADEN</button>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        const SafePurgeModal = ({ snippets, selectedIds, onToggle, warning, onApprove, onCancel }) => {
-            return (
-                <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex justify-center items-center animate-fade-in p-4">
-                    <div className="bg-white w-full max-w-xl max-h-[85vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 min-w-0">
-                        <div className="p-4 border-b border-stone-200 flex justify-between items-center bg-emerald-50">
-                            <h3 className="font-bold text-emerald-700 uppercase text-xs tracking-widest flex items-center gap-2">✨ Masterlog: Notizen zur Übernahme bereit</h3>
-                            <button onClick={onCancel} className="text-slate-400 hover:text-rose-500 transition-colors font-bold text-sm">✕</button>
-                        </div>
-                        
-                        {warning && (
-                            <div className="p-4 m-6 mb-0 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 text-xs shadow-sm">
-                                <strong className="block uppercase tracking-widest mb-1 text-[10px] text-rose-600">⚠️ System-Warnung (Archivar)</strong>
-                                {warning}
-                            </div>
-                        )}
-
-                        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 text-sm font-sans text-slate-700 bg-stone-50 min-w-0">
-                            <p className="text-xs text-slate-500 mb-2">Wähle die Snippets aus, die in den persistenten Session-Speicher übernommen werden sollen. Alte Chat-Wasserköpfe werden beim Bestätigen komprimiert (Safe-Purge).</p>
-                            {snippets.map((snip) => (
-                                <label key={snip.id} className="flex gap-3 p-4 bg-white rounded-2xl shadow-sm border border-emerald-100 cursor-pointer hover:border-emerald-300 transition-colors w-full min-w-0">
-                                    <input type="checkbox" checked={selectedIds.has(snip.id)} onChange={() => onToggle(snip.id)} className="accent-emerald-600 w-4 h-4 mt-0.5 shrink-0 cursor-pointer" />
-                                    <div className="flex-1 min-w-0 text-sm leading-relaxed break-words">
-                                        <strong className="text-emerald-700 font-mono text-[10px] uppercase tracking-widest block mb-1 truncate">[{snip.kategorie || 'LOG'}]: {snip.titel || 'Eintrag'}</strong>
-                                        {snip.inhalt}
-                                    </div>
-                                </label>
-                            ))}
-                            {snippets.length === 0 && <div className="text-center text-slate-400 text-xs py-4">Keine strukturierten Snippets gefunden.</div>}
-                        </div>
-                        <div className="p-4 border-t border-stone-100 bg-white flex gap-3 shrink-0">
-                            <button onClick={onCancel} className="btn py-3 flex-1 text-slate-500 hover:bg-stone-100">Verwerfen</button>
-                            <button onClick={onApprove} className="btn-primary py-3 flex-1 bg-emerald-600 text-white hover:bg-emerald-700 shadow-md border-none">
-                                ✅ FREIGEBEN & PURGE
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        const ChatBubble = ({ message, personaName, playingMsgId, onPlayTTS, onDelete, audioSessionCache }) => {
+        const ChatBubble = React.memo(({ message, personaName, playingMsgId, onPlayTTS, onDelete, audioSessionCache }) => {
             const isUser = message.sender === 'user';
             const isError = message.sender === 'system-error';
             const isSystemScout = message.sender === 'system';
@@ -298,16 +209,19 @@
                 </div>
             );
 
-            const cleanedText = cleanVisibleText(message.text);
-            let finalMarkup = cleanedText;
-            if (typeof marked !== 'undefined') {
-                try {
-                    const rawMarkup = marked.parse(cleanedText);
-                    finalMarkup = rawMarkup.replace(/==(.*?)==/g, '<mark class="bg-indigo-100 text-indigo-800 px-1 rounded">$1</mark>');
-                } catch (e) {
-                    console.error("Markdown parsing error", e);
+            const finalMarkup = React.useMemo(() => {
+                const cleanedText = cleanVisibleText(message.text);
+                let markup = cleanedText;
+                if (typeof marked !== 'undefined') {
+                    try {
+                        const rawMarkup = marked.parse(cleanedText);
+                        markup = rawMarkup.replace(/==(.*?)==/g, '<mark class="bg-indigo-100 text-indigo-800 px-1 rounded">$1</mark>');
+                    } catch (e) {
+                        console.error("Markdown parsing error", e);
+                    }
                 }
-            }
+                return typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(markup) : markup;
+            }, [message.text]);
             
             let parsedScratch = null;
             if (!isUser && message.scratchpad) {
@@ -337,7 +251,6 @@
                         <div className={`p-5 w-full min-w-0 ${isUser ? 'bg-white text-slate-700 border border-stone-100 shadow-sm rounded-3xl rounded-tr-sm' : 'bg-indigo-50 text-indigo-900 border border-indigo-100 shadow-sm rounded-3xl rounded-tl-sm'}`}>
                             <div className="markdown-content text-[15px] font-sans leading-relaxed whitespace-pre-wrap break-words" dangerouslySetInnerHTML={{ __html: finalMarkup }} />
                             
-                            {/* V5.4: Permanente TTS Buttons */}
                             {!isUser && (
                                 <div className="mt-3 flex gap-4 pt-2">
                                     <button onClick={() => onPlayTTS(message.id, message.text, parsedScratch?.kernel_matrix?.matrix?.tts_regie_prompt || parsedScratch?.kernel_matrix?.tts_regie_prompt)} className={`text-[9px] uppercase font-bold tracking-widest transition-colors flex items-center gap-1 p-0 ${playingMsgId === message.id ? 'text-indigo-600 animate-pulse' : 'text-slate-400 hover:text-indigo-500'}`}>
@@ -360,7 +273,7 @@
                                         </div>
                                     )}
                                     {parsedScratch.kernel_matrix && (
-                                        <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(JSON.stringify(parsedScratch.kernel_matrix, null, 2))}></pre>
+                                        <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(JSON.stringify(parsedScratch.kernel_matrix, null, 1))}></pre>
                                     )}
                                     {!parsedScratch.kernel_matrix && !parsedScratch.persona_gedanken && (
                                          <pre className="text-[10px] font-mono text-indigo-800/80 whitespace-pre-wrap break-words w-full bg-white/50 border border-indigo-100 p-3 rounded-2xl shadow-inner" dangerouslySetInnerHTML={getXRayHTML(message.scratchpad)}></pre>
@@ -371,23 +284,30 @@
                     </div>
                 </div>
             );
-        };
+        }, (prevProps, nextProps) => {
+            if (prevProps.message.id !== nextProps.message.id) return false;
+            
+            const wasPlaying = prevProps.playingMsgId === prevProps.message.id;
+            const isPlaying = nextProps.playingMsgId === nextProps.message.id;
+            if (wasPlaying !== isPlaying) return false;
+            
+            const prevCache = prevProps.audioSessionCache && prevProps.audioSessionCache[prevProps.message.id];
+            const nextCache = nextProps.audioSessionCache && nextProps.audioSessionCache[nextProps.message.id];
+            if (prevCache !== nextCache) return false;
+            
+            return true;
+        });
 
-        // --- APP MAIN ---
+        // --- MAIN APP ---
         const App = () => {
             const [isBooting, setIsBooting] = React.useState(true);
 
             const defaultTemplate = `[SYSTEM_ZEIT]
 [LUNA_HELFER]
-[KERNEL_DIREKTIVEN]
+[SANCTUM_KONTEXT]
 
 === [USER INPUT] ===
 "[USER_INPUT]"`;
-
-            const [promptTemplate, setPromptTemplate] = React.useState(() => {
-                return localStorage.getItem('lumen_promptTemplate') || defaultTemplate;
-            });
-            React.useEffect(() => { localStorage.setItem('lumen_promptTemplate', promptTemplate); }, [promptTemplate]);
 
             const defaultKernelTemplate = `[TELEMETRIE]
 
@@ -395,17 +315,24 @@
 
 === [USER INPUT] ===
 "[USER_INPUT]"`;
-            const [kernelTemplate, setKernelTemplate] = React.useState(() => localStorage.getItem('lumen_kernelTemplate') || defaultKernelTemplate);
-            React.useEffect(() => { localStorage.setItem('lumen_kernelTemplate', kernelTemplate); }, [kernelTemplate]);
+            
+            // Refactored States: Clean Init ohne synchrone localStorage Aufrufe
+            const [promptTemplate, setPromptTemplate] = React.useState(defaultTemplate);
+            const [kernelTemplate, setKernelTemplate] = React.useState(defaultKernelTemplate);
+            const [apiParamMapping, setApiParamMapping] = React.useState([]);
+            const [dryRunMode, setDryRunMode] = React.useState(false);
+            const [agent2JsonMode, setAgent2JsonMode] = React.useState(false);
+            const [useApiCache, setUseApiCache] = React.useState(false);
+            const [apiHistory, setApiHistory] = React.useState([]);
 
-            const [apiParamMapping, setApiParamMapping] = React.useState(() => {
-                try {
-                    const stored = JSON.parse(localStorage.getItem('lumen_apiParamMapping'));
-                    if (stored && stored.length > 0) return stored;
-                } catch {}
-                return []; // Format: { id, jsonKey, apiParam }
-            });
-            React.useEffect(() => { localStorage.setItem('lumen_apiParamMapping', JSON.stringify(apiParamMapping)); }, [apiParamMapping]);
+            // State Side-Effects
+            React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_promptTemplate', promptTemplate); }, [promptTemplate, isBooting]);
+            React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_kernelTemplate', kernelTemplate); }, [kernelTemplate, isBooting]);
+            React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_apiParamMapping', JSON.stringify(apiParamMapping)); }, [apiParamMapping, isBooting]);
+            React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_dryRun', String(dryRunMode)); }, [dryRunMode, isBooting]);
+            React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_a2json', String(agent2JsonMode)); }, [agent2JsonMode, isBooting]);
+            React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_useCache', String(useApiCache)); }, [useApiCache, isBooting]);
+            React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_apiHistory', JSON.stringify(apiHistory)); }, [apiHistory, isBooting]);
 
             const defaultProviders = [
                 { id: 'gemini-3-flash', name: 'Google Gemini (3 Flash)', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent', type: 'gemini', model: '', apiKey: '', jsonMode: true, maxTokens: 8000, temperature: 0.7, reasoning_effort: 'none', verbosity: 'medium', top_p: 1.0, presence_penalty: 0, frequency_penalty: 0, logprobs: false, stop: '', tools_json: '', tool_choice: 'none', tool_search: false },
@@ -421,7 +348,6 @@
                 { id: 'agent-luna-default', name: 'Web-Scout (OpenAI)', type: 'openai', url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini', apiKey: '', prompt: 'Du bist Luna, der Web-Scout. Bewerte die folgenden rohen Suchergebnisse und extrahiere die wichtigsten Fakten. Gib AUSSCHLIESSLICH folgendes JSON zurück:\n{\n  "metakognition": "...",\n  "scout_bericht": {\n    "fakten": "..."\n  }\n}' }
             ];
             
-            // V5.4: Dual Audio Physics in DNA
             const defaultDna = { 
                 persona_name: "Maira", 
                 kernel_prompt: DEFAULT_KERNEL_PROMPT, 
@@ -465,32 +391,11 @@
             const [autoPlayEnabled, setAutoPlayEnabled] = React.useState(false);
             const [isMemoryLocked, setIsMemoryLocked] = React.useState(false);
 
-            const [dryRunMode, setDryRunMode] = React.useState(() => localStorage.getItem('lumen_dryRun') === 'true');
-            React.useEffect(() => { localStorage.setItem('lumen_dryRun', String(dryRunMode)); }, [dryRunMode]);
-
-            const [agent2JsonMode, setAgent2JsonMode] = React.useState(() => localStorage.getItem('lumen_a2json') === 'true');
-            React.useEffect(() => { localStorage.setItem('lumen_a2json', String(agent2JsonMode)); }, [agent2JsonMode]);
-
-            const [useApiCache, setUseApiCache] = React.useState(() => localStorage.getItem('lumen_useCache') === 'true');
-            React.useEffect(() => { localStorage.setItem('lumen_useCache', String(useApiCache)); }, [useApiCache]);
-
             const [tokenUsage, setTokenUsage] = React.useState({ system: 0, history: 0, percent: 0 });
             const [showTokenTooltip, setShowTokenTooltip] = React.useState(false);
 
             const [latestContext, setLatestContext] = React.useState("[AKTIVER KONTEXT WIRD ZUR LAUFZEIT INJIZIERT]");
             const [showTelemetry, setShowTelemetry] = React.useState(false);
-            
-            // V5.4: API History Persistenz
-            const [apiHistory, setApiHistory] = React.useState(() => {
-                try {
-                    const stored = JSON.parse(localStorage.getItem('lumen_apiHistory'));
-                    return stored || [];
-                } catch { return []; }
-            });
-            React.useEffect(() => {
-                localStorage.setItem('lumen_apiHistory', JSON.stringify(apiHistory));
-            }, [apiHistory]);
-            
             const [showApiLog, setShowApiLog] = React.useState(false);
             
             const [activeStateId, setActiveStateId] = React.useState(0);
@@ -544,16 +449,34 @@
             const fileInputRefOmni = React.useRef(null);
             const apiAbortControllerRef = React.useRef(null);
 
-            const handleDeleteMessage = (id) => {
+            const handleDeleteMessage = React.useCallback((id) => {
                 setMessages(prev => prev.filter(m => m.id !== id));
-                setApiHistory(prev => prev.filter(log => log.linkedMsgId !== id)); // V5.4 Sync Delete
-            };
+                setApiHistory(prev => prev.filter(log => log.linkedMsgId !== id));
+                setAudioSessionCache(prev => {
+                    if (prev[id]) {
+                        URL.revokeObjectURL(prev[id]);
+                        const n = { ...prev };
+                        delete n[id];
+                        return n;
+                    }
+                    return prev;
+                });
+            }, []);
 
             React.useEffect(() => {
                 const bootSystem = async () => {
                     try {
                         const load = (key, fallback) => { try { const val = localStorage.getItem(key); return val ? JSON.parse(val) : fallback; } catch { return fallback; } };
                         const loadStr = (key, fallback) => localStorage.getItem(key) || fallback;
+
+                        // Refactored async loading of primitive states
+                        setPromptTemplate(loadStr('lumen_promptTemplate', defaultTemplate));
+                        setKernelTemplate(loadStr('lumen_kernelTemplate', defaultKernelTemplate));
+                        setApiParamMapping(load('lumen_apiParamMapping', []));
+                        setDryRunMode(loadStr('lumen_dryRun', 'false') === 'true');
+                        setAgent2JsonMode(loadStr('lumen_a2json', 'false') === 'true');
+                        setUseApiCache(loadStr('lumen_useCache', 'false') === 'true');
+                        setApiHistory(load('lumen_apiHistory', []));
 
                         let oldKeys = { gemini: '', openai: '' };
                         try { const storedKeys = JSON.parse(localStorage.getItem('lumen_apiKeys')); if (storedKeys) oldKeys = storedKeys; } catch {}
@@ -591,26 +514,52 @@
                                 delete storedDna.audio_physics;
                             }
                             if (storedDna.audio_physics_kernel === undefined) storedDna.audio_physics_kernel = "";
-                            if (storedDna.audio_physics_persona === undefined) storedDna.audio_physics_persona = "";
+                        if (storedDna.audio_physics_persona === undefined) storedDna.audio_physics_persona = "";
 
-                            setDna({ ...defaultDna, ...storedDna });
+                        setDna({ ...defaultDna, ...storedDna });
+                    }
+
+                    setAutoTtsRegie(loadStr('lumen_auto_tts', 'false') === 'true');
+                    setAutoPlayEnabled(loadStr('lumen_autoPlay', 'false') === 'true');
+                    
+                    let initialChat = INITIAL_MESSAGES;
+                    try {
+                        const dbChat = await db.chat_history.get('main');
+                        if (dbChat && dbChat.data) {
+                            initialChat = dbChat.data;
+                        } else {
+                            const legacyChatStr = localStorage.getItem('lumen_chat');
+                            if (legacyChatStr) {
+                                const legacyChat = JSON.parse(legacyChatStr);
+                                initialChat = legacyChat;
+                                await db.chat_history.put({ session_id: 'main', data: legacyChat });
+                                localStorage.removeItem('lumen_chat');
+                                console.log("LUMEN MIGRATION: Chat-Verlauf sicher in Dexie übertragen.");
+                            }
                         }
+                    } catch (err) {
+                        console.error("Dexie Chat-Load Error:", err);
+                        const fallbackChat = localStorage.getItem('lumen_chat');
+                        if (fallbackChat) initialChat = JSON.parse(fallbackChat);
+                    }
+                    
+                    setMessages(initialChat);
 
-                        setAutoTtsRegie(loadStr('lumen_auto_tts', 'false') === 'true');
-                        setAutoPlayEnabled(loadStr('lumen_autoPlay', 'false') === 'true');
-                        setMessages(load('lumen_chat', INITIAL_MESSAGES));
+                } catch(e) { console.error("Boot Error", e); }
 
-                    } catch(e) { console.error("Boot Error", e); }
+                await new Promise(r => setTimeout(r, 600));
+                setIsBooting(false);
+            };
+            bootSystem();
+        }, []);
 
-                    await new Promise(r => setTimeout(r, 600));
-                    setIsBooting(false);
-                };
-                bootSystem();
-            }, []);
-
-            React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_chat', JSON.stringify(messages)); }, [messages, isBooting]);
-            React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_session_memory', sessionMemory); }, [sessionMemory, isBooting]);
-            React.useEffect(() => { if (!isBooting && lastArchivedMsgId) localStorage.setItem('lumen_last_archive_id', lastArchivedMsgId); }, [lastArchivedMsgId, isBooting]);
+        React.useEffect(() => { 
+            if (!isBooting) {
+                db.chat_history.put({ session_id: 'main', data: messages }).catch(e => console.error("Dexie Save Error:", e));
+            } 
+        }, [messages, isBooting]);
+        React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_session_memory', sessionMemory); }, [sessionMemory, isBooting]);
+        React.useEffect(() => { if (!isBooting && lastArchivedMsgId) localStorage.setItem('lumen_last_archive_id', lastArchivedMsgId); }, [lastArchivedMsgId, isBooting]);
             React.useEffect(() => { if (!isBooting) localStorage.setItem('lumen_agentProviders', JSON.stringify(agentProviders)); }, [agentProviders, isBooting]);
 
             React.useEffect(() => {
@@ -671,9 +620,7 @@
 
             const validateTemplateJson = () => {
                 try {
-                    // Ersetze alle Platzhalter durch einen sicheren Dummy-String, um die JSON-Struktur zu testen
                     let testString = promptTemplate.replace(/\[([a-zA-Z0-9_.]+)\]/g, "dummy_value");
-                    // Säubere eventuelle versteckte Zeilenumbrüche, die das Parsing stören
                     testString = testString.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
                     JSON.parse(testString);
                     showToast("✅ Template ist valides JSON!");
@@ -776,16 +723,6 @@
                     }
                 } catch(e) { console.warn('Archivar Optimierung fehlgeschlagen', e); }
                 return finalData;
-            };
-
-            const handleOptimizeArchivar = async (memoryItem) => {
-                setOptimizingId(memoryItem.id);
-                try {
-                    const optimizedData = await runArchivar(memoryItem);
-                    await db.memories.update(memoryItem.id, { fakt: optimizedData.fakt, kategorie: optimizedData.kategorie, titel_technisch: optimizedData.titel_technisch });
-                    showToast('Akte durch Archivar optimiert');
-                    loadMemories();
-                } catch(e) { showToast('Optimierung fehlgeschlagen'); } finally { setOptimizingId(null); }
             };
 
             const triggerArchivarCycle = React.useCallback(async (currentMsgs) => {
@@ -1058,13 +995,20 @@
                 } catch (e) { showToast("STT Fehler: " + e.message); setLoadingStatus(null); }
             };
 
+            const setSafeApiCache = (key, value) => {
+                window.lumenApiCache.set(key, value);
+                if (window.lumenApiCache.size > 50) {
+                    const oldestKey = window.lumenApiCache.keys().next().value;
+                    window.lumenApiCache.delete(oldestKey);
+                }
+            };
+
             const fetchTextFromAPI = async (sysPrompt, userPayloadStr, historyMessages, provider, forceTextMode = false, signal = null, extraParams = {}) => {
                 let resText = "";
                 const useJsonMode = provider.jsonMode !== false && !forceTextMode;
                 const key = provider.apiKey;
                 const apiUrl = provider.url;
 
-                // Globale Parameter-Fusion (Pipeline überschreibt Provider-Defaults)
                 const mergedParams = {
                     temperature: extraParams.temperature ?? provider.temperature,
                     top_p: extraParams.top_p ?? provider.top_p,
@@ -1095,10 +1039,8 @@
                     const bodyPayload = { systemInstruction: {parts:[{text:sysPrompt}]}, contents };
                     bodyPayload.generationConfig = {};
                     
-                    // 1. Kontext & Mapping
                     if (mergedParams.maxTokens) bodyPayload.generationConfig.maxOutputTokens = mergedParams.maxTokens;
                     
-                    // 2. Reasoning (Mapping auf Googles thinkingLevel) vs Sampling
                     if (mergedParams.reasoning_effort && mergedParams.reasoning_effort !== 'none') {
                         bodyPayload.generationConfig.thinkingConfig = { thinkingLevel: mergedParams.reasoning_effort.toUpperCase() };
                     } else {
@@ -1108,7 +1050,6 @@
                         if (mergedParams.frequency_penalty !== undefined) bodyPayload.generationConfig.frequencyPenalty = mergedParams.frequency_penalty;
                     }
                     
-                    // 3. Formatierung & Stop
                     if (mergedParams.stop && mergedParams.stop.trim() !== '') {
                         bodyPayload.generationConfig.stopSequences = mergedParams.stop.split(',').map(s => s.trim()).slice(0, 4);
                     }
@@ -1120,30 +1061,26 @@
                         bodyPayload.generationConfig.responseSchema = extraParams.response_format.json_schema || extraParams.response_format.schema;
                     }
                     
-                    // 4. Tools (Gemini Schema)
                     if (mergedParams.tools_json && mergedParams.tools_json.trim() !== '') {
                         try {
                             bodyPayload.tools = typeof mergedParams.tools_json === 'string' ? JSON.parse(mergedParams.tools_json) : mergedParams.tools_json;
-                            // Proprietäre OpenAI tool_search wird hier ignoriert.
                         } catch(e) { console.warn("LUMEN API WARNUNG: Gemini Tools JSON ist invalid.", e); }
                     }
 
                     const fetchUrl = apiUrl.includes('?') ? `${apiUrl}&key=${key}` : `${apiUrl}?key=${key}`;
                     
-                    // --- CACHE CHECK ---
                     const cacheKey = JSON.stringify({ url: fetchUrl, body: bodyPayload });
                     if (useApiCache && window.lumenApiCache.has(cacheKey)) {
                         console.log("LUMEN: Cache Hit!");
                         return window.lumenApiCache.get(cacheKey);
                     }
-                    // -------------------
                     
                     const r = await fetch(fetchUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(bodyPayload), signal });
                     const d = await r.json(); 
                     if(!r.ok) throw new Error(d.error?.message || 'Gemini API Fehler'); 
                     resText = d.candidates[0].content.parts[0].text;
                     
-                    if (useApiCache) window.lumenApiCache.set(cacheKey, resText);
+                    if (useApiCache) setSafeApiCache(cacheKey, resText);
                 } else {
                     const payload = [
                         {role:'system',content:sysPrompt}, 
@@ -1157,22 +1094,18 @@
                         messages: payload 
                     };
                     
-                    // 1. Kontext-Limits
                     if (mergedParams.maxTokens) bodyPayload.max_completion_tokens = mergedParams.maxTokens;
                     if (mergedParams.verbosity) bodyPayload.verbosity = mergedParams.verbosity;
                     
-                    // 2. Reasoning vs. Sampling
                     if (mergedParams.reasoning_effort && mergedParams.reasoning_effort !== 'none') {
                         bodyPayload.reasoning = { effort: mergedParams.reasoning_effort };
                     } else {
-                        // Sampling Parameter nur wenn Reasoning inaktiv ist
                         if (mergedParams.temperature !== undefined) bodyPayload.temperature = mergedParams.temperature;
                         if (mergedParams.top_p !== undefined) bodyPayload.top_p = mergedParams.top_p;
                         if (mergedParams.presence_penalty !== undefined) bodyPayload.presence_penalty = mergedParams.presence_penalty;
                         if (mergedParams.frequency_penalty !== undefined) bodyPayload.frequency_penalty = mergedParams.frequency_penalty;
                     }
                     
-                    // 3. Formatierung
                     if (useJsonMode && !extraParams.response_format) {
                         bodyPayload.response_format = { type: "json_object" };
                     } else if (extraParams.response_format) {
@@ -1184,7 +1117,6 @@
                         bodyPayload.stop = mergedParams.stop.split(',').map(s => s.trim()).slice(0, 4);
                     }
                     
-                    // 4. Tools & Agenten
                     if (mergedParams.tools_json && mergedParams.tools_json.trim() !== '') {
                         try {
                             bodyPayload.tools = typeof mergedParams.tools_json === 'string' ? JSON.parse(mergedParams.tools_json) : mergedParams.tools_json;
@@ -1197,22 +1129,112 @@
                         } catch(e) { console.warn("LUMEN API WARNUNG: Tools JSON ist invalid.", e); }
                     }
                     
-                    // --- CACHE CHECK ---
                     const cacheKey = JSON.stringify({ url: apiUrl, body: bodyPayload });
                     if (useApiCache && window.lumenApiCache.has(cacheKey)) {
                         console.log("LUMEN: Cache Hit!");
                         return window.lumenApiCache.get(cacheKey);
                     }
-                    // -------------------
                     
                     const r = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify(bodyPayload), signal });
                     const d = await r.json(); 
                     if(!r.ok) throw new Error(d.error?.message || 'OpenAI API Fehler'); 
                     resText = d.choices[0].message.content;
                     
-                    if (useApiCache) window.lumenApiCache.set(cacheKey, resText);
+                    if (useApiCache) setSafeApiCache(cacheKey, resText);
                 }
                 return resText;
+            };
+
+            const executeKernelPhase = async (text, hist, dynamicContext, telemetryBlock, kernelProvider, signal, newAiMsgId) => {
+                let lastMatrix = {};
+                const lastAiMsg = [...hist].reverse().find(m => m.sender === 'ai' && m.scratchpad);
+                if (lastAiMsg) {
+                    try {
+                        const parsedScratch = JSON.parse(lastAiMsg.scratchpad);
+                        if (parsedScratch.kernel_matrix) lastMatrix = parsedScratch.kernel_matrix;
+                    } catch(e) {}
+                }
+
+                let userPayload1 = kernelTemplate;
+                userPayload1 = userPayload1.replace(/\[USER_INPUT\]/g, text);
+                userPayload1 = userPayload1.replace(/\[AKTIVER_KONTEXT\]/g, dynamicContext ? `[AKTIVER KONTEXT]\n${dynamicContext}` : "");
+                userPayload1 = userPayload1.replace(/\[TELEMETRIE\]/g, telemetryBlock);
+                userPayload1 = userPayload1.replace(/\[LLM2_PERSONA\]/g, dna.cartridge_prompt ? `[REGELN FÜR AGENT 2]\n${dna.cartridge_prompt}` : "");
+                userPayload1 = userPayload1.replace(/\[LLM2_TEMPLATE\]/g, promptTemplate ? `[ZIEL-TEMPLATE FÜR AGENT 2]\n${promptTemplate}` : "");
+
+                userPayload1 = userPayload1.replace(/\[LAST_MATRIX\.([a-zA-Z0-9_.]+)\]/g, (match, path) => {
+                    const val = resolveJsonPath(lastMatrix, path);
+                    if (val !== undefined && val !== null) {
+                        return typeof val === 'object' ? JSON.stringify(val) : String(val);
+                    }
+                    return "null";
+                });
+
+                const sysPrompt1 = `${dna.kernel_prompt}\n\n${autoTtsRegie && dna.audio_physics_kernel ? dna.audio_physics_kernel : ""}`.trim();
+
+                let resText1 = await fetchTextFromAPI(sysPrompt1, userPayload1, hist, kernelProvider, false, signal);
+                
+                const params1 = { model: kernelProvider.model || kernelProvider.type, temperature: kernelProvider.temperature, reasoning_effort: kernelProvider.reasoning_effort, verbosity: kernelProvider.verbosity };
+                setApiHistory(prev => [...prev, { id: generateId(), linkedMsgId: newAiMsgId, type: 'AGENT 1 (KERNEL)', timestamp: Date.now(), request: { system: sysPrompt1, user: userPayload1, params: params1 }, response: resText1 }].slice(-30));
+                
+                let objPhase1 = null;
+                try {
+                    const cleanResText1 = resText1.replace(/```json/gi, '').replace(/```/g, '').trim();
+                    objPhase1 = JSON.parse(cleanResText1);
+                } catch(e) {
+                    throw new Error("Lumen Kernel konnte das JSON-Skelett nicht parsen. Matrix-Format Fehler.");
+                }
+                return objPhase1;
+            };
+
+            const executePersonaPhase = async (text, hist, objPhase1, deskContext, helferAddon, systemTimeStr, personaProvider, signal, newAiMsgId) => {
+                const sysPrompt2 = `${dna.cartridge_prompt}\n\n${autoTtsRegie && dna.audio_physics_persona ? dna.audio_physics_persona : ""}`.trim();
+                
+                let userPayload2 = promptTemplate;
+                userPayload2 = userPayload2.replace(/\[USER_INPUT\]/g, text);
+                userPayload2 = userPayload2.replace(/\[SYSTEM_ZEIT\]/g, systemTimeStr);
+                userPayload2 = userPayload2.replace(/\[LUNA_HELFER\]/g, helferAddon ? helferAddon : "");
+                userPayload2 = userPayload2.replace(/\[SANCTUM_KONTEXT\]/g, deskContext ? deskContext : "");
+
+                userPayload2 = userPayload2.replace(/\[([a-zA-Z0-9_.]+)\]/g, (match, path) => {
+                    if (['USER_INPUT', 'SYSTEM_ZEIT', 'LUNA_HELFER', 'SANCTUM_KONTEXT'].includes(path)) return match;
+                    const val = resolveJsonPath(objPhase1, path);
+                    if (val !== undefined && val !== null) {
+                        return typeof val === 'object' ? JSON.stringify(val) : String(val);
+                    }
+                    return ""; 
+                });
+
+                let dynamicApiParams = {};
+                apiParamMapping.forEach(mapping => {
+                    if (!mapping.jsonKey || !mapping.apiParam) return;
+                    const val = resolveJsonPath(objPhase1, mapping.jsonKey);
+                    if (val !== undefined && val !== null) {
+                        const numVal = Number(val);
+                        dynamicApiParams[mapping.apiParam] = isNaN(numVal) ? val : numVal;
+                    }
+                });
+
+                if (dryRunMode) {
+                    setLoadingStatus(null);
+                    const dryRunPayloadMsg = `=== GENERIERTER LLM2 PAYLOAD ===\n\n${userPayload2}\n\n=== EXTRAHIERTE API-PARAMETER ===\n${JSON.stringify(dynamicApiParams, null, 2)}`;
+                    setMessages(p => [...p, { id: newAiMsgId, sender: 'system-debug', text: dryRunPayloadMsg, scratchpad: JSON.stringify({ kernel_matrix: objPhase1 }, null, 2), timestamp: new Date().toISOString() }]);
+                    showToast('Dry-Run: Pipeline nach Agent 1 gestoppt');
+                    return null;
+                }
+
+                let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, personaProvider, !agent2JsonMode, signal, dynamicApiParams);
+                
+                const params2 = { model: personaProvider.model || personaProvider.type, temperature: personaProvider.temperature, reasoning_effort: personaProvider.reasoning_effort, verbosity: personaProvider.verbosity, ...dynamicApiParams };
+                setApiHistory(prev => [...prev, { id: generateId(), linkedMsgId: newAiMsgId, type: 'AGENT 2 (PERSONA)', timestamp: Date.now(), request: { system: sysPrompt2, user: userPayload2, params: params2 }, response: resText2 }].slice(-30));
+
+                const xmlMatch = resText2.match(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i);
+                const gedanken = xmlMatch ? xmlMatch[1].trim() : "";
+                const finalAnswer = resText2.replace(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i, '').trim();
+
+                if (!finalAnswer) throw new Error("Die Persona hat keine finale Antwort generiert.");
+
+                return { finalAnswer, gedanken, resText2 };
             };
 
             const handleSendMessage = async () => {
@@ -1316,50 +1338,7 @@
                     // ==========================================
                     // PHASE 1: DER KERNEL (JSON ROUTING)
                     // ==========================================
-                    
-                    // --- KERNEL REKURSION: Letztes JSON extrahieren ---
-                    let lastMatrix = {};
-                    const lastAiMsg = [...hist].reverse().find(m => m.sender === 'ai' && m.scratchpad);
-                    if (lastAiMsg) {
-                        try {
-                            const parsedScratch = JSON.parse(lastAiMsg.scratchpad);
-                            if (parsedScratch.kernel_matrix) lastMatrix = parsedScratch.kernel_matrix;
-                        } catch(e) {}
-                    }
-
-                    // --- SMART TEMPLATE ENGINE (AGENT 1) ---
-                    let userPayload1 = kernelTemplate;
-                    userPayload1 = userPayload1.replace(/\[USER_INPUT\]/g, text);
-                    userPayload1 = userPayload1.replace(/\[AKTIVER_KONTEXT\]/g, dynamicContext ? `[AKTIVER KONTEXT]\n${dynamicContext}` : "");
-                    userPayload1 = userPayload1.replace(/\[TELEMETRIE\]/g, telemetryBlock);
-                    userPayload1 = userPayload1.replace(/\[LLM2_PERSONA\]/g, dna.cartridge_prompt ? `[REGELN FÜR AGENT 2]\n${dna.cartridge_prompt}` : "");
-                    userPayload1 = userPayload1.replace(/\[LLM2_TEMPLATE\]/g, promptTemplate ? `[ZIEL-TEMPLATE FÜR AGENT 2]\n${promptTemplate}` : "");
-
-                    // Dynamische Pfade aus dem LETZTEN JSON (LAST_MATRIX) auflösen
-                    userPayload1 = userPayload1.replace(/\[LAST_MATRIX\.([a-zA-Z0-9_.]+)\]/g, (match, path) => {
-                        const val = resolveJsonPath(lastMatrix, path);
-                        if (val !== undefined && val !== null) {
-                            return typeof val === 'object' ? JSON.stringify(val) : String(val);
-                        }
-                        return "null"; // Fallback, falls der Wert im letzten Turn nicht existierte
-                    });
-
-                    // System-Prompt von Altlasten befreit (Kontext ist jetzt im Payload)
-                    const sysPrompt1 = `${dna.kernel_prompt}\n\n${autoTtsRegie && dna.audio_physics_kernel ? dna.audio_physics_kernel : ""}`.trim();
-
-                    let resText1 = await fetchTextFromAPI(sysPrompt1, userPayload1, hist, kernelProvider, false, signal);
-                    
-                    // V5.4: Logging Phase 1 Params
-                    const params1 = { model: kernelProvider.model || kernelProvider.type, temperature: kernelProvider.temperature, reasoning_effort: kernelProvider.reasoning_effort, verbosity: kernelProvider.verbosity };
-                    setApiHistory(prev => [...prev, { id: generateId(), linkedMsgId: newAiMsgId, type: 'AGENT 1 (KERNEL)', timestamp: Date.now(), request: { system: sysPrompt1, user: userPayload1, params: params1 }, response: resText1 }].slice(-30));
-                    
-                    let objPhase1 = null;
-                    try {
-                        const cleanResText1 = resText1.replace(/```json/gi, '').replace(/```/g, '').trim();
-                        objPhase1 = JSON.parse(cleanResText1);
-                    } catch(e) {
-                        throw new Error("Lumen Kernel konnte das JSON-Skelett nicht parsen. Matrix-Format Fehler.");
-                    }
+                    const objPhase1 = await executeKernelPhase(text, hist, dynamicContext, telemetryBlock, kernelProvider, signal, newAiMsgId);
 
                     if (objPhase1 && objPhase1.matrix && objPhase1.matrix.aktiver_state !== undefined) {
                         const newStateId = Number(objPhase1.matrix.aktiver_state);
@@ -1464,60 +1443,11 @@
                     // ==========================================
                     setLoadingStatus("MAIRA ÜBERSETZT...");
                     
-                    const sysPrompt2 = `${dna.cartridge_prompt}\n\n${autoTtsRegie && dna.audio_physics_persona ? dna.audio_physics_persona : ""}`.trim();
+                    const phase2Result = await executePersonaPhase(text, hist, objPhase1, deskContext, helferAddon, systemTimeStr, personaProvider, signal, newAiMsgId);
                     
-                    // --- SMART TEMPLATE ENGINE ---
-                    let userPayload2 = promptTemplate;
+                    if (!phase2Result) return; 
 
-                    // 1. Standard-Platzhalter auflösen
-                    userPayload2 = userPayload2.replace(/\[USER_INPUT\]/g, text);
-                    userPayload2 = userPayload2.replace(/\[SYSTEM_ZEIT\]/g, systemTimeStr);
-                    userPayload2 = userPayload2.replace(/\[LUNA_HELFER\]/g, helferAddon ? helferAddon : "");
-                    userPayload2 = userPayload2.replace(/\[SANCTUM_KONTEXT\]/g, deskContext ? deskContext : "");
-
-                    // 2. Dynamische JSON-Pfade auflösen (RegEx sucht nach [pfad.zum.key])
-                    userPayload2 = userPayload2.replace(/\[([a-zA-Z0-9_.]+)\]/g, (match, path) => {
-                        // Falls es ein nicht aufgelöster Standard-Platzhalter ist, ignorieren
-                        if (['USER_INPUT', 'SYSTEM_ZEIT', 'LUNA_HELFER', 'SANCTUM_KONTEXT'].includes(path)) return match;
-                        
-                        const val = resolveJsonPath(objPhase1, path);
-                        if (val !== undefined && val !== null) {
-                            return typeof val === 'object' ? JSON.stringify(val) : String(val);
-                        }
-                        return ""; // Leert den Platzhalter, wenn der JSON-Pfad nicht existiert
-                    });
-
-                    // --- VEKTOR MAPPING (API-PARAMETER) ---
-                    let dynamicApiParams = {};
-                    apiParamMapping.forEach(mapping => {
-                        if (!mapping.jsonKey || !mapping.apiParam) return;
-                        const val = resolveJsonPath(objPhase1, mapping.jsonKey);
-                        if (val !== undefined && val !== null) {
-                            const numVal = Number(val);
-                            dynamicApiParams[mapping.apiParam] = isNaN(numVal) ? val : numVal;
-                        }
-                    });
-
-                    if (dryRunMode) {
-                        setLoadingStatus(null);
-                        const dryRunPayloadMsg = `=== GENERIERTER LLM2 PAYLOAD ===\n\n${userPayload2}\n\n=== EXTRAHIERTE API-PARAMETER ===\n${JSON.stringify(dynamicApiParams, null, 2)}`;
-                        setMessages(p => [...p, { id: newAiMsgId, sender: 'system-debug', text: dryRunPayloadMsg, scratchpad: JSON.stringify({ kernel_matrix: objPhase1 }, null, 2), timestamp: new Date().toISOString() }]);
-                        showToast('Dry-Run: Pipeline nach Agent 1 gestoppt');
-                        return;
-                    }
-
-                    let resText2 = await fetchTextFromAPI(sysPrompt2, userPayload2, hist, personaProvider, !agent2JsonMode, signal, dynamicApiParams);
-                    
-                    // V5.4: Logging Phase 2 Params
-                    const params2 = { model: personaProvider.model || personaProvider.type, temperature: personaProvider.temperature, reasoning_effort: personaProvider.reasoning_effort, verbosity: personaProvider.verbosity, ...dynamicApiParams };
-                    setApiHistory(prev => [...prev, { id: generateId(), linkedMsgId: newAiMsgId, type: 'AGENT 2 (PERSONA)', timestamp: Date.now(), request: { system: sysPrompt2, user: userPayload2, params: params2 }, response: resText2 }].slice(-30));
-
-                    const xmlMatch = resText2.match(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i);
-                    const gedanken = xmlMatch ? xmlMatch[1].trim() : "";
-                    const finalAnswer = resText2.replace(/<übersetzungs_prozess>([\s\S]*?)<\/übersetzungs_prozess>/i, '').trim();
-
-                    if (!finalAnswer) throw new Error("Die Persona hat keine finale Antwort generiert.");
-
+                    const { finalAnswer, gedanken } = phase2Result;
                     const ttsRegie = objPhase1.matrix?.tts_regie_prompt || null;
                     const finalScratch = JSON.stringify({ kernel_matrix: objPhase1, persona_gedanken: gedanken }, null, 2);
 
@@ -1611,7 +1541,7 @@
                                                     )}
                                                     <div className="mb-4"><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[1] SYSTEM PROMPT</div><div className="opacity-90">{log.request.system}</div></div>
                                                     <div className="mb-4 pt-4 border-t border-dashed border-slate-500/30"><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-600' : 'text-indigo-400'}`}>[2] USER PAYLOAD</div><div className={isKernel ? 'text-slate-900 font-bold' : 'text-white font-bold'}>{log.request.user}</div></div>
-                                                    <div className={`pt-4 border-t border-dashed border-slate-500/30 ${isKernel ? 'bg-emerald-50 -mx-5 -mb-5 p-5 rounded-b-3xl' : 'bg-indigo-900/30 -mx-5 -mb-5 p-5 rounded-b-3xl'}`}><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-700' : 'text-fuchsia-400'}`}>[3] API RESPONSE</div><div className={isKernel ? 'text-emerald-900' : 'text-fuchsia-100'}>{log.response}</div></div>
+                                                    <div className={`pt-4 border-t border-dashed border-slate-500/30 ${isKernel ? 'bg-emerald-50 -mx-5 -mb-5 p-5 rounded-b-3xl' : 'bg-indigo-900/30 -mx-5 -mb-5 p-5 rounded-b-3xl'}`}><div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${isKernel ? 'text-emerald-700' : 'text-fuchsia-400'}`}>[3] API RESPONSE</div><div className={isKernel ? 'text-emerald-900 whitespace-pre-wrap break-words' : 'text-fuchsia-100 whitespace-pre-wrap break-words'}>{log.response}</div></div>
                                                 </div>
                                             </div>
                                         );
@@ -1726,7 +1656,7 @@
                             ) : (
                                 <div className="flex gap-2 items-center">
                                     <span className="text-[9px] font-bold text-rose-500 uppercase">Sicher?</span>
-                                    <button onClick={() => { setMessages([]); setApiHistory([]); localStorage.removeItem('lumen_chat'); localStorage.removeItem('lumen_apiHistory'); stopAudio(); setShowClearConfirm(false); }} className="text-[9px] font-mono uppercase tracking-widest text-rose-500 hover:text-rose-600 transition-colors font-bold">JA</button>
+                                    <button onClick={() => { setMessages([]); setApiHistory([]); Object.values(audioSessionCache).forEach(val => URL.revokeObjectURL(val)); setAudioSessionCache({}); localStorage.removeItem('lumen_chat'); localStorage.removeItem('lumen_apiHistory'); stopAudio(); setShowClearConfirm(false); }} className="text-[9px] font-mono uppercase tracking-widest text-rose-500 hover:text-rose-600 transition-colors font-bold">JA</button>
                                     <button onClick={() => setShowClearConfirm(false)} className="text-[9px] font-mono uppercase tracking-widest text-slate-500 hover:text-slate-700 transition-colors">NEIN</button>
                                 </div>
                             )}
