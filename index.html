@@ -1309,15 +1309,29 @@
                 userPayload2 = userPayload2.replace(/\[LUNA_HELFER\]/g, helferAddon ? helferAddon : "");
                 userPayload2 = userPayload2.replace(/\[SANCTUM_KONTEXT\]/g, deskContext ? deskContext : "");
 
-                // Dynamische JSON-Pfade auflösen (RegEx sucht nach [pfad.zum.key])
-                userPayload2 = userPayload2.replace(/\[([a-zA-Z0-9_.]+)\]/g, (match, path) => {
+                // Dynamische JSON-Pfade auflösen (Tolerant gegenüber Spaces und Bindestrichen)
+                // Der Regex sucht nach [ pfad.zum.key ]
+                userPayload2 = userPayload2.replace(/\[\s*([a-zA-Z0-9_.-]+)\s*\]/g, (match, path) => {
+                    // Standard-Platzhalter vor versehentlichem Überschreiben schützen
                     if (['USER_INPUT', 'SYSTEM_ZEIT', 'LUNA_HELFER', 'SANCTUM_KONTEXT'].includes(path)) return match;
+                    
+                    // Sicherheits-Check: Ist objPhase1 überhaupt definiert?
+                    if (!objPhase1) {
+                        console.warn("LUMEN WARNUNG: objPhase1 ist in Agent 2 nicht verfügbar!");
+                        return match; 
+                    }
+
                     const val = resolveJsonPath(objPhase1, path);
+                    
+                    // Debug-Log für die Konsole, um zu sehen was die Engine macht
+                    console.log(`[TEMPLATE ENGINE] Prüfe Pfad: "${path}" -> Gefunden:`, val);
+
                     if (val !== undefined && val !== null) {
                         return typeof val === 'object' ? JSON.stringify(val) : String(val);
                     }
-                    // WICHTIG: Ersetzt leere Pfade durch nichts, löscht die eckigen Klammern!
-                    return ""; 
+                    
+                    // Wenn der Pfad im JSON nicht existiert, lasse die Klammer als normalen Text stehen!
+                    return match; 
                 });
 
                 let dynamicApiParams = {};
