@@ -1311,7 +1311,7 @@
 
                 // Dynamische JSON-Pfade auflösen (Tolerant gegenüber Spaces und Bindestrichen)
                 // Der Regex sucht nach [ pfad.zum.key ]
-                userPayload2 = userPayload2.replace(/\[\s*([a-zA-Z0-9_.-]+)\s*\]/g, (match, path) => {
+                userPayload2 = userPayload2.replace(/\[\s*([a-zA-Z0-9_.\-äöüÄÖÜß]+)\s*\]/g, (match, path) => {
                     // Standard-Platzhalter vor versehentlichem Überschreiben schützen
                     if (['USER_INPUT', 'SYSTEM_ZEIT', 'LUNA_HELFER', 'SANCTUM_KONTEXT'].includes(path)) return match;
                     
